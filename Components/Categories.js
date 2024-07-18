@@ -1,5 +1,3 @@
-// TEST TEST TEST
-
 import React from 'react';
 import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
