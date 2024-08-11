@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity, Text, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Path } from 'react-native-svg';
 
 const suggestionsList = [
@@ -66,9 +67,7 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSortPress, sortOrder, onSugges
         end={{ x: 1, y: 1 }}
         style={styles.gradient}
       >
-        <Svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={styles.icon}>
-          <Path d="M15.5 4l-1-1h-5l-1 1H5v2h14V4h-3.5zM6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z" fill="#888" />
-        </Svg>
+        <MaterialIcons name="search" size={24} color="#888" style={styles.icon} />
         <TextInput
           style={styles.input}
           placeholder="Search recipes..."
