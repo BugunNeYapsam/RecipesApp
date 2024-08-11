@@ -15,7 +15,7 @@ const TrendingRecipes = ({ showAll }) => {
       return (
         <ScrollView style={styles.container}>
           <View style={styles.grid}>
-            {trendingRecipes.map((recipe, index) => (
+            {trendingRecipes?.map((recipe, index) => (
               <TouchableOpacity key={index} style={styles.recipeCard}>
                 <Image source={recipe.image} style={styles.recipeImage} />
                 <Text style={styles.recipeName}>{recipe.name}</Text>
@@ -35,7 +35,7 @@ const TrendingRecipes = ({ showAll }) => {
           </TouchableOpacity>
         </View>
         <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
-          {trendingRecipes.map((recipe, index) => (
+          {trendingRecipes?.map((recipe, index) => (
             <TouchableOpacity key={index} style={styles.trendingCard}>
               <Image source={recipe.image} style={styles.trendingImage} />
               <View style={styles.trendingOverlay}>

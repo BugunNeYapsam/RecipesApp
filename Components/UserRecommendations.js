@@ -16,7 +16,7 @@ const UserRecommendations = ({ showAll }) => {
     return (
       <ScrollView style={styles.container}>
         <View style={styles.grid}>
-          {userRecommendations.map((recommendation, index) => (
+          {userRecommendations?.map((recommendation, index) => (
             <TouchableOpacity key={index} style={styles.recommendationCard}>
               <Image source={recommendation.image} style={styles.recommendationImage} />
               <Text style={styles.recommendationName}>{recommendation.name}</Text>
@@ -36,7 +36,7 @@ const UserRecommendations = ({ showAll }) => {
         </TouchableOpacity>
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
-        {userRecommendations.map((recommendation, index) => (
+        {userRecommendations?.map((recommendation, index) => (
           <TouchableOpacity key={index} style={styles.recommendationCard}>
             <Image source={recommendation.image} style={styles.recommendationImage} />
             <View style={styles.recommendationOverlay}>

@@ -16,7 +16,7 @@ const TopChefs = ({ showAll }) => {
     return (
       <ScrollView style={styles.container}>
         <View style={styles.grid}>
-          {topChefs.map((chef, index) => (
+          {topChefs?.map((chef, index) => (
             <TouchableOpacity key={index} style={styles.chefCard}>
               <Image source={chef.image} style={styles.chefImage} />
               <Text style={styles.chefName}>{chef.name}</Text>
@@ -36,7 +36,7 @@ const TopChefs = ({ showAll }) => {
         </TouchableOpacity>
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
-        {topChefs.map((chef, index) => (
+        {topChefs?.map((chef, index) => (
           <TouchableOpacity key={index} style={styles.chefCard}>
             <Image source={chef.image} style={styles.chefImage} />
             <View style={styles.chefOverlay}>

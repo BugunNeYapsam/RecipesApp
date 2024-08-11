@@ -17,7 +17,7 @@ const VideoRecipes = ({ showAll }) => {
     return (
       <ScrollView style={styles.container}>
         <View style={styles.grid}>
-          {videoRecipes.map((recipe, index) => (
+          {videoRecipes?.map((recipe, index) => (
             <TouchableOpacity key={index} style={styles.videoCard}>
               <Image source={recipe.image} style={styles.videoImage} />
               <View style={styles.playIconOverlay}>
@@ -40,7 +40,7 @@ const VideoRecipes = ({ showAll }) => {
         </TouchableOpacity>
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
-        {videoRecipes.map((recipe, index) => (
+        {videoRecipes?.map((recipe, index) => (
           <TouchableOpacity key={index} style={styles.videoCard}>
             <Image source={recipe.image} style={styles.videoImage} />
             <View style={styles.playIconOverlay}>

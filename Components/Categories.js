@@ -11,7 +11,7 @@ const Categories = ({ showAll }) => {
     return (
       <ScrollView style={styles.container}>
         <View style={styles.grid}>
-          {allCategoriesData.map((category, index) => (
+          {allCategoriesData?.map((category, index) => (
             <TouchableOpacity key={index} style={styles.categoryCard}>
               <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
               <View style={{...styles.categoryOverlay, backgroundColor: 'rgba(0, 0, 0, 0)'}}>
@@ -33,7 +33,7 @@ const Categories = ({ showAll }) => {
         </TouchableOpacity>
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
-        {allCategoriesData.map((category, index) => (
+        {allCategoriesData?.map((category, index) => (
           <TouchableOpacity key={index} style={styles.categoryCard}>
             <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
             <View style={styles.categoryOverlay}>

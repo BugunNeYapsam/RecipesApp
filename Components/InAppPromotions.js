@@ -16,7 +16,7 @@ const InAppPromotions = ({ showAll }) => {
     return (
       <ScrollView style={styles.container}>
         <View style={styles.grid}>
-          {promotions.map((promotion, index) => (
+          {promotions?.map((promotion, index) => (
             <TouchableOpacity key={index} style={styles.promotionCard}>
               <Image source={promotion.image} style={styles.promotionImage} />
               <Text style={styles.promotionName}>{promotion.name}</Text>
@@ -36,7 +36,7 @@ const InAppPromotions = ({ showAll }) => {
         </TouchableOpacity>
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
-        {promotions.map((promotion, index) => (
+        {promotions?.map((promotion, index) => (
           <TouchableOpacity key={index} style={styles.promotionCard}>
             <Image source={promotion.image} style={styles.promotionImage} />
             <View style={styles.promotionOverlay}>

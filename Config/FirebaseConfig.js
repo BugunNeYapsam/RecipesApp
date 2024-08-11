@@ -37,4 +37,4 @@ if (analyticsIsSupported()) {
 }
 
 
-export { app, analytics, db};
+export { app, analytics, db };

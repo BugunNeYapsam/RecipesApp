@@ -11,7 +11,7 @@ const FeaturedRecipes = ({ showAll }) => {
       return (
         <ScrollView style={styles.container}>
           <View style={styles.grid}>
-            {allRecipeData.map((recipe, index) => (
+            {allRecipeData?.map((recipe, index) => (
               <TouchableOpacity key={index} style={styles.recipeCard}>
                 <Image source={{ uri: recipe.imageUrl }} style={styles.recipeImage} />
                 <Text style={styles.recipeName}>{recipe.isim}</Text>
@@ -31,7 +31,7 @@ const FeaturedRecipes = ({ showAll }) => {
           </TouchableOpacity>
         </View>
         <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
-          {allRecipeData.map((recipe, index) => (
+          {allRecipeData?.map((recipe, index) => (
             <TouchableOpacity key={index} style={styles.featuredCard}>
               <Image source={{ uri: recipe.imageUrl }} style={styles.recipeImage} />
               <View style={styles.featuredOverlay}>

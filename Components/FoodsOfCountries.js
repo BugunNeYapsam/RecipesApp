@@ -11,7 +11,7 @@ const FoodsOfCountries = ({ showAll }) => {
     return (
       <ScrollView style={styles.container}>
         <View style={styles.grid}>
-          {allCountries.map((country, index) => (
+          {allCountries?.map((country, index) => (
             <TouchableOpacity key={index} style={styles.countryCard}>
               <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
               <View style={styles.countryOverlay}>
@@ -33,7 +33,7 @@ const FoodsOfCountries = ({ showAll }) => {
         </TouchableOpacity>
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
-        {allCountries.map((country, index) => (
+        {allCountries?.map((country, index) => (
           <TouchableOpacity key={index} style={styles.countryCard}>
             <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
             <View style={styles.countryOverlay}>

@@ -12,10 +12,10 @@ import VideoRecipes from './Components/VideoRecipes';
 import UserRecommendations from './Components/UserRecommendations';
 import InAppPromotions from './Components/InAppPromotions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { collection, getDocs } from "firebase/firestore"; 
-import { useAppContext } from './Context/AppContext';
-import { db } from './Config/FirebaseConfig';
 import FoodsOfCountries from './Components/FoodsOfCountries';
+import { collection, getDocs } from "firebase/firestore"; 
+import { db } from './Config/FirebaseConfig';
+import { useAppContext } from './Context/AppContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -54,6 +54,9 @@ const ExploreStack = () => {
 
 export default function App() {
   const { setAllCategoriesData, setAllRecipeData, setAllCountries } = useAppContext();
+  
+  const co = useAppContext();
+  console.log(co)
 
   const getData = async () => {
     try {

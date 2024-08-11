@@ -10,7 +10,8 @@ export default function AllRecipes(props) {
   const { allRecipeData } = useAppContext();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [expandedCardIndex, setExpandedCardIndex] = React.useState(null);
-  const [sortOrder, setSortOrder] = React.useState('none'); // 'none', 'asc', 'desc'
+  const [sortOrder, setSortOrder] = React.useState('none');
+  const [selectedChips, setSelectedChips] = React.useState([]);
 
   const sortRecipes = (recipes, order) => {
     if (order === 'asc') {
@@ -21,7 +22,11 @@ export default function AllRecipes(props) {
     return recipes;
   };
 
-  const filteredRecipes = allRecipeData.filter(r => r.isim.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredRecipes = allRecipeData?.filter(r => 
+    selectedChips.length > 0 
+      ? selectedChips.some(chip => r.isim.toLowerCase().includes(chip.toLowerCase()))
+      : r.isim.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const sortedRecipes = sortRecipes(filteredRecipes, sortOrder);
 
@@ -37,9 +42,17 @@ export default function AllRecipes(props) {
     });
   };
 
+  const handleSuggestionSelect = (suggestion) => {
+    setSelectedChips(prevChips => [...prevChips, suggestion]);
+    setSearchTerm('');
+  };
+
+  const handleChipRemove = (chip) => {
+    setSelectedChips(prevChips => prevChips.filter(c => c !== chip));
+  };
+
   const navigation = useNavigation();
 
-  // Başlık çubuğunu gizlemek için navigation.setOptions kullanabilirsiniz
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
@@ -48,18 +61,26 @@ export default function AllRecipes(props) {
 
   return (
     <LinearGradient
-      colors={['#bbd0c4', '#a1d0c4', '#bbd0c4']} // Gradient colors
+      colors={['#bbd0c4', '#a1d0c4', '#bbd0c4']}
       style={styles.gradient}
     >
       <View style={styles.container}>
-        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} onSortPress={handleSort} sortOrder={sortOrder} />
+        <SearchBar
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          onSortPress={handleSort}
+          sortOrder={sortOrder}
+          onSuggestionSelect={handleSuggestionSelect}
+          selectedChips={selectedChips}
+          onChipRemove={handleChipRemove}
+        />
         <ScrollView>
-          {sortedRecipes.map((r, index) => (
+          {sortedRecipes?.map((r, index) => (
             <RecipeCard
               key={index}
               foodName={r.isim}
               ingredients={r.malzemeler}
-              recipeSteps={r.tarif} // Assuming recipe steps are now an array
+              recipeSteps={r.tarif}
               imageUrl={"https://picsum.photos/200/300"}
               expanded={expandedCardIndex === index}
               toggleExpand={() => toggleExpand(index)}
