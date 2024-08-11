@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollView, View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { ScrollView, View, StyleSheet, TextInput, SafeAreaView, Platform, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import RecipeCard from '../Components/RecipeCard';
 import SearchBar from '../Components/SearchBar';
@@ -60,39 +60,45 @@ export default function AllRecipes(props) {
   }, [navigation]);
 
   return (
-    <LinearGradient
-      colors={['#bbd0c4', '#a1d0c4', '#bbd0c4']}
-      style={styles.gradient}
-    >
-      <View style={styles.container}>
-        <SearchBar
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          onSortPress={handleSort}
-          sortOrder={sortOrder}
-          onSuggestionSelect={handleSuggestionSelect}
-          selectedChips={selectedChips}
-          onChipRemove={handleChipRemove}
-        />
-        <ScrollView>
-          {sortedRecipes?.map((r, index) => (
-            <RecipeCard
-              key={index}
-              foodName={r.isim}
-              ingredients={r.malzemeler}
-              recipeSteps={r.tarif}
-              imageUrl={"https://picsum.photos/200/300"}
-              expanded={expandedCardIndex === index}
-              toggleExpand={() => toggleExpand(index)}
-            />
-          ))}
-        </ScrollView>
-      </View>
-    </LinearGradient>
+    <SafeAreaView style={styles.safeArea}>
+      <LinearGradient
+        colors={['#bbd0c4', '#a1d0c4', '#bbd0c4']}
+        style={styles.gradient}
+      >
+        <View style={styles.container}>
+          <SearchBar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            onSortPress={handleSort}
+            sortOrder={sortOrder}
+            onSuggestionSelect={handleSuggestionSelect}
+            selectedChips={selectedChips}
+            onChipRemove={handleChipRemove}
+          />
+          <ScrollView>
+            {sortedRecipes?.map((r, index) => (
+              <RecipeCard
+                key={index}
+                foodName={r.isim}
+                ingredients={r.malzemeler}
+                recipeSteps={r.tarif}
+                imageUrl={"https://picsum.photos/200/300"}
+                expanded={expandedCardIndex === index}
+                toggleExpand={() => toggleExpand(index)}
+              />
+            ))}
+          </ScrollView>
+        </View>
+      </LinearGradient>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
   gradient: {
     flex: 1,
   },
