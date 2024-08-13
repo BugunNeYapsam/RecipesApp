@@ -1,18 +1,17 @@
 import * as React from 'react';
+import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Explore from "./Screens/Explore";
 import AllRecipes from "./Screens/AllRecipes";
+import SearchScreen from './Screens/SearchScreen';
 import Categories from "./Components/Categories";
 import FeaturedRecipes from "./Components/FeaturedRecipes";
-import TrendingRecipes from "./Components/TrendingRecipes";
-import TopChefs from './Components/TopChefs';
 import VideoRecipes from './Components/VideoRecipes';
-import UserRecommendations from './Components/UserRecommendations';
 import InAppPromotions from './Components/InAppPromotions';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FoodsOfCountries from './Components/FoodsOfCountries';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { collection, getDocs } from "firebase/firestore"; 
 import { db } from './Config/FirebaseConfig';
 import { useAppContext } from './Context/AppContext';
@@ -30,17 +29,8 @@ const ExploreStack = () => {
       <Stack.Screen name="Tüm Öne Çıkan Tarifler">
         {() => (<FeaturedRecipes showAll />)}
       </Stack.Screen>
-      <Stack.Screen name="Tüm Trend Tarifler">
-        {() => (<TrendingRecipes showAll />)}
-      </Stack.Screen>
-      <Stack.Screen name="Tüm En İyi Şefler">
-        {() => (<TopChefs showAll />)}
-      </Stack.Screen>
       <Stack.Screen name="Tüm Video Tarifler">
         {() => (<VideoRecipes showAll />)}
-      </Stack.Screen>
-      <Stack.Screen name="Tüm Kullanıcı Önerileri">
-        {() => (<UserRecommendations showAll />)}
       </Stack.Screen>
       <Stack.Screen name="Tüm Ülkeler">
         {() => (<FoodsOfCountries showAll />)}
@@ -49,6 +39,84 @@ const ExploreStack = () => {
         {() => (<InAppPromotions showAll />)}
       </Stack.Screen>
     </Stack.Navigator>
+  );
+};
+
+const CustomTabBar = ({ state, descriptors, navigation }) => {
+  return (
+    <View style={styles.tabBarContainer}>
+      {state.routes.map((route, index) => {
+        const { options } = descriptors[route.key];
+        const label =
+          options.tabBarLabel !== undefined
+            ? options.tabBarLabel
+            : options.title !== undefined
+            ? options.title
+            : route.name;
+
+        const isFocused = state.index === index;
+
+        const onPress = () => {
+          const event = navigation.emit({
+            type: 'tabPress',
+            target: route.key,
+            canPreventDefault: true,
+          });
+
+          if (!isFocused && !event.defaultPrevented) {
+            navigation.navigate(route.name);
+          }
+        };
+
+        const onLongPress = () => {
+          navigation.emit({
+            type: 'tabLongPress',
+            target: route.key,
+          });
+        };
+
+        if (route.name === "Ara") {
+          return (
+            <TouchableOpacity
+              key={index}
+              accessibilityRole="button"
+              accessibilityState={isFocused ? { selected: true } : {}}
+              accessibilityLabel={options.tabBarAccessibilityLabel}
+              testID={options.tabBarTestID}
+              onPress={onPress}
+              onLongPress={onLongPress}
+              style={styles.middleButton}
+            >
+              <View style={styles.middleButtonContainer}>
+                <MaterialIcons name="search" color="#fff" size={32} />
+              </View>
+            </TouchableOpacity>
+          );
+        } else {
+          return (
+            <TouchableOpacity
+              key={index}
+              accessibilityRole="button"
+              accessibilityState={isFocused ? { selected: true } : {}}
+              accessibilityLabel={options.tabBarAccessibilityLabel}
+              testID={options.tabBarTestID}
+              onPress={onPress}
+              onLongPress={onLongPress}
+              style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+            >
+              <MaterialIcons
+                name={route.name === "Keşfet" ? "explore" : "list"}
+                color={isFocused ? '#6B2346' : '#666'}
+                size={24}
+              />
+              <Text style={{ color: isFocused ? '#6B2346' : '#666', fontSize: 12 }}>
+                {label}
+              </Text>
+            </TouchableOpacity>
+          );
+        }
+      })}
+    </View>
   );
 };
 
@@ -103,35 +171,42 @@ export default function Main() {
 
   return (
     <NavigationContainer>
-      <Tab.Navigator 
-        screenOptions={{
-          tabBarActiveTintColor: '#6B2346', // Active tab text color
-          tabBarInactiveTintColor: '#666', // Inactive tab text color
-          tabBarStyle: {
-            borderTopWidth: 1, // Top border width
-            borderTopColor: '#ccc', // Top border color
-          },
-        }}>
-        <Tab.Screen 
-          name="Keşfet"
-          options={{
-            headerShown: false,
-            tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="explore" color={color} size={25} />
-            ),
-          }}>
-            {() => <ExploreStack />}
-        </Tab.Screen>
-        <Tab.Screen
-          name="Yemek Öner"
-          options={{
-            tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="list" color={color} size={25} />
-            ),
-          }}>
-            {() => <AllRecipes />}
-        </Tab.Screen>
+      <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}>
+        <Tab.Screen name="Keşfet" options={{ headerShown: false }} component={ExploreStack} />
+        <Tab.Screen name="Ara" options={{ headerShown: false }} component={SearchScreen} />
+        <Tab.Screen name="Yemek Öner" options={{ headerShown: false }} component={AllRecipes} />
       </Tab.Navigator>
     </NavigationContainer>
-  );    
+  );
 }
+
+const styles = StyleSheet.create({
+  tabBarContainer: {
+    flexDirection: 'row',
+    height: 60,
+    backgroundColor: '#ffffff',
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
+    position: 'absolute',
+    bottom: 25,
+    left: 20,
+    right: 20,
+    borderRadius: 15,
+    elevation: 2,
+  },
+  middleButton: {
+    top: -20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+  },
+  middleButtonContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: '#6B2346',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+  },
+});
