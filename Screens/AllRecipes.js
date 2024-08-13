@@ -3,7 +3,7 @@ import { ScrollView, View, StyleSheet, TextInput, SafeAreaView, Platform, Status
 import { LinearGradient } from 'expo-linear-gradient';
 import RecipeCard from '../Components/RecipeCard';
 import SearchBar from '../Components/SearchBar';
-import { useNavigation, useLayoutEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 
 export default function AllRecipes(props) {

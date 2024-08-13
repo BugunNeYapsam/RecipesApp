@@ -8,11 +8,11 @@ import AllRecipes from "./Screens/AllRecipes";
 import SearchScreen from './Screens/SearchScreen';
 import Categories from "./Components/Categories";
 import FeaturedRecipes from "./Components/FeaturedRecipes";
-import VideoRecipes from './Components/VideoRecipes';
+import VideoRecipes from "./Components/VideoRecipes";
 import InAppPromotions from './Components/InAppPromotions';
 import FoodsOfCountries from './Components/FoodsOfCountries';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { collection, getDocs } from "firebase/firestore"; 
+import { collection, getDocs } from "firebase/firestore";
 import { db } from './Config/FirebaseConfig';
 import { useAppContext } from './Context/AppContext';
 
@@ -85,11 +85,16 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
               testID={options.tabBarTestID}
               onPress={onPress}
               onLongPress={onLongPress}
-              style={styles.middleButton}
+              style={styles.tabButton}
             >
-              <View style={styles.middleButtonContainer}>
-                <MaterialIcons name="search" color="#fff" size={32} />
-              </View>
+              <MaterialIcons
+                name={"search"}
+                color={isFocused ? '#6B2346' : '#666'}
+                size={24}
+              />
+              <Text style={{ color: isFocused ? '#6B2346' : '#666', fontSize: 12 }}>
+                {label}
+              </Text>
             </TouchableOpacity>
           );
         } else {
@@ -102,7 +107,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
               testID={options.tabBarTestID}
               onPress={onPress}
               onLongPress={onLongPress}
-              style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+              style={styles.tabButton}
             >
               <MaterialIcons
                 name={route.name === "Keşfet" ? "explore" : "list"}
@@ -149,7 +154,6 @@ export default function Main() {
     }
   };
 
-  
   const getCountries = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "3"));
@@ -188,25 +192,14 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#ccc',
     position: 'absolute',
-    bottom: 25,
-    left: 20,
-    right: 20,
-    borderRadius: 15,
-    elevation: 2,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    justifyContent: 'space-between',
   },
-  middleButton: {
-    top: -20,
-    justifyContent: 'center',
-    alignItems: 'center',
+  tabButton: {
     flex: 1,
-  },
-  middleButtonContainer: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: '#6B2346',
-    justifyContent: 'center',
     alignItems: 'center',
-    elevation: 5,
-  },
+    justifyContent: 'center',
+  }
 });
