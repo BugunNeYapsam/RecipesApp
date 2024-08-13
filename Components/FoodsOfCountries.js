@@ -82,6 +82,12 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#6B2346',
+    shadowColor: '#6B2346',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 6
   },
   countryFlag: {
     width: '100%',

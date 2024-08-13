@@ -1,9 +1,10 @@
 import React from 'react';
+import { SafeAreaView } from 'react-native';
 
 export default function SearchScreen() {
   return (
-    <div>
+    <SafeAreaView>
       TEST
-    </div>
+    </SafeAreaView>
   );
 }
