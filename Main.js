@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
+import { Text, View, Dimensions } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -11,10 +11,13 @@ import FeaturedRecipes from "./Components/FeaturedRecipes";
 import VideoRecipes from "./Components/VideoRecipes";
 import InAppPromotions from './Components/InAppPromotions';
 import FoodsOfCountries from './Components/FoodsOfCountries';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { collection, getDocs } from "firebase/firestore";
 import { db } from './Config/FirebaseConfig';
 import { useAppContext } from './Context/AppContext';
+import { getPathDown } from './Components/CurvedBar';
+import { Svg, Path } from "react-native-svg";
+import { scale } from "react-native-size-scaling";
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -42,91 +45,10 @@ const ExploreStack = () => {
   );
 };
 
-const CustomTabBar = ({ state, descriptors, navigation }) => {
-  return (
-    <View style={styles.tabBarContainer}>
-      {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-            ? options.title
-            : route.name;
-
-        const isFocused = state.index === index;
-
-        const onPress = () => {
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
-
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
-          }
-        };
-
-        const onLongPress = () => {
-          navigation.emit({
-            type: 'tabLongPress',
-            target: route.key,
-          });
-        };
-
-        if (route.name === "Ara") {
-          return (
-            <TouchableOpacity
-              key={index}
-              accessibilityRole="button"
-              accessibilityState={isFocused ? { selected: true } : {}}
-              accessibilityLabel={options.tabBarAccessibilityLabel}
-              testID={options.tabBarTestID}
-              onPress={onPress}
-              onLongPress={onLongPress}
-              style={styles.tabButton}
-            >
-              <MaterialIcons
-                name={"search"}
-                color={isFocused ? '#6B2346' : '#666'}
-                size={24}
-              />
-              <Text style={{ color: isFocused ? '#6B2346' : '#666', fontSize: 12 }}>
-                {label}
-              </Text>
-            </TouchableOpacity>
-          );
-        } else {
-          return (
-            <TouchableOpacity
-              key={index}
-              accessibilityRole="button"
-              accessibilityState={isFocused ? { selected: true } : {}}
-              accessibilityLabel={options.tabBarAccessibilityLabel}
-              testID={options.tabBarTestID}
-              onPress={onPress}
-              onLongPress={onLongPress}
-              style={styles.tabButton}
-            >
-              <MaterialIcons
-                name={route.name === "Keşfet" ? "explore" : "list"}
-                color={isFocused ? '#6B2346' : '#666'}
-                size={24}
-              />
-              <Text style={{ color: isFocused ? '#6B2346' : '#666', fontSize: 12 }}>
-                {label}
-              </Text>
-            </TouchableOpacity>
-          );
-        }
-      })}
-    </View>
-  );
-};
-
 export default function Main() {
   const { setAllCategoriesData, setAllRecipeData, setAllCountries } = useAppContext();
+  const [maxWidth, setMaxWidth] = React.useState(Dimensions.get("window").width);
+  const returnpathDown = getPathDown(maxWidth, 60, 50);
 
   const getData = async () => {
     try {
@@ -175,31 +97,75 @@ export default function Main() {
 
   return (
     <NavigationContainer>
-      <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}>
-        <Tab.Screen name="Keşfet" options={{ headerShown: false }} component={ExploreStack} />
-        <Tab.Screen name="Ara" options={{ headerShown: false }} component={SearchScreen} />
-        <Tab.Screen name="Yemek Öner" options={{ headerShown: false }} component={AllRecipes} />
+      <Tab.Navigator screenOptions={{ 
+        tabBarStyle: { backgroundColor: "transparent", borderTopWidth: 0, position: "absolute", elevation: 0 }, 
+      }}>
+         <Tab.Screen
+            name="Keşfet"
+            component={ExploreStack}
+            options={{
+              headerShown: false,
+              tabBarItemStyle: { marginTop: -3 },
+              tabBarIcon: ({ focused }) => (
+                <MaterialIcons 
+                  name="explore" 
+                  color={focused ? "#6B2346" : "#4A4A4A"} 
+                  size={28} 
+                />
+              ),
+              tabBarLabel: ({ focused }) => (
+                <Text style={{ color: focused ? "#6B2346" : "#000000", fontSize: 10, padding: 5 }}>Keşfet</Text>
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Ara"
+            component={SearchScreen}
+            options={{
+              headerShown: false,
+              unmountOnBlur: false,
+              tabBarItemStyle: { margin: 0, zIndex: -50 },
+              tabBarIcon: ({ focused }) => (
+                <View style={{ 
+                  display: "flex", 
+                  justifyContent: "center", 
+                  alignItems: "center", 
+                  height: 50, 
+                  width: 50, 
+                  backgroundColor: focused ? "#6B2346" : "white", 
+                  borderRadius: 25 
+                }}>
+                  <MaterialIcons name="search" color={focused ? "#ffffff" : "#4A4A4A"} size={32} />
+                </View>
+              ),
+              tabBarLabel: () => (
+                <View>
+                  <Svg width={maxWidth} height={scale(60)}>
+                    <Path fill={"white"} {...{ d: returnpathDown }} />
+                  </Svg>
+                </View>
+              ),
+            }}
+          />
+      <Tab.Screen
+        name="Yemek Öner"
+        component={AllRecipes}
+        options={{ 
+          headerShown: false,
+          tabBarItemStyle: { marginTop: -3 },
+          tabBarIcon: ({ focused }) => (
+            <MaterialIcons 
+              name="restaurant-menu" 
+              color={focused ? "#6B2346" : "#4A4A4A"} 
+              size={28} 
+            />
+          ),
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ color: focused ? "#6B2346" : "#000000", fontSize: 10, padding: 5 }}>Yemek Öner</Text>
+          ),
+        }}
+      />
       </Tab.Navigator>
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  tabBarContainer: {
-    flexDirection: 'row',
-    height: 60,
-    backgroundColor: '#ffffff',
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    justifyContent: 'space-between',
-  },
-  tabButton: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
-});

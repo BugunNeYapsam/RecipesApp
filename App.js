@@ -1,6 +1,6 @@
 import React from 'react';
-import { AppProvider } from './Context/AppContext'; // Adjust path
-import Main from './Main'; // Adjust path
+import { AppProvider } from './Context/AppContext';
+import Main from './Main';
 
 export default function App() {
   return (
