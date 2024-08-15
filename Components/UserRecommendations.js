@@ -85,6 +85,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
+    borderWidth: 1,
+    borderColor: '#6B2346',
+    shadowColor: '#6B2346',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 6
   },
   recommendationImage: {
     width: '100%',

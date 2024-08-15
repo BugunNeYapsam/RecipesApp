@@ -82,9 +82,7 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSortPress, sortOrder, onSugges
         </TouchableOpacity>
       </LinearGradient>
 
-      {/* Render Selected Chips and Delete Icon */}
       <View style={styles.chipsAndRemoveContainer}>
-        {/* Chips */}
         <View style={styles.chipsContainer}>
           {selectedChips.map((chip, index) => (
             <View key={index} style={styles.chip}>
@@ -98,7 +96,6 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSortPress, sortOrder, onSugges
           ))}
         </View>
 
-        {/* Delete Icon */}
         {selectedChips.length > 1 && (
           <TouchableOpacity style={styles.removeAllButton} onPress={() => selectedChips.forEach(onChipRemove)}>
             <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -108,10 +105,8 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSortPress, sortOrder, onSugges
         )}
       </View>
 
-      {/* Render Suggestions as Chips */}
       {filteredSuggestions.length > 0 && (
         <View style={styles.suggestionsWrapper}>
-          {/* Left Arrow */}
           <TouchableOpacity onPress={() => scrollSuggestions('left')}>
             <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <Path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z" fill="#888" />
@@ -129,7 +124,6 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSortPress, sortOrder, onSugges
             {filteredSuggestions.map(renderSuggestionChip)}
           </ScrollView>
 
-          {/* Right Arrow */}
           <TouchableOpacity onPress={() => scrollSuggestions('right')}>
             <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <Path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12l-4.58 4.59z" fill="#888" />

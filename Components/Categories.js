@@ -60,7 +60,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     marginBottom: 10,
-
     fontWeight: 'bold',
   },
   seeAll: {
@@ -79,6 +78,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     elevation: 2,
     backgroundColor: '#E3E3E3',
+    borderWidth: 1,
+    borderColor: '#6B2346',
+    shadowColor: '#6B2346',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 6
   },
   categoryImage: {
     width: '100%',

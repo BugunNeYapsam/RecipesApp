@@ -14,7 +14,7 @@ const InAppPromotions = ({ showAll }) => {
 
   if (showAll) {
     return (
-      <ScrollView style={styles.container}>
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 120 }}>
         <View style={styles.grid}>
           {promotions?.map((promotion, index) => (
             <TouchableOpacity key={index} style={styles.promotionCard}>
@@ -35,7 +35,7 @@ const InAppPromotions = ({ showAll }) => {
           <Text style={styles.seeAll}>Tümünü Gör</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
+      <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
         {promotions?.map((promotion, index) => (
           <TouchableOpacity key={index} style={styles.promotionCard}>
             <Image source={promotion.image} style={styles.promotionImage} />
@@ -85,6 +85,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
+    borderWidth: 1,
+    borderColor: '#6B2346',
+    shadowColor: '#6B2346',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 6
   },
   promotionImage: {
     width: '100%',

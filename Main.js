@@ -1,22 +1,24 @@
 import * as React from 'react';
+import { Text, View, Dimensions } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Explore from "./Screens/Explore";
 import AllRecipes from "./Screens/AllRecipes";
+import SearchScreen from './Screens/SearchScreen';
 import Categories from "./Components/Categories";
 import FeaturedRecipes from "./Components/FeaturedRecipes";
-import TrendingRecipes from "./Components/TrendingRecipes";
-import TopChefs from './Components/TopChefs';
-import VideoRecipes from './Components/VideoRecipes';
-import UserRecommendations from './Components/UserRecommendations';
+import VideoRecipes from "./Components/VideoRecipes";
 import InAppPromotions from './Components/InAppPromotions';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FoodsOfCountries from './Components/FoodsOfCountries';
 import Filter from './Screens/Filter'; 
-import { collection, getDocs } from "firebase/firestore"; 
+import { collection, getDocs } from "firebase/firestore";
 import { db } from './Config/FirebaseConfig';
 import { useAppContext } from './Context/AppContext';
+import { getPathDown } from './Components/CurvedBar';
+import { Svg, Path } from "react-native-svg";
+import { scale } from "react-native-size-scaling";
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -31,17 +33,8 @@ const ExploreStack = () => {
       <Stack.Screen name="Tüm Öne Çıkan Tarifler">
         {() => (<FeaturedRecipes showAll />)}
       </Stack.Screen>
-      <Stack.Screen name="Tüm Trend Tarifler">
-        {() => (<TrendingRecipes showAll />)}
-      </Stack.Screen>
-      <Stack.Screen name="Tüm En İyi Şefler">
-        {() => (<TopChefs showAll />)}
-      </Stack.Screen>
       <Stack.Screen name="Tüm Video Tarifler">
         {() => (<VideoRecipes showAll />)}
-      </Stack.Screen>
-      <Stack.Screen name="Tüm Kullanıcı Önerileri">
-        {() => (<UserRecommendations showAll />)}
       </Stack.Screen>
       <Stack.Screen name="Tüm Ülkeler">
         {() => (<FoodsOfCountries showAll />)}
@@ -55,6 +48,8 @@ const ExploreStack = () => {
 
 export default function Main() {
   const { setAllCategoriesData, setAllRecipeData, setAllCountries } = useAppContext();
+  const [maxWidth, setMaxWidth] = React.useState(Dimensions.get("window").width);
+  const returnpathDown = getPathDown(maxWidth, 60, 50);
 
   const getData = async () => {
     try {
@@ -103,45 +98,75 @@ export default function Main() {
 
   return (
     <NavigationContainer>
-      <Tab.Navigator 
-        screenOptions={{
-          tabBarActiveTintColor: '#6B2346', // Active tab text color
-          tabBarInactiveTintColor: '#666', // Inactive tab text color
-          tabBarStyle: {
-            borderTopWidth: 1, // Top border width
-            borderTopColor: '#ccc', // Top border color
-          },
-        }}>
-        <Tab.Screen 
-          name="Keşfet"
-          options={{
-            headerShown: false,
-            tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="explore" color={color} size={25} />
-            ),
-          }}>
-            {() => <ExploreStack />}
-        </Tab.Screen>
-        <Tab.Screen
-          name="Filtre"
-          options={{
-            tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="tune" color={color} size={25} /> // Yeni ikon
-            ),
-          }}>
-            {() => <Filter />}
-        </Tab.Screen>
-        <Tab.Screen
-          name="Tüm Yemekler"
-          options={{
-            tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="list" color={color} size={25} />
-            ),
-          }}>
-            {() => <AllRecipes />}
-        </Tab.Screen>
-        
+      <Tab.Navigator screenOptions={{ 
+        tabBarStyle: { backgroundColor: "transparent", borderTopWidth: 0, position: "absolute", elevation: 0 }, 
+      }}>
+         <Tab.Screen
+            name="Keşfet"
+            component={ExploreStack}
+            options={{
+              headerShown: false,
+              tabBarItemStyle: { marginTop: -3 },
+              tabBarIcon: ({ focused }) => (
+                <MaterialIcons 
+                  name="explore" 
+                  color={focused ? "#6B2346" : "#4A4A4A"} 
+                  size={28} 
+                />
+              ),
+              tabBarLabel: ({ focused }) => (
+                <Text style={{ color: focused ? "#6B2346" : "#000000", fontSize: 10, padding: 5 }}>Keşfet</Text>
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Ara"
+            component={SearchScreen}
+            options={{
+              headerShown: false,
+              unmountOnBlur: false,
+              tabBarItemStyle: { margin: 0, zIndex: -50 },
+              tabBarIcon: ({ focused }) => (
+                <View style={{ 
+                  display: "flex", 
+                  justifyContent: "center", 
+                  alignItems: "center", 
+                  height: 50, 
+                  width: 50, 
+                  backgroundColor: focused ? "#6B2346" : "white", 
+                  borderRadius: 25 
+                }}>
+                  <MaterialIcons name="search" color={focused ? "#ffffff" : "#4A4A4A"} size={32} />
+                </View>
+              ),
+              tabBarLabel: () => (
+                <View>
+                  <Svg width={maxWidth} height={scale(60)}>
+                    <Path fill={"white"} {...{ d: returnpathDown }} />
+                  </Svg>
+                </View>
+              ),
+            }}
+          />
+      <Tab.Screen
+        name="Yemek Öner"
+        component={AllRecipes}
+        options={{ 
+          headerShown: false,
+          tabBarItemStyle: { marginTop: -3 },
+          tabBarIcon: ({ focused }) => (
+            <MaterialIcons 
+              name="restaurant-menu" 
+              color={focused ? "#6B2346" : "#4A4A4A"} 
+              size={28} 
+            />
+          ),
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ color: focused ? "#6B2346" : "#000000", fontSize: 10, padding: 5 }}>Yemek Öner</Text>
+          ),
+        }}
+      />
       </Tab.Navigator>
     </NavigationContainer>
-  );    
+  );
 }
