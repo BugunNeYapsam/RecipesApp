@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, SafeAreaView, Platform, StatusBar, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-export default function SearchScreen() {
+export default function SuggestFood() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <LinearGradient colors={['#bbd0c4', '#a1d0c4', '#bbd0c4']} style={styles.gradient}>

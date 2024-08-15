@@ -1,5 +1,6 @@
 import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, Platform, StatusBar, SafeAreaView, View, Image } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import Categories from '../Components/Categories';
 import FeaturedRecipes from '../Components/FeaturedRecipes';
 import TrendingRecipes from '../Components/TrendingRecipes';
@@ -8,35 +9,32 @@ import VideoRecipes from '../Components/VideoRecipes';
 import UserRecommendations from '../Components/UserRecommendations';
 import InAppPromotions from '../Components/InAppPromotions';
 import FoodsOfCountries from '../Components/FoodsOfCountries';
+import headerImage from '../assets/headerBNY.png';
 
 const Explore = () => {
-  // <TrendingRecipes />
-  // <TopChefs />
-  // <UserRecommendations />
-  
   return (
-    <ScrollView style={styles.container}>
-      <Categories />
-      <FeaturedRecipes />
-      <VideoRecipes />
-      <FoodsOfCountries />
-      <InAppPromotions />
-    </ScrollView>
+    <SafeAreaView style={styles.safeArea}>
+      <LinearGradient colors={['#ebb20f', '#ffd43b', '#ffdd73']} style={styles.gradient}>
+        <View style={{ marginTop: 5, marginBottom: -5, paddingBottom: 10 }}>
+          <Image source={headerImage} style={styles.headerImage} />
+        </View>
+        <ScrollView style={styles.container}>
+          <Categories />
+          <FeaturedRecipes />
+          <VideoRecipes />
+          <FoodsOfCountries />
+          <InAppPromotions />
+        </ScrollView>
+      </LinearGradient>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-  },
-  searchBar: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    marginBottom: 20,
+  headerImage: {
+    width: 300,
+    height: 50,
+    marginLeft: 1
   },
   header: {
     flexDirection: 'row',
@@ -78,6 +76,18 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  safeArea: {
+    flex: 1,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
+  gradient: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
   },
 });
 
