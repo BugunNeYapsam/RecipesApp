@@ -13,6 +13,7 @@ import UserRecommendations from './Components/UserRecommendations';
 import InAppPromotions from './Components/InAppPromotions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FoodsOfCountries from './Components/FoodsOfCountries';
+import Filter from './Screens/Filter'; 
 import { collection, getDocs } from "firebase/firestore"; 
 import { db } from './Config/FirebaseConfig';
 import { useAppContext } from './Context/AppContext';
@@ -23,7 +24,7 @@ const Stack = createStackNavigator();
 const ExploreStack = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Anasayfa" component={Explore} />
+      <Stack.Screen name="Bugün Ne Yapsam?" component={Explore} />
       <Stack.Screen name="Tüm Kategoriler">
         {() => (<Categories showAll />)}
       </Stack.Screen>
@@ -81,7 +82,6 @@ export default function Main() {
     }
   };
 
-  
   const getCountries = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "3"));
@@ -123,7 +123,16 @@ export default function Main() {
             {() => <ExploreStack />}
         </Tab.Screen>
         <Tab.Screen
-          name="Yemek Öner"
+          name="Filtre"
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <MaterialIcons name="tune" color={color} size={25} /> // Yeni ikon
+            ),
+          }}>
+            {() => <Filter />}
+        </Tab.Screen>
+        <Tab.Screen
+          name="Tüm Yemekler"
           options={{
             tabBarIcon: ({color, size}) => (
               <MaterialIcons name="list" color={color} size={25} />
@@ -131,6 +140,7 @@ export default function Main() {
           }}>
             {() => <AllRecipes />}
         </Tab.Screen>
+        
       </Tab.Navigator>
     </NavigationContainer>
   );    
