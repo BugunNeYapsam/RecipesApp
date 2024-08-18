@@ -1,20 +1,61 @@
-import React from 'react';
-import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 
 const Categories = ({ showAll }) => {
   const navigation = useNavigation();
   const { allCategoriesData } = useAppContext();
+  const [loading, setLoading] = useState(true);
+  const shimmerValue = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (allCategoriesData && allCategoriesData.length > 0) {
+      setLoading(false);
+    }
+
+    const shimmerAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(shimmerValue, {
+          toValue: 1,
+          duration: 1500,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shimmerValue, {
+          toValue: 0,
+          duration: 1500,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    shimmerAnimation.start();
+
+    return () => shimmerAnimation.stop();
+  }, [allCategoriesData, shimmerValue]);
+
+  const renderPlaceholders = () => {
+    const placeholders = new Array(6).fill(0); // Number of placeholders to render
+    return placeholders.map((_, index) => (
+      <View key={index} style={styles.placeholderCard}>
+        <Animated.View style={[styles.placeholderImage, { opacity: shimmerValue }]} />
+        <View style={styles.placeholderOverlay}>
+          <Animated.View style={[styles.placeholderText, { opacity: shimmerValue }]} />
+        </View>
+      </View>
+    ));
+  };
 
   if (showAll) {
     return (
       <ScrollView style={styles.container}>
         <View style={styles.grid}>
-          {allCategoriesData?.map((category, index) => (
+          {loading ? renderPlaceholders() : allCategoriesData?.map((category, index) => (
             <TouchableOpacity key={index} style={styles.categoryCard}>
               <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
-              <View style={{...styles.categoryOverlay, backgroundColor: 'rgba(0, 0, 0, 0)'}}>
+              <View style={styles.categoryOverlay}>
                 <Text style={styles.categoryName}>{category.name}</Text>
               </View>
             </TouchableOpacity>
@@ -33,7 +74,7 @@ const Categories = ({ showAll }) => {
         </TouchableOpacity>
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
-        {allCategoriesData?.map((category, index) => (
+        {loading ? renderPlaceholders() : allCategoriesData?.map((category, index) => (
           <TouchableOpacity key={index} style={styles.categoryCard}>
             <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
             <View style={styles.categoryOverlay}>
@@ -83,7 +124,7 @@ const styles = StyleSheet.create({
     shadowColor: '#6B2346',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.5,
-    shadowRadius: 6
+    shadowRadius: 6,
   },
   categoryImage: {
     width: '100%',
@@ -107,6 +148,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+  },
+  placeholderCard: {
+    width: 120,
+    height: 180,
+    marginRight: 10,
+    marginBottom: 10,
+    borderRadius: 10,
+    backgroundColor: '#E0E0E0',
+    elevation: 2,
+  },
+  placeholderImage: {
+    width: '100%',
+    height: '75%',
+    backgroundColor: '#D0D0D0',
+  },
+  placeholderOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeholderText: {
+    width: '60%',
+    height: 20,
+    backgroundColor: '#C0C0C0',
+    borderRadius: 4,
   },
 });
 
