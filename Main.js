@@ -21,6 +21,8 @@ import { Svg, Path } from "react-native-svg";
 import { scale } from "react-native-size-scaling";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Settings from './Screens/Settings';
+import ReportIssueScreen from './Screens/ReportIssueScreen';
+import ContactScreen from './Screens/ContactScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -44,6 +46,9 @@ const ExploreStack = () => {
       <Stack.Screen name="Tüm Promosyonlar">
         {() => (<InAppPromotions showAll />)}
       </Stack.Screen>
+      <Stack.Screen name="Hata Bildir" component={ReportIssueScreen} options={{ headerShown: false }}/>
+      <Stack.Screen name="İletişim" component={ContactScreen} options={{headerShown: false }} />
+
     </Stack.Navigator>
   );
 };

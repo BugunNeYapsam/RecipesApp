@@ -14,7 +14,7 @@ import headerImage from '../assets/headerBNY.png';
 const Explore = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <LinearGradient colors={['#ebb20f', '#ffd43b', '#ffdd73']} style={styles.gradient}>
+      <LinearGradient colors={['#008080', '#f5fffa', '#faf0e6']} style={styles.gradient}>
         <View style={{ marginTop: 5, marginBottom: -5, paddingBottom: 10 }}>
           <Image source={headerImage} style={styles.headerImage} />
         </View>

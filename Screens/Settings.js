@@ -6,12 +6,10 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Switch,
-  Image,
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
-export default function Example() {
+export default function Example({ navigation }) {
   const [form, setForm] = useState({
     emailNotifications: true,
     pushNotifications: false,
@@ -20,175 +18,38 @@ export default function Example() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f8f8f8' }}>
       <View style={styles.header}>
-        <View style={styles.headerAction}>
-          <TouchableOpacity
-            onPress={() => {
-              // handle onPress
-            }}>
-            <FeatherIcon
-              color="#000"
-              name="arrow-left"
-              size={24} />
-          </TouchableOpacity>
-        </View>
-
         <Text numberOfLines={1} style={styles.headerTitle}>
           Ayarlar
         </Text>
-
-        <View style={[styles.headerAction, { alignItems: 'flex-end' }]}>
-          <TouchableOpacity
-            onPress={() => {
-              // handle onPress
-            }}>
-            <FeatherIcon
-              color="#000"
-              name="more-vertical"
-              size={24} />
-          </TouchableOpacity>
-        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={[styles.section, { paddingTop: 4 }]}>
-          <Text style={styles.sectionTitle}>Hesap</Text>
-
-          <View style={styles.sectionBody}>
-            <TouchableOpacity
-              onPress={() => {
-                // handle onPress
-              }}
-              style={styles.profile}>
-              <Image
-                alt=""
-                source={{
-                  uri: 'https://tmssl.akamaized.net//images/foto/galerie/allan-saint-maximin-fenerbahce-2024-2025-2-1721225288-142672.jpg',
-                }}
-                style={styles.profileAvatar} />
-
-              <View style={styles.profileBody}>
-                <Text style={styles.profileName}>Alen sen maksimen</Text>
-
-                <Text style={styles.profileHandle}>asm@example.com</Text>
-              </View>
-
-              <FeatherIcon
-                color="#bcbcbc"
-                name="chevron-right"
-                size={22} />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <View style={[styles.section, { paddingTop: 11 }]} />
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Tercihler</Text>
-
           <View style={styles.sectionBody}>
             <View style={[styles.rowWrapper, styles.rowFirst]}>
               <TouchableOpacity
                 onPress={() => {
-                  // handle onPress
-                }}
-                style={styles.row}>
-                <Text style={styles.rowLabel}>Diller</Text>
-
-                <View style={styles.rowSpacer} />
-
-                <Text style={styles.rowValue}>Türkçe</Text>
-
-                <FeatherIcon
-                  color="#bcbcbc"
-                  name="chevron-right"
-                  size={19} />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.rowWrapper}>
-              <TouchableOpacity
-                onPress={() => {
-                  // handle onPress
-                }}
-                style={styles.row}>
-                <Text style={styles.rowLabel}>Konum</Text>
-
-                <View style={styles.rowSpacer} />
-
-                <Text style={styles.rowValue}>Kocaeli</Text>
-
-                <FeatherIcon
-                  color="#bcbcbc"
-                  name="chevron-right"
-                  size={19} />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.rowWrapper}>
-              <View style={styles.row}>
-                <Text style={styles.rowLabel}>Email Bildirimleri</Text>
-
-                <View style={styles.rowSpacer} />
-
-                <Switch
-                  onValueChange={emailNotifications =>
-                    setForm({ ...form, emailNotifications })
-                  }
-                  style={{ transform: [{ scaleX: 0.95 }, { scaleY: 0.95 }] }}
-                  value={form.emailNotifications} />
-              </View>
-            </View>
-
-            <View style={[styles.rowWrapper, styles.rowLast]}>
-              <View style={styles.row}>
-                <Text style={styles.rowLabel}>Anlık Bildirimler</Text>
-
-                <View style={styles.rowSpacer} />
-
-                <Switch
-                  onValueChange={pushNotifications =>
-                    setForm({ ...form, pushNotifications })
-                  }
-                  style={{ transform: [{ scaleX: 0.95 }, { scaleY: 0.95 }] }}
-                  value={form.pushNotifications} />
-              </View>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Kaynaklar</Text>
-
-          <View style={styles.sectionBody}>
-            <View style={[styles.rowWrapper, styles.rowFirst]}>
-              <TouchableOpacity
-                onPress={() => {
-                  // handle onPress
+                  navigation.navigate('İletişim'); // Navigate to the ContactScreen
                 }}
                 style={styles.row}>
                 <Text style={styles.rowLabel}>İletişim</Text>
-
                 <View style={styles.rowSpacer} />
-
-                <FeatherIcon
-                  color="#bcbcbc"
-                  name="chevron-right"
-                  size={19} />
+                <FeatherIcon color="#bcbcbc" name="chevron-right" size={19} />
               </TouchableOpacity>
             </View>
 
+            {/* Other rows remain unchanged */}
             <View style={styles.rowWrapper}>
               <TouchableOpacity
                 onPress={() => {
-                  // handle onPress
+                  navigation.navigate('Hata Bildir'); // Navigate to the new screen
                 }}
                 style={styles.row}>
                 <Text style={styles.rowLabel}>Hata Bildir</Text>
-
                 <View style={styles.rowSpacer} />
-
-                <FeatherIcon
-                  color="#bcbcbc"
-                  name="chevron-right"
-                  size={19} />
+                <FeatherIcon color="#bcbcbc" name="chevron-right" size={19} />
               </TouchableOpacity>
             </View>
 
@@ -199,13 +60,8 @@ export default function Example() {
                 }}
                 style={styles.row}>
                 <Text style={styles.rowLabel}>Play Store - Derecelendirme</Text>
-
                 <View style={styles.rowSpacer} />
-
-                <FeatherIcon
-                  color="#bcbcbc"
-                  name="chevron-right"
-                  size={19} />
+                <FeatherIcon color="#bcbcbc" name="chevron-right" size={19} />
               </TouchableOpacity>
             </View>
 
@@ -216,41 +72,16 @@ export default function Example() {
                 }}
                 style={styles.row}>
                 <Text style={styles.rowLabel}>Şartlar ve Gizlilik</Text>
-
                 <View style={styles.rowSpacer} />
-
-                <FeatherIcon
-                  color="#bcbcbc"
-                  name="chevron-right"
-                  size={19} />
+                <FeatherIcon color="#bcbcbc" name="chevron-right" size={19} />
               </TouchableOpacity>
             </View>
           </View>
         </View>
 
         <View style={styles.section}>
-          <View style={styles.sectionBody}>
-            <View
-              style={[
-                styles.rowWrapper,
-                styles.rowFirst,
-                styles.rowLast,
-                { alignItems: 'center' },
-              ]}>
-              <TouchableOpacity
-                onPress={() => {
-                  // handle onPress
-                }}
-                style={styles.row}>
-                <Text style={[styles.rowLabel, styles.rowLabelLogout]}>
-                  ÇIKIŞ
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          <View style={styles.sectionBody} />
         </View>
-
-        <Text style={styles.contentFooter}>App Version 2.24 #50491</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -265,12 +96,6 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 16,
   },
-  headerAction: {
-    width: 40,
-    height: 40,
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-  },
   headerTitle: {
     fontSize: 19,
     fontWeight: '600',
@@ -279,21 +104,15 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexBasis: 0,
     textAlign: 'center',
+    paddingTop: 23
   },
   /** Content */
   content: {
     paddingHorizontal: 16,
   },
-  contentFooter: {
-    marginTop: 24,
-    fontSize: 13,
-    fontWeight: '500',
-    textAlign: 'center',
-    color: '#a69f9f',
-  },
   /** Section */
   section: {
-    paddingVertical: 12,
+    paddingVertical: 3,
   },
   sectionTitle: {
     margin: 8,
@@ -314,35 +133,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
-  },
-  /** Profile */
-  profile: {
-    padding: 12,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  profileAvatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 9999,
-    marginRight: 12,
-  },
-  profileBody: {
-    marginRight: 'auto',
-  },
-  profileName: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#292929',
-  },
-  profileHandle: {
-    marginTop: 2,
-    fontSize: 16,
-    fontWeight: '400',
-    color: '#858585',
   },
   /** Row */
   row: {
@@ -382,11 +172,5 @@ const styles = StyleSheet.create({
   rowLast: {
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
-  },
-  rowLabelLogout: {
-    width: '100%',
-    textAlign: 'center',
-    fontWeight: '600',
-    color: '#6B2346',
   },
 });
