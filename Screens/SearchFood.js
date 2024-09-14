@@ -1,13 +1,13 @@
+// SearchFood.js
 import * as React from 'react';
-import { ScrollView, View, StyleSheet, TextInput, SafeAreaView, Platform, StatusBar } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { ScrollView, View, StyleSheet, SafeAreaView, Platform, StatusBar } from 'react-native';
 import RecipeCard from '../Components/RecipeCard';
 import SearchBar from '../Components/SearchBar';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 
 export default function SearchFood(props) {
-  const { allRecipeData } = useAppContext();
+  const { allRecipeData, savedRecipes, addRecipe, removeRecipe } = useAppContext();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [expandedCardIndex, setExpandedCardIndex] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState('none');
@@ -51,6 +51,14 @@ export default function SearchFood(props) {
     setSelectedChips(prevChips => prevChips.filter(c => c !== chip));
   };
 
+  const handleSave = (recipe, isSaved) => {
+    if (isSaved) {
+      addRecipe(recipe);
+    } else {
+      removeRecipe(recipe);
+    }
+  };
+
   const navigation = useNavigation();
 
   React.useLayoutEffect(() => {
@@ -61,35 +69,32 @@ export default function SearchFood(props) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <LinearGradient
-        colors={['#bbd0c4', '#a1d0c4', '#bbd0c4']}
-        style={styles.gradient}
-      >
-        <View style={styles.container}>
-          <SearchBar
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            onSortPress={handleSort}
-            sortOrder={sortOrder}
-            onSuggestionSelect={handleSuggestionSelect}
-            selectedChips={selectedChips}
-            onChipRemove={handleChipRemove}
-          />
-          <ScrollView>
-            {sortedRecipes?.map((r, index) => (
-              <RecipeCard
-                key={index}
-                foodName={r.isim}
-                ingredients={r.malzemeler}
-                recipeSteps={r.tarif}
-                imageUrl={"https://picsum.photos/200/300"}
-                expanded={expandedCardIndex === index}
-                toggleExpand={() => toggleExpand(index)}
-              />
-            ))}
-          </ScrollView>
-        </View>
-      </LinearGradient>
+      <View style={styles.container}>
+        <SearchBar
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          onSortPress={handleSort}
+          sortOrder={sortOrder}
+          onSuggestionSelect={handleSuggestionSelect}
+          selectedChips={selectedChips}
+          onChipRemove={handleChipRemove}
+        />
+        <ScrollView>
+          {sortedRecipes?.map((r, index) => (
+            <RecipeCard
+              key={index}
+              foodName={r.isim}
+              ingredients={r.malzemeler}
+              recipeSteps={r.tarif}
+              imageUrl={"https://picsum.photos/200/300"}
+              expanded={expandedCardIndex === index}
+              toggleExpand={() => toggleExpand(index)}
+              onSave={(isSaved) => handleSave(r, isSaved)}
+              saved={savedRecipes.some(savedRecipe => savedRecipe.isim === r.isim)}
+            />
+          ))}
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -98,9 +103,6 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-  },
-  gradient: {
-    flex: 1,
   },
   container: {
     flex: 1,

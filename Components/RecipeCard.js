@@ -1,25 +1,50 @@
-import React from 'react';
+// RecipeCard.js
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialIcons } from '@expo/vector-icons'; // Example of using MaterialIcons from expo/vector-icons
+import { MaterialIcons } from '@expo/vector-icons';
+import { useAppContext } from '../Context/AppContext';
 
-const RecipeCard = ({ foodName, ingredients, recipeSteps, imageUrl, expanded, toggleExpand }) => {
+const RecipeCard = ({ foodName, ingredients, recipeSteps, imageUrl, expanded, toggleExpand, saved }) => {
+  const [isSaved, setIsSaved] = useState(saved);
+  const { addRecipe, removeRecipe } = useAppContext();
+
+  // Using useCallback to memoize the function
+  const handleSave = useCallback(() => {
+    setIsSaved(prev => {
+      const newState = !prev;
+      if (newState) {
+        addRecipe({ isim: foodName, malzemeler: ingredients, tarif: recipeSteps });
+      } else {
+        removeRecipe({ isim: foodName });
+      }
+      return newState;
+    });
+  }, [addRecipe, removeRecipe, foodName, ingredients, recipeSteps]);
+
   return (
     <TouchableOpacity onPress={toggleExpand} activeOpacity={0.8}>
       <View style={[styles.card, expanded && styles.cardExpanded]}>
         <LinearGradient
-          colors={['#d3d3d3', '#ffffff']} // Updated gradient colors
+          colors={['#dddfff', '#ffffff']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradient}
         >
           <View style={styles.header}>
-            <Text style={styles.title}>{foodName}</Text>
             <MaterialIcons
               name={expanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
               size={24}
               color="#888"
             />
+            <Text style={styles.title}>{foodName}</Text>
+            <TouchableOpacity onPress={handleSave}>
+              <MaterialIcons
+                name={isSaved ? 'bookmark' : 'bookmark-border'}
+                size={24}
+                color={isSaved ? '#6B2346' : '#888'}
+              />
+            </TouchableOpacity>
           </View>
           {expanded && (
             <View style={styles.contentContainer}>
@@ -57,7 +82,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     marginBottom: 20,
-    overflow: 'hidden', // Ensures the content respects the border radius
+    overflow: 'hidden',
   },
   gradient: {
     borderRadius: 10,
@@ -65,13 +90,13 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#000', // Changed to black for readability
+    color: '#000',
   },
   contentContainer: {
     borderRadius: 10,
@@ -81,12 +106,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginTop: 10,
-    color: '#333', // Darker color for readability
-  },
-  content: {
-    fontSize: 16,
-    marginBottom: 10,
-    color: '#333', // Darker color for readability
+    color: '#333',
   },
   ingredientsList: {
     marginBottom: 10,

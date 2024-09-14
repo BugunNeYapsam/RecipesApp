@@ -1,7 +1,6 @@
 import * as shape from "d3-shape";
 import { scale } from "react-native-size-scaling";
 
-//** Path Line */
 const line = (width, height) => {
   const path = shape
     .line()
@@ -18,7 +17,6 @@ const line = (width, height) => {
   return path;
 };
 
-//** Path Curved*/
 const lineCurvedDown = (iPosition, height, circle) => {
   const position = iPosition;
   const circleWidth = circle + position;
@@ -29,7 +27,7 @@ const lineCurvedDown = (iPosition, height, circle) => {
     .x((d) => d.x)
     .y((d) => d.y)
     .curve(shape.curveBasis)([
-    { x: position - scale(20), y: 0 }, // border center left
+    { x: position - scale(20), y: 0 }, 
     { x: position - scale(10), y: scale(2) },
     { x: position - scale(2), y: scale(10) },
     { x: position, y: scale(17) },

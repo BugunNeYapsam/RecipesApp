@@ -16,9 +16,6 @@ import Saveds from './Screens/Saveds';
 import { collection, getDocs } from "firebase/firestore";
 import { db } from './Config/FirebaseConfig';
 import { useAppContext } from './Context/AppContext';
-import { getPathDown } from './Components/CurvedBar';
-import { Svg, Path } from "react-native-svg";
-import { scale } from "react-native-size-scaling";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Settings from './Screens/Settings';
 import ReportIssueScreen from './Screens/ReportIssueScreen';
@@ -46,9 +43,6 @@ const ExploreStack = () => {
       <Stack.Screen name="Tüm Promosyonlar">
         {() => (<InAppPromotions showAll />)}
       </Stack.Screen>
-      <Stack.Screen name="Hata Bildir" component={ReportIssueScreen} options={{ headerShown: false }}/>
-      <Stack.Screen name="İletişim" component={ContactScreen} options={{headerShown: false }} />
-
     </Stack.Navigator>
   );
 };
@@ -56,7 +50,6 @@ const ExploreStack = () => {
 export default function Main() {
   const { setAllCategoriesData, setAllRecipeData, setAllCountries } = useAppContext();
   const [maxWidth, setMaxWidth] = React.useState(Dimensions.get("window").width);
-  const returnpathDown = getPathDown(maxWidth, 60, 50);
 
   const getData = async () => {
     try {
@@ -105,89 +98,71 @@ export default function Main() {
 
   return (
     <NavigationContainer>
-      <Tab.Navigator screenOptions={{ tabBarStyle: { backgroundColor: "transparent", borderTopWidth: 0, position: "absolute", elevation: 0 } }}>
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: {
+            backgroundColor: "#6B2346",
+            borderTopWidth: 0,
+            elevation: 0,
+            height: 65,
+            margin: 15, 
+            borderRadius: 15,
+            position: 'absolute'
+          },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            marginBottom: 2,
+          },
+        }}
+      >
         <Tab.Screen
           name="Keşfet"
           component={ExploreStack}
           options={{
             headerShown: false,
-            tabBarItemStyle: { marginTop: 2 },
+            tabBarItemStyle: { marginTop: 3 },
             tabBarIcon: ({ focused }) => (
-              <MaterialIcons 
-                name="explore" 
-                color={focused ? "#6B2346" : "#4A4A4A"} 
-                size={28} 
+              <MaterialIcons
+                name="explore"
+                color={focused ? "#ffffff" : "#ffdddd"}
+                size={27}
               />
             ),
             tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#6B2346" : "#000000", fontSize: 10, padding: 3 }}>Keşfet</Text>
+              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>Keşfet</Text>
             ),
           }}
         />
-        <Tab.Screen
-          name="Yemek Öner"
-          component={SuggestFood}
-          options={{ 
-            headerShown: false,
-            tabBarItemStyle: { marginTop: 2 },
-            tabBarIcon: ({ focused }) => (
-              <MaterialIcons 
-                name="restaurant-menu" 
-                color={focused ? "#6B2346" : "#4A4A4A"} 
-                size={28} 
-              />
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#6B2346" : "#000000", fontSize: 10, padding: 3 }}>Yemek Öner</Text>
-            ),
-          }}
-        />
+
         <Tab.Screen
           name="Ara"
           component={SearchFood}
           options={{
             headerShown: false,
-            unmountOnBlur: false,
-            tabBarItemStyle: { margin: 0, zIndex: -50 },
+            tabBarItemStyle: { marginTop: 3},
             tabBarIcon: ({ focused }) => (
-              <View style={{ 
-                display: "flex", 
-                justifyContent: "center", 
-                alignItems: "center", 
-                height: 50, 
-                width: 50, 
-                backgroundColor: focused ? "#6B2346" : "white", 
-                borderRadius: 25,
-                marginBottom: -10,
-                marginRight: -1
-              }}>
-                <MaterialIcons name="search" color={focused ? "#ffffff" : "#4A4A4A"} size={32} />
-              </View>
+                <MaterialIcons name="tune" color={focused ? "#ffffff" : "#ffdddd"} size={27} />
             ),
-            tabBarLabel: () => (
-              <View>
-                <Svg width={maxWidth} height={scale(50)}>
-                  <Path fill={"white"} {...{ d: returnpathDown }} />
-                </Svg>
-              </View>
+            tabBarLabel: ({ focused }) => (
+              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>Filtre</Text>
             ),
           }}
         />
         <Tab.Screen
           name="Kaydedilenler"
           component={Saveds}
-          options={{ 
+          options={{
             headerShown: false,
-            tabBarItemStyle: { marginTop: 2 },
+            tabBarItemStyle: { marginTop: 3 },
             tabBarIcon: ({ focused }) => (
-              <MaterialIcons 
-                name="bookmark" 
-                color={focused ? "#6B2346" : "#4A4A4A"} 
-                size={28} 
+              <MaterialIcons
+                name="bookmark"
+                color={focused ? "#ffffff" : "#ffdddd"}
+                size={27}
               />
             ),
             tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#6B2346" : "#000000", fontSize: 10, padding: 3 }}>Kaydedilenler</Text>
+              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>Kaydedilenler</Text>
             ),
           }}
         />
@@ -196,16 +171,16 @@ export default function Main() {
           component={Settings}
           options={{
             headerShown: false,
-            tabBarItemStyle: { marginTop: 2 },
+            tabBarItemStyle: { marginTop: 3 },
             tabBarIcon: ({ focused }) => (
-              <MaterialIcons 
-                name="settings" 
-                color={focused ? "#6B2346" : "#4A4A4A"} 
-                size={28} 
+              <MaterialIcons
+                name="settings"
+                color={focused ? "#ffffff" : "#ffdddd"}
+                size={27}
               />
             ),
             tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#6B2346" : "#000000", fontSize: 10, padding: 3 }}>Ayarlar</Text>
+              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>Ayarlar</Text>
             ),
           }}
         />

@@ -15,6 +15,8 @@ export default function Example({ navigation }) {
     pushNotifications: false,
   });
 
+  const [isExpanded, setIsExpanded] = useState(false);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f8f8f8' }}>
       <View style={styles.header}>
@@ -31,27 +33,25 @@ export default function Example({ navigation }) {
             <View style={[styles.rowWrapper, styles.rowFirst]}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('İletişim'); // Navigate to the ContactScreen
+                  setIsExpanded(!isExpanded);
                 }}
                 style={styles.row}>
                 <Text style={styles.rowLabel}>İletişim</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon color="#bcbcbc" name="chevron-right" size={19} />
+                <FeatherIcon
+                  color="#bcbcbc"
+                  name={isExpanded ? "chevron-up" : "chevron-down"}
+                  size={19}
+                />
               </TouchableOpacity>
-            </View>
-
-            {/* Other rows remain unchanged */}
-            <View style={styles.rowWrapper}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('Hata Bildir'); // Navigate to the new screen
-                }}
-                style={styles.row}>
-                <Text style={styles.rowLabel}>Hata Bildir</Text>
-                <View style={styles.rowSpacer} />
-                <FeatherIcon color="#bcbcbc" name="chevron-right" size={19} />
-              </TouchableOpacity>
-            </View>
+              {isExpanded && (
+                <View style={styles.expandedContent}>
+                  <Text style={styles.expandedText}>
+                    bugunneyapsamQgmail.com
+                  </Text>
+                </View>
+              )}
+            </View>  
 
             <View style={styles.rowWrapper}>
               <TouchableOpacity
@@ -61,7 +61,11 @@ export default function Example({ navigation }) {
                 style={styles.row}>
                 <Text style={styles.rowLabel}>Play Store - Derecelendirme</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon color="#bcbcbc" name="chevron-right" size={19} />
+                <FeatherIcon
+                  color="#bcbcbc"
+                  name={isExpanded ? "chevron-up" : "chevron-down"}
+                  size={19}
+                />
               </TouchableOpacity>
             </View>
 
@@ -73,7 +77,11 @@ export default function Example({ navigation }) {
                 style={styles.row}>
                 <Text style={styles.rowLabel}>Şartlar ve Gizlilik</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon color="#bcbcbc" name="chevron-right" size={19} />
+                <FeatherIcon
+                  color="#bcbcbc"
+                  name={isExpanded ? "chevron-up" : "chevron-down"}
+                  size={19}
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -172,5 +180,15 @@ const styles = StyleSheet.create({
   rowLast: {
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
+  },
+  /** Expanded Content */
+  expandedContent: {
+    padding: 10,
+    backgroundColor: '#f9f9f9',
+    marginRight: 15
+  },
+  expandedText: {
+    fontSize: 14,
+    color: '#000',
   },
 });

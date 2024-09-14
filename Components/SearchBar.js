@@ -62,7 +62,7 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSortPress, sortOrder, onSugges
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={isFocused ? ['#f0f0f0', '#f0f0f0'] : ['#e0e0e0', '#f0f0f0']}
+        colors={isFocused ? ['#dddfff', '#ffffff'] : ['#ffffff', '#dddfff']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5, // Space for the arrows
   },
   suggestionChip: {
-    backgroundColor: '#d0d0d0', // Slightly darker gray for the suggestion chips
+    backgroundColor: '#dddfff', // Slightly darker gray for the suggestion chips
     paddingVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 20, // Rounded appearance
