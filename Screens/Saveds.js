@@ -1,14 +1,18 @@
-// Saved.js
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, View, StyleSheet, Text, SafeAreaView, Platform, StatusBar } from 'react-native';
 import { useAppContext } from '../Context/AppContext';
 import RecipeCard from '../Components/RecipeCard';
 
 export default function Saved() {
   const { savedRecipes, removeRecipe } = useAppContext();
+  const [expandedCardIndex, setExpandedCardIndex] = useState(null);  // Track which card is expanded
 
   const handleSave = (recipe) => {
-    removeRecipe(recipe);
+    removeRecipe(recipe);  // Unsave the recipe when the bookmark icon is clicked
+  };
+
+  const toggleExpand = (index) => {
+    setExpandedCardIndex(expandedCardIndex === index ? null : index);  // Toggle expansion for each card
   };
 
   return (
@@ -23,10 +27,11 @@ export default function Saved() {
                   foodName={r.isim}
                   ingredients={r.malzemeler}
                   recipeSteps={r.tarif}
-                  imageUrl={"https://picsum.photos/200/300"}
-                  expanded={false}
-                  saved={true}
-                  onSave={() => handleSave(r)}
+                  imageUrl={"https://picsum.photos/200/300"}  // Placeholder image URL
+                  expanded={expandedCardIndex === index}  // Control expansion
+                  toggleExpand={() => toggleExpand(index)}  // Handle expand/collapse on click
+                  saved={true}  // Mark as saved
+                  onSave={() => handleSave(r)}  // Handle unsave on icon click
                 />
               </View>
             ))

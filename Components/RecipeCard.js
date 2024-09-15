@@ -1,27 +1,9 @@
-// RecipeCard.js
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useAppContext } from '../Context/AppContext';
 
-const RecipeCard = ({ foodName, ingredients, recipeSteps, imageUrl, expanded, toggleExpand, saved }) => {
-  const [isSaved, setIsSaved] = useState(saved);
-  const { addRecipe, removeRecipe } = useAppContext();
-
-  // Using useCallback to memoize the function
-  const handleSave = useCallback(() => {
-    setIsSaved(prev => {
-      const newState = !prev;
-      if (newState) {
-        addRecipe({ isim: foodName, malzemeler: ingredients, tarif: recipeSteps });
-      } else {
-        removeRecipe({ isim: foodName });
-      }
-      return newState;
-    });
-  }, [addRecipe, removeRecipe, foodName, ingredients, recipeSteps]);
-
+const RecipeCard = ({ foodName, ingredients, recipeSteps, expanded, toggleExpand, saved, onSave }) => {
   return (
     <TouchableOpacity onPress={toggleExpand} activeOpacity={0.8}>
       <View style={[styles.card, expanded && styles.cardExpanded]}>
@@ -32,17 +14,19 @@ const RecipeCard = ({ foodName, ingredients, recipeSteps, imageUrl, expanded, to
           style={styles.gradient}
         >
           <View style={styles.header}>
+            {/* Chevron Icon for Expand/Collapse */}
             <MaterialIcons
               name={expanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
               size={24}
               color="#888"
             />
+            {/* Title and Save/Unsave Icon */}
             <Text style={styles.title}>{foodName}</Text>
-            <TouchableOpacity onPress={handleSave}>
+            <TouchableOpacity onPress={() => onSave(!saved)}>
               <MaterialIcons
-                name={isSaved ? 'bookmark' : 'bookmark-border'}
+                name={saved ? 'bookmark' : 'bookmark-border'}
                 size={24}
-                color={isSaved ? '#6B2346' : '#888'}
+                color={saved && '#888'}
               />
             </TouchableOpacity>
           </View>
@@ -76,11 +60,6 @@ const RecipeCard = ({ foodName, ingredients, recipeSteps, imageUrl, expanded, to
 const styles = StyleSheet.create({
   card: {
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
     marginBottom: 20,
     overflow: 'hidden',
   },
@@ -97,6 +76,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#000',
+    flex: 1,
+    marginHorizontal: 10,
   },
   contentContainer: {
     borderRadius: 10,
