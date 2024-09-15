@@ -1,4 +1,3 @@
-// SearchFood.js
 import * as React from 'react';
 import { ScrollView, View, StyleSheet, SafeAreaView, Platform, StatusBar } from 'react-native';
 import RecipeCard from '../Components/RecipeCard';
@@ -6,7 +5,7 @@ import SearchBar from '../Components/SearchBar';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 
-export default function SearchFood(props) {
+export default function SearchFood({ updateRecipeRating }) {
   const { allRecipeData, savedRecipes, addRecipe, removeRecipe } = useAppContext();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [expandedCardIndex, setExpandedCardIndex] = React.useState(null);
@@ -59,6 +58,10 @@ export default function SearchFood(props) {
     }
   };
 
+  const handleRatingChange = (recipeId, newRating) => {
+    updateRecipeRating(recipeId, newRating);
+  };
+
   const navigation = useNavigation();
 
   React.useLayoutEffect(() => {
@@ -91,6 +94,8 @@ export default function SearchFood(props) {
               toggleExpand={() => toggleExpand(index)}
               onSave={(isSaved) => handleSave(r, isSaved)}
               saved={savedRecipes.some(savedRecipe => savedRecipe.isim === r.isim)}
+              rating={r.rating || 0} 
+              onRate={(newRating) => handleRatingChange(r.id, newRating)}
             />
           ))}
         </ScrollView>

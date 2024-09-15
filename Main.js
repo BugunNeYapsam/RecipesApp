@@ -1,25 +1,21 @@
 import * as React from 'react';
-import { ScrollView, View, StyleSheet, TextInput, SafeAreaView, Platform, StatusBar, Dimensions, Text } from 'react-native';
+import {  Dimensions, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Explore from "./Screens/Explore";
 import SearchFood from "./Screens/SearchFood";
-import SuggestFood from './Screens/SuggestFood';
 import Categories from "./Components/Categories";
 import FeaturedRecipes from "./Components/FeaturedRecipes";
 import VideoRecipes from "./Components/VideoRecipes";
 import InAppPromotions from './Components/InAppPromotions';
 import FoodsOfCountries from './Components/FoodsOfCountries';
-import Filter from './Screens/Filter'; 
 import Saveds from './Screens/Saveds';
 import { collection, getDocs } from "firebase/firestore";
 import { db } from './Config/FirebaseConfig';
 import { useAppContext } from './Context/AppContext';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Settings from './Screens/Settings';
-import ReportIssueScreen from './Screens/ReportIssueScreen';
-import ContactScreen from './Screens/ContactScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -49,7 +45,6 @@ const ExploreStack = () => {
 
 export default function Main() {
   const { setAllCategoriesData, setAllRecipeData, setAllCountries } = useAppContext();
-  const [maxWidth, setMaxWidth] = React.useState(Dimensions.get("window").width);
 
   const getData = async () => {
     try {
@@ -87,6 +82,17 @@ export default function Main() {
       setAllCountries(countries);
     } catch (error) {
       console.error("Error getting documents: ", error);
+    }
+  };
+
+  const updateRecipeRating = async (recipeId, newRating) => {
+    try {
+      const recipeDocRef = doc(db, "1", recipeId);
+      console.log(recipeDocRef);
+      await updateDoc(recipeDocRef, { rating: newRating });
+      console.log("Rating updated successfully");
+    } catch (error) {
+      console.error("Error updating rating: ", error);
     }
   };
 
@@ -133,10 +139,8 @@ export default function Main() {
             ),
           }}
         />
-
         <Tab.Screen
           name="Ara"
-          component={SearchFood}
           options={{
             headerShown: false,
             tabBarItemStyle: { marginTop: 3},
@@ -147,7 +151,9 @@ export default function Main() {
               <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>Filtre</Text>
             ),
           }}
-        />
+        >
+          {() => <SearchFood updateRecipeRating={updateRecipeRating} />}
+        </Tab.Screen>
         <Tab.Screen
           name="Kaydedilenler"
           component={Saveds}

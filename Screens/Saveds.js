@@ -8,7 +8,7 @@ export default function Saved() {
   const [expandedCardIndex, setExpandedCardIndex] = useState(null);  // Track which card is expanded
 
   const handleSave = (recipe) => {
-    removeRecipe(recipe);  // Unsave the recipe when the bookmark icon is clicked
+    removeRecipe(recipe);
   };
 
   const toggleExpand = (index) => {
@@ -24,14 +24,17 @@ export default function Saved() {
             savedRecipes.map((r, index) => (
               <View key={index} style={styles.recipeContainer}>
                 <RecipeCard
+                  key={index}
                   foodName={r.isim}
                   ingredients={r.malzemeler}
                   recipeSteps={r.tarif}
-                  imageUrl={"https://picsum.photos/200/300"}  // Placeholder image URL
-                  expanded={expandedCardIndex === index}  // Control expansion
-                  toggleExpand={() => toggleExpand(index)}  // Handle expand/collapse on click
-                  saved={true}  // Mark as saved
-                  onSave={() => handleSave(r)}  // Handle unsave on icon click
+                  imageUrl={"https://picsum.photos/200/300"}
+                  expanded={expandedCardIndex === index}
+                  toggleExpand={() => toggleExpand(index)}
+                  onSave={(isSaved) => handleSave(r, isSaved)}
+                  saved={savedRecipes.some(savedRecipe => savedRecipe.isim === r.isim)}
+                  rating={r.rating || 0} 
+                  onRate={(newRating) => handleRatingChange(r.id, newRating)}
                 />
               </View>
             ))
