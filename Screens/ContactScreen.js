@@ -1,4 +1,3 @@
-// ContactScreen.js
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';

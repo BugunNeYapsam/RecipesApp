@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, View, StyleSheet, Text, SafeAreaView, Platform, StatusBar } from 'react-native';
 import { useAppContext } from '../Context/AppContext';
 import RecipeCard from '../Components/RecipeCard';
 
-export default function Saved() {
+export default function Saved({ updateRecipeRating }) {
   const { savedRecipes, removeRecipe } = useAppContext();
-  const [expandedCardIndex, setExpandedCardIndex] = useState(null);  // Track which card is expanded
+  const [expandedCardIndex, setExpandedCardIndex] = useState(null);
 
   const handleSave = (recipe) => {
     removeRecipe(recipe);
   };
 
   const toggleExpand = (index) => {
-    setExpandedCardIndex(expandedCardIndex === index ? null : index);  // Toggle expansion for each card
+    setExpandedCardIndex(expandedCardIndex === index ? null : index);
   };
 
   return (
@@ -25,6 +25,7 @@ export default function Saved() {
               <View key={index} style={styles.recipeContainer}>
                 <RecipeCard
                   key={index}
+                  recipeID={r.id}
                   foodName={r.isim}
                   ingredients={r.malzemeler}
                   recipeSteps={r.tarif}
@@ -34,7 +35,7 @@ export default function Saved() {
                   onSave={(isSaved) => handleSave(r, isSaved)}
                   saved={savedRecipes.some(savedRecipe => savedRecipe.isim === r.isim)}
                   rating={r.rating || 0} 
-                  onRate={(newRating) => handleRatingChange(r.id, newRating)}
+                  updateRecipeRating={updateRecipeRating}
                 />
               </View>
             ))
@@ -62,9 +63,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 20,
     paddingHorizontal: 10,
-  },
-  recipeContainer: {
-    marginBottom: 10,
   },
   noRecipesText: {
     textAlign: 'center',

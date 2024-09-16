@@ -58,10 +58,6 @@ export default function SearchFood({ updateRecipeRating }) {
     }
   };
 
-  const handleRatingChange = (recipeId, newRating) => {
-    updateRecipeRating(recipeId, newRating);
-  };
-
   const navigation = useNavigation();
 
   React.useLayoutEffect(() => {
@@ -86,6 +82,7 @@ export default function SearchFood({ updateRecipeRating }) {
           {sortedRecipes?.map((r, index) => (
             <RecipeCard
               key={index}
+              recipeID={r.id}
               foodName={r.isim}
               ingredients={r.malzemeler}
               recipeSteps={r.tarif}
@@ -95,7 +92,7 @@ export default function SearchFood({ updateRecipeRating }) {
               onSave={(isSaved) => handleSave(r, isSaved)}
               saved={savedRecipes.some(savedRecipe => savedRecipe.isim === r.isim)}
               rating={r.rating || 0} 
-              onRate={(newRating) => handleRatingChange(r.id, newRating)}
+              updateRecipeRating={updateRecipeRating}
             />
           ))}
         </ScrollView>

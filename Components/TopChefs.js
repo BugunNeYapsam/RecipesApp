@@ -6,7 +6,6 @@ const topChefs = [
   { name: 'Chef Gordon Ramsay', image: 'https://picsum.photos/200' },
   { name: 'Chef Jamie Oliver', image: 'https://picsum.photos/200' },
   { name: 'Chef Nigella Lawson', image: 'https://picsum.photos/200' },
-  // Add more top chefs if needed
 ];
 
 const TopChefs = ({ showAll }) => {

@@ -38,7 +38,7 @@ const lineCurvedDown = (iPosition, height, circle) => {
     { x: trim + scale(10), y: height / 2 + scale(10) },
     { x: trim + scale(25), y: height / 2 + scale(2) },
 
-    { x: circleWidth, y: scale(17) }, // border center right
+    { x: circleWidth, y: scale(17) },
     { x: circleWidth + scale(2), y: scale(10) },
     { x: circleWidth + scale(10), y: 0 },
     { x: circleWidth + scale(20), y: 0 },

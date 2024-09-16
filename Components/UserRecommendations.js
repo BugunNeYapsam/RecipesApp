@@ -6,7 +6,6 @@ const userRecommendations = [
   { name: 'Delicious Lasagna', image: "" },
   { name: 'Tasty Tacos', image: "" },
   { name: 'Yummy Pancakes', image: "" },
-  // Add more user recommendations if needed
 ];
 
 const UserRecommendations = ({ showAll }) => {

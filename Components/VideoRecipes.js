@@ -7,7 +7,6 @@ const videoRecipes = [
   { name: 'How to Make Spaghetti Carbonara', image: "" },
   { name: 'Easy Chicken Alfredo', image: "" },
   { name: 'Best Beef Stroganoff', image: "" },
-  // Add more video recipes if needed
 ];
 
 const VideoRecipes = ({ showAll }) => {

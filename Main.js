@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {  Dimensions, Text } from 'react-native';
+import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -11,8 +11,8 @@ import VideoRecipes from "./Components/VideoRecipes";
 import InAppPromotions from './Components/InAppPromotions';
 import FoodsOfCountries from './Components/FoodsOfCountries';
 import Saveds from './Screens/Saveds';
-import { collection, getDocs } from "firebase/firestore";
 import { db } from './Config/FirebaseConfig';
+import { collection, getDocs, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useAppContext } from './Context/AppContext';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Settings from './Screens/Settings';
@@ -44,16 +44,27 @@ const ExploreStack = () => {
 };
 
 export default function Main() {
-  const { setAllCategoriesData, setAllRecipeData, setAllCountries } = useAppContext();
+  const { setAllCategoriesData, setAllRecipeData, setAllCountries, updateAllRecipeRatings } = useAppContext();
 
   const getData = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "1"));
       const recipes = [];
+      const ratings = {};
+      
       querySnapshot.forEach((doc) => {
-        recipes.push(doc.data());
+        const recipeData = doc.data();
+        const recipeId = doc.id;
+  
+        recipes.push(recipeData);
+  
+        if (recipeData.rating !== undefined) {
+          ratings[recipeId] = recipeData.rating;
+        }
       });
+
       setAllRecipeData(recipes);
+      updateAllRecipeRatings(ratings);
     } catch (error) {
       console.error("Error getting documents: ", error);
     }
@@ -85,16 +96,41 @@ export default function Main() {
     }
   };
 
-  const updateRecipeRating = async (recipeId, newRating) => {
+  const updateRecipeRating = async (recipeId, newRating, updateSpecificRecipeRating) => {
     try {
-      const recipeDocRef = doc(db, "1", recipeId);
-      console.log(recipeDocRef);
-      await updateDoc(recipeDocRef, { rating: newRating });
-      console.log("Rating updated successfully");
+      if (!db) throw new Error("Firestore not initialized correctly!");
+  
+      const recipeDocRef = doc(db, "1", recipeId.toString());
+      const recipeDoc = await getDoc(recipeDocRef);
+  
+      if (!recipeDoc.exists()) {
+        throw new Error("Recipe document does not exist!");
+      }
+  
+      const recipeData = recipeDoc.data();
+      const currentRatingTotal = recipeData.ratingTotal || 0;
+      const currentRatingCount = recipeData.ratingCount || 0;
+  
+      const updatedRatingTotal = currentRatingTotal + newRating;
+      const updatedRatingCount = currentRatingCount + 1;
+  
+      const newAverageRating = updatedRatingTotal / updatedRatingCount;
+  
+      await updateDoc(recipeDocRef, {
+        ratingTotal: updatedRatingTotal,
+        ratingCount: updatedRatingCount,
+        rating: newAverageRating
+      });
+  
+      updateSpecificRecipeRating(recipeId, newAverageRating);
+  
+      return true;
     } catch (error) {
-      console.error("Error updating rating: ", error);
+      console.error("Error updating rating:", error);
+      return false;
     }
   };
+  
 
   React.useEffect(() => {
     getData();
@@ -156,7 +192,6 @@ export default function Main() {
         </Tab.Screen>
         <Tab.Screen
           name="Kaydedilenler"
-          component={Saveds}
           options={{
             headerShown: false,
             tabBarItemStyle: { marginTop: 3 },
@@ -171,7 +206,9 @@ export default function Main() {
               <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>Kaydedilenler</Text>
             ),
           }}
-        />
+        >
+          {() => <Saveds updateRecipeRating={updateRecipeRating} />}
+        </Tab.Screen>
         <Tab.Screen
           name="Ayarlar"
           component={Settings}

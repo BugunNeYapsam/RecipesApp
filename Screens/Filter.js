@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   tagContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0', // Saydam gri arka plan rengi
+    backgroundColor: '#f0f0f0',
     borderRadius: 16,
     padding: 8,
     marginRight: 8,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   tagText: {
     fontSize: 16,
     color: '#333',
-    flex: 1, // Metin alanı butondan önce gelir
+    flex: 1,
   },
   
   removeButtonText: {

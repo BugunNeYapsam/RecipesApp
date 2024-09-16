@@ -1,32 +1,47 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Animated } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { useAppContext } from '../Context/AppContext';
 
-const RecipeCard = ({ foodName, ingredients, recipeSteps, expanded, toggleExpand, saved, onSave, rating, onRate }) => {
-  const [currentRating, setCurrentRating] = useState(rating);
+const RecipeCard = ({ recipeID, foodName, ingredients, recipeSteps, expanded, toggleExpand, saved, onSave, rating, updateRecipeRating }) => {
+  const { recipeRatings, updateSpecificRecipeRating } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showFailure, setShowFailure] = useState(false);
   const successOpacity = useRef(new Animated.Value(0)).current;
+  const failureOpacity = useRef(new Animated.Value(0)).current;
 
-  const handleRating = async (newRating) => {
-    const validRating = Math.max(0, Math.min(5, newRating));
-    setCurrentRating(validRating);
-    setLoading(true);
-
+  const saveRatingToDevice = async (rating) => {
     try {
-      await onRate(validRating);
-      triggerSuccessAnimation();
+      await AsyncStorage.setItem(`rating_${foodName}`, JSON.stringify(rating));
     } catch (error) {
-      console.error("Error updating rating.");
+      console.error('Failed to save rating:', error);
+      throw error;
     }
-
-    setLoading(false);
   };
 
-  useEffect(() => {
-    setCurrentRating(rating);
-  }, [rating]);
+  const handleRating = async (recipe_id, newRating) => {
+    const validRating = Math.max(0, Math.min(5, newRating));
+    setLoading(true);
+  
+    try {
+      const dbUpdateResult = await updateRecipeRating(recipe_id, newRating, updateSpecificRecipeRating);
+  
+      if (dbUpdateResult) {
+        await saveRatingToDevice(validRating);
+        triggerSuccessAnimation();
+      } else {
+        triggerFailureAnimation();
+      }
+    } catch (error) {
+      console.error("Error updating rating:", error);
+      triggerFailureAnimation();
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const triggerSuccessAnimation = () => {
     setShowSuccess(true);
@@ -45,38 +60,56 @@ const RecipeCard = ({ foodName, ingredients, recipeSteps, expanded, toggleExpand
     ]).start(() => setShowSuccess(false));
   };
 
-  const renderStars = () => {
-    const stars = [];
-    const fullStars = Math.floor(currentRating);
-    const hasHalfStar = currentRating % 1 !== 0;
+  const triggerFailureAnimation = () => {
+    setShowFailure(true);
+    Animated.sequence([
+      Animated.timing(failureOpacity, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.delay(1000),
+      Animated.timing(failureOpacity, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start(() => setShowFailure(false));
+  };
 
+  const renderStars = (recipe_id) => {
+    const current_rating = recipeRatings[parseInt(recipe_id)] || 0;
+    const stars = [];
+    const fullStars = Math.floor(current_rating);
+    const hasHalfStar = current_rating % 1 !== 0;
+  
     for (let i = 1; i <= fullStars; i++) {
       stars.push(
-        <TouchableOpacity key={`full-${i}`} onPress={() => handleRating(i)}>
+        <TouchableOpacity key={`full-${i}`} onPress={() => handleRating(parseInt(recipe_id), i)}>
           <MaterialIcons name="star" size={24} color="#FFC107" />
         </TouchableOpacity>
       );
     }
-
+  
     if (hasHalfStar) {
       stars.push(
-        <TouchableOpacity key="half-star" onPress={() => handleRating(fullStars + 1)}>
+        <TouchableOpacity key="half-star" onPress={() => handleRating(parseInt(recipe_id), fullStars + 1)}>
           <MaterialIcons name="star-half" size={24} color="#FFC107" />
         </TouchableOpacity>
       );
     }
-
+  
     for (let i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++) {
       stars.push(
-        <TouchableOpacity key={`empty-${i}`} onPress={() => handleRating(i + 1)}>
+        <TouchableOpacity key={`empty-${i}`} onPress={() => handleRating(parseInt(recipe_id), i + 1)}>
           <MaterialIcons name="star-border" size={24} color="#FFC107" />
         </TouchableOpacity>
       );
     }
-
+  
     return stars;
   };
-
+  
   return (
     <TouchableOpacity onPress={toggleExpand} activeOpacity={0.8}>
       <View style={[styles.card, expanded && styles.cardExpanded]}>
@@ -97,27 +130,13 @@ const RecipeCard = ({ foodName, ingredients, recipeSteps, expanded, toggleExpand
               <MaterialIcons
                 name={saved ? 'bookmark' : 'bookmark-border'}
                 size={24}
-                color={saved && '#888'}
+                color={'#888'}
               />
             </TouchableOpacity>
           </View>
 
           {expanded && (
             <>
-              <View style={styles.ratingContainer}>
-                <View style={styles.starsContainer}>
-                  {renderStars()}
-                </View>
-
-                {loading ? (
-                  <ActivityIndicator size="small" color="#FFC107" />
-                ) : showSuccess ? (
-                  <Animated.View style={[styles.successTick, { opacity: successOpacity }]}>
-                    <Ionicons name="checkmark-circle" size={30} color="green" />
-                  </Animated.View>
-                ) : null}
-              </View>
-
               <View style={styles.contentContainer}>
                 <Text style={styles.subtitle}>Ingredients:</Text>
                 <View style={styles.ingredientsList}>
@@ -136,6 +155,25 @@ const RecipeCard = ({ foodName, ingredients, recipeSteps, expanded, toggleExpand
                     </View>
                   ))}
                 </View>
+              </View>
+
+              <View style={styles.ratingContainer}>
+                <Text style={styles.ratingText}>{recipeRatings[recipeID]?.toFixed(1)}</Text>
+                <View style={styles.starsContainer}>
+                  {renderStars(recipeID)}
+                </View>
+
+                {loading ? (
+                  <ActivityIndicator style={{marginLeft: 15}} size="small" color="#FFC107" />
+                ) : showSuccess ? (
+                  <Animated.View style={[styles.successTick, { opacity: successOpacity }]}>
+                    <Ionicons name="checkmark-circle" size={30} color="green" />
+                  </Animated.View>
+                ) : showFailure ? (
+                  <Animated.View style={[styles.failureTick, { opacity: failureOpacity }]}>
+                    <Ionicons name="close-circle" size={30} color="red" />
+                  </Animated.View>
+                ) : null}
               </View>
             </>
           )}
@@ -161,9 +199,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#222',
     flex: 1,
     marginHorizontal: 10,
   },
@@ -205,6 +243,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    marginTop: 20,
   },
   starsContainer: {
     flexDirection: 'row',
@@ -213,6 +252,15 @@ const styles = StyleSheet.create({
   },
   successTick: {
     marginLeft: 10,
+  },
+  failureTick: {
+    marginLeft: 10,
+  },
+  ratingText: {
+    fontSize: 16,
+    marginRight: 10,
+    color: '#555',
+    fontWeight: "500"
   },
 });
 

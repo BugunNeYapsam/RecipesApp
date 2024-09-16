@@ -6,7 +6,6 @@ const promotions = [
   { name: 'Summer Sale', image: "" },
   { name: 'Buy One Get One Free', image: "" },
   { name: 'Exclusive Member Discounts', image: "" },
-  // Add more promotions if needed
 ];
 
 const InAppPromotions = ({ showAll }) => {

@@ -14,7 +14,7 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSortPress, sortOrder, onSugges
   const [isFocused, setIsFocused] = useState(false);
   const scrollViewRef = useRef(null);
   const [scrollX, setScrollX] = useState(0);
-  const chipWidth = 100; // Approximate width of each chip, you can adjust based on your design
+  const chipWidth = 100;
 
   const filteredSuggestions = suggestionsList.filter(
     suggestion =>
@@ -163,36 +163,36 @@ const styles = StyleSheet.create({
   },
   chipsAndRemoveContainer: {
     flexDirection: 'row',
-    alignItems: 'center', // Vertically align chips and remove button
-    justifyContent: 'space-between', // Space between chips and remove button
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginTop: 10,
   },
   chipsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
-    flex: 1, // Chips take up available space
+    flex: 1,
   },
   chip: {
-    backgroundColor: '#e8e8e8', // Light gray color for the selected chips
+    backgroundColor: '#e8e8e8',
     paddingVertical: 5,
     paddingHorizontal: 12,
-    borderRadius: 20, // Rounded appearance for minimal look
+    borderRadius: 20,
     margin: 5,
     flexDirection: 'row',
     alignItems: 'center',
   },
   chipText: {
     fontSize: 14,
-    color: '#555', // Darker gray for text color
+    color: '#555',
   },
   chipIcon: {
     marginLeft: 5,
   },
   removeAllButton: {
-    backgroundColor: '#FF6961', // Soft red color for the Remove All button
+    backgroundColor: '#FF6961',
     padding: 5,
-    borderRadius: 20, // Rounded appearance
+    borderRadius: 20,
   },
   suggestionsWrapper: {
     flexDirection: 'row',
@@ -202,13 +202,13 @@ const styles = StyleSheet.create({
   suggestionsRow: {
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    marginHorizontal: 5, // Space for the arrows
+    marginHorizontal: 5,
   },
   suggestionChip: {
-    backgroundColor: '#dddfff', // Slightly darker gray for the suggestion chips
+    backgroundColor: '#dddfff',
     paddingVertical: 5,
     paddingHorizontal: 15,
-    borderRadius: 20, // Rounded appearance
+    borderRadius: 20,
     margin: 5,
   },
   chipText: {

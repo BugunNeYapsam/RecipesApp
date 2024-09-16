@@ -10,8 +10,8 @@ export const AppProvider = ({ children }) => {
   const [allCategoriesData, setAllCategoriesData] = useState([]);
   const [allCountries, setAllCountries] = useState([]);
   const [savedRecipes, setSavedRecipes] = useState([]);
+  const [recipeRatings, setRecipeRatings] = useState({});
 
-  // Load saved recipes from AsyncStorage when the app starts
   useEffect(() => {
     const loadSavedRecipes = async () => {
       try {
@@ -25,6 +25,17 @@ export const AppProvider = ({ children }) => {
     };
     loadSavedRecipes();
   }, []);
+
+  const updateSpecificRecipeRating = (recipeId, newRating) => {
+    setRecipeRatings((prevRatings) => ({
+      ...prevRatings,
+      [recipeId]: newRating,
+    }));
+  };
+
+  const updateAllRecipeRatings = (ratings) => {
+    setRecipeRatings(ratings);
+  };
 
   const signIn = (userData) => setUser(userData);
   const signOut = () => setUser(null);
@@ -65,7 +76,10 @@ export const AppProvider = ({ children }) => {
       allCategoriesData,
       setAllCategoriesData,
       allCountries,
-      setAllCountries
+      setAllCountries,
+      recipeRatings,
+      updateSpecificRecipeRating,
+      updateAllRecipeRatings
     }}>
       {children}
     </AppContext.Provider>
