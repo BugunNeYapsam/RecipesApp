@@ -83,6 +83,7 @@ export default function SearchFood({ updateRecipeRating }) {
             <RecipeCard
               key={index}
               recipeID={r.id}
+              imgUrl={r.imageUrl}
               foodName={r.isim}
               ingredients={r.malzemeler}
               recipeSteps={r.tarif}

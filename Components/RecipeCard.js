@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Animated, Image } from 'react-native'; // Import Image
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { useAppContext } from '../Context/AppContext';
 
-const RecipeCard = ({ recipeID, foodName, ingredients, recipeSteps, expanded, toggleExpand, saved, onSave, rating, updateRecipeRating }) => {
+const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expanded, toggleExpand, saved, onSave, rating, updateRecipeRating }) => {
   const { recipeRatings, updateSpecificRecipeRating } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -179,25 +179,17 @@ const RecipeCard = ({ recipeID, foodName, ingredients, recipeSteps, expanded, to
           style={styles.gradient}
         >
           <View style={styles.header}>
-            <MaterialIcons
-              name={expanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
-              size={24}
-              color="#888"
-            />
+            <MaterialIcons name={expanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'} size={24} color="#888" />
             <Text style={styles.title}>{foodName}</Text>
-            <TouchableOpacity onPress={() => onSave(!saved)}>
-              <MaterialIcons
-                name={saved ? 'bookmark' : 'bookmark-border'}
-                size={24}
-                color={'#888'}
-              />
-            </TouchableOpacity>
+            { !expanded && <Image source={{ uri: imgUrl }} style={styles.image} resizeMode="cover" /> }
           </View>
 
           {expanded && (
             <>
+            { expanded && <Image source={{ uri: imgUrl }} style={styles.imageExpanded} resizeMode="cover" /> }
+
               <View style={styles.contentContainer}>
-                <Text style={styles.subtitle}>Ingredients:</Text>
+                <Text style={styles.subtitle}>Malzemeler:</Text>
                 <View style={styles.ingredientsList}>
                   {ingredients.map((ingredient, index) => (
                     <Text key={index} style={styles.ingredientItem}>
@@ -205,7 +197,7 @@ const RecipeCard = ({ recipeID, foodName, ingredients, recipeSteps, expanded, to
                     </Text>
                   ))}
                 </View>
-                <Text style={styles.subtitle}>Recipe:</Text>
+                <Text style={styles.subtitle}>Tarif:</Text>
                 <View style={styles.stepsList}>
                   {recipeSteps.map((step, index) => (
                     <View key={index} style={styles.stepItemContainer}>
@@ -216,23 +208,28 @@ const RecipeCard = ({ recipeID, foodName, ingredients, recipeSteps, expanded, to
                 </View>
               </View>
 
-              <View style={styles.ratingContainer}>
-                <Text style={styles.ratingText}>{recipeRatings[recipeID]?.toFixed(1)}</Text>
-                <View style={styles.starsContainer}>
-                  {renderStars(recipeID)}
-                </View>
+              <View style={styles.cardFooter}>
+                <View style={styles.ratingContainer}>
+                  <Text style={styles.ratingText}>{recipeRatings[recipeID]?.toFixed(1)}</Text>
+                  <View style={styles.starsContainer}>
+                    {renderStars(recipeID)}
+                  </View>
 
-                {loading ? (
-                  <ActivityIndicator style={{marginLeft: 15}} size="small" color="#FFC107" />
-                ) : showSuccess ? (
-                  <Animated.View style={[styles.successTick, { opacity: successOpacity }]}>
-                    <Ionicons name="checkmark-circle" size={30} color="green" />
-                  </Animated.View>
-                ) : showFailure ? (
-                  <Animated.View style={[styles.failureTick, { opacity: failureOpacity }]}>
-                    <Ionicons name="close-circle" size={30} color="red" />
-                  </Animated.View>
-                ) : null}
+                  {loading ? (
+                    <ActivityIndicator style={{marginLeft: 15}} size="small" color="#FFC107" />
+                  ) : showSuccess ? (
+                    <Animated.View style={[styles.successTick, { opacity: successOpacity }]}>
+                      <Ionicons name="checkmark-circle" size={30} color="green" />
+                    </Animated.View>
+                  ) : showFailure ? (
+                    <Animated.View style={[styles.failureTick, { opacity: failureOpacity }]}>
+                      <Ionicons name="close-circle" size={30} color="red" />
+                    </Animated.View>
+                  ) : null}
+                </View>
+                <TouchableOpacity onPress={() => onSave(!saved)}>
+                  <MaterialIcons name={saved ? 'bookmark' : 'bookmark-border'} size={24} color={'#888'} />
+                </TouchableOpacity>
               </View>
             </>
           )}
@@ -247,6 +244,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
     overflow: 'hidden',
+    borderWidth: .5,
+    borderColor: "#555",
   },
   gradient: {
     borderRadius: 10,
@@ -256,6 +255,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginLeft: -5,
   },
   title: {
     fontSize: 18,
@@ -263,6 +263,27 @@ const styles = StyleSheet.create({
     color: '#222',
     flex: 1,
     marginHorizontal: 10,
+  },
+  image: {
+    position: "absolute",
+    right: 0,
+    width: 100,
+    height: 100,
+    borderRadius: 60,
+    borderColor: "#555",
+    borderWidth: .5,
+    marginLeft: 10,
+    marginRight: -30,
+  },
+  imageExpanded: {
+    display: "flex",
+    justifyContent: "center",
+    height: 200,
+    borderRadius: 5,
+    borderColor: "#555",
+    borderWidth: .5,
+    marginTop: 20,
+    marginBottom: 10,
   },
   contentContainer: {
     borderRadius: 10,
@@ -272,6 +293,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
+    marginBottom: 5,
   },
   ingredientsList: {
     marginBottom: 10,
@@ -298,11 +320,16 @@ const styles = StyleSheet.create({
     flex: 1,
     flexWrap: 'wrap',
   },
+  cardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: "center",
+    marginTop: 20,
+  },
   ratingContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    marginTop: 20,
   },
   starsContainer: {
     flexDirection: 'row',
