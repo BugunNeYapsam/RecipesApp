@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 20,
     paddingHorizontal: 10,
+    paddingBottom: "20%"
   },
   noRecipesText: {
     textAlign: 'center',

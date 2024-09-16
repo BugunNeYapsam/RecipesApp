@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Animated } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -10,8 +10,18 @@ const RecipeCard = ({ recipeID, foodName, ingredients, recipeSteps, expanded, to
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFailure, setShowFailure] = useState(false);
+  const [isRated, setIsRated] = useState(false);
   const successOpacity = useRef(new Animated.Value(0)).current;
   const failureOpacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const fetchRatedStatus = async () => {
+      const rated = await checkIfRated(recipeID);
+      setIsRated(rated);
+    };
+
+    fetchRatedStatus();
+  }, [recipeID]);
 
   const saveRatingToDevice = async (rating) => {
     try {
@@ -22,21 +32,55 @@ const RecipeCard = ({ recipeID, foodName, ingredients, recipeSteps, expanded, to
     }
   };
 
+  const checkIfRated = async (recipe_id) => {
+    try {
+      const ratedRecipes = await AsyncStorage.getItem('ratedRecipes');
+      if (ratedRecipes !== null) {
+        const ratedList = JSON.parse(ratedRecipes);
+        return ratedList.includes(recipe_id);
+      }
+      return false;
+    } catch (error) {
+      console.error("Error checking if recipe has been rated:", error);
+      return false;
+    }
+  };
+
+  const markAsRated = async (recipe_id) => {
+    try {
+      const ratedRecipes = await AsyncStorage.getItem('ratedRecipes');
+      let ratedList = [];
+      if (ratedRecipes !== null) {
+        ratedList = JSON.parse(ratedRecipes);
+      }
+      ratedList.push(recipe_id);
+      await AsyncStorage.setItem('ratedRecipes', JSON.stringify(ratedList));
+    } catch (error) {
+      console.error("Error marking recipe as rated:", error);
+    }
+  };
+  
   const handleRating = async (recipe_id, newRating) => {
     const validRating = Math.max(0, Math.min(5, newRating));
     setLoading(true);
   
-    try {
-      const dbUpdateResult = await updateRecipeRating(recipe_id, newRating, updateSpecificRecipeRating);
+    const hasRated = await checkIfRated(recipe_id);
+    if (hasRated) {
+      setLoading(false);
+      return;
+    }
   
+    try {
+      const dbUpdateResult = await updateRecipeRating(recipe_id, newRating, updateSpecificRecipeRating);  
       if (dbUpdateResult) {
         await saveRatingToDevice(validRating);
+        await markAsRated(recipe_id);
+        setIsRated(true);  // Immediately disable the stars after successful rating
         triggerSuccessAnimation();
       } else {
         triggerFailureAnimation();
       }
     } catch (error) {
-      console.error("Error updating rating:", error);
       triggerFailureAnimation();
     } finally {
       setLoading(false);
@@ -83,26 +127,41 @@ const RecipeCard = ({ recipeID, foodName, ingredients, recipeSteps, expanded, to
     const fullStars = Math.floor(current_rating);
     const hasHalfStar = current_rating % 1 !== 0;
   
+    const starColor = isRated ? '#AAAAAA' : '#FFC107';
+    const starOpacity = isRated ? 0.5 : 1;
+  
     for (let i = 1; i <= fullStars; i++) {
       stars.push(
-        <TouchableOpacity key={`full-${i}`} onPress={() => handleRating(parseInt(recipe_id), i)}>
-          <MaterialIcons name="star" size={24} color="#FFC107" />
+        <TouchableOpacity
+          key={`full-${i}`}
+          onPress={() => !isRated && handleRating(parseInt(recipe_id), i)}
+          disabled={isRated}
+        >
+          <MaterialIcons name="star" size={24} color={starColor} style={{ opacity: starOpacity }} />
         </TouchableOpacity>
       );
     }
   
     if (hasHalfStar) {
       stars.push(
-        <TouchableOpacity key="half-star" onPress={() => handleRating(parseInt(recipe_id), fullStars + 1)}>
-          <MaterialIcons name="star-half" size={24} color="#FFC107" />
+        <TouchableOpacity
+          key="half-star"
+          onPress={() => !isRated && handleRating(parseInt(recipe_id), fullStars + 1)}
+          disabled={isRated}
+        >
+          <MaterialIcons name="star-half" size={24} color={starColor} style={{ opacity: starOpacity }} />
         </TouchableOpacity>
       );
     }
   
     for (let i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++) {
       stars.push(
-        <TouchableOpacity key={`empty-${i}`} onPress={() => handleRating(parseInt(recipe_id), i + 1)}>
-          <MaterialIcons name="star-border" size={24} color="#FFC107" />
+        <TouchableOpacity
+          key={`empty-${i}`}
+          onPress={() => !isRated && handleRating(parseInt(recipe_id), i + 1)}
+          disabled={isRated}
+        >
+          <MaterialIcons name="star-border" size={24} color={starColor} style={{ opacity: starOpacity }} />
         </TouchableOpacity>
       );
     }
