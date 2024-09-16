@@ -1,13 +1,9 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Platform, StatusBar, SafeAreaView, View, Image } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import Categories from '../Components/Categories';
 import FeaturedRecipes from '../Components/FeaturedRecipes';
-import TrendingRecipes from '../Components/TrendingRecipes';
-import TopChefs from '../Components/TopChefs';
 import VideoRecipes from '../Components/VideoRecipes';
-import UserRecommendations from '../Components/UserRecommendations';
-import InAppPromotions from '../Components/InAppPromotions';
+// import InAppPromotions from '../Components/InAppPromotions';
 import FoodsOfCountries from '../Components/FoodsOfCountries';
 import headerImage from '../assets/headerBNY.png';
 
@@ -22,7 +18,7 @@ const Explore = () => {
           <FeaturedRecipes />
           <VideoRecipes />
           <FoodsOfCountries />
-          <InAppPromotions />
+          {/* <InAppPromotions /> */}
         </ScrollView>
     </SafeAreaView>
   );
@@ -85,8 +81,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingVertical: 5,
     paddingHorizontal: 10,
+    marginBottom: "20%"
   },
 });
 

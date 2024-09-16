@@ -8,7 +8,7 @@ import SearchFood from "./Screens/SearchFood";
 import Categories from "./Components/Categories";
 import FeaturedRecipes from "./Components/FeaturedRecipes";
 import VideoRecipes from "./Components/VideoRecipes";
-import InAppPromotions from './Components/InAppPromotions';
+// import InAppPromotions from './Components/InAppPromotions';
 import FoodsOfCountries from './Components/FoodsOfCountries';
 import Saveds from './Screens/Saveds';
 import { db } from './Config/FirebaseConfig';
@@ -36,9 +36,9 @@ const ExploreStack = () => {
       <Stack.Screen name="Tüm Ülkeler">
         {() => (<FoodsOfCountries showAll />)}
       </Stack.Screen>
-      <Stack.Screen name="Tüm Promosyonlar">
+      {/* <Stack.Screen name="Tüm Promosyonlar">
         {() => (<InAppPromotions showAll />)}
-      </Stack.Screen>
+      </Stack.Screen> */}
     </Stack.Navigator>
   );
 };
