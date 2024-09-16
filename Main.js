@@ -44,7 +44,7 @@ const ExploreStack = () => {
 };
 
 export default function Main() {
-  const { setAllCategoriesData, setAllRecipeData, setAllCountries, updateAllRecipeRatings } = useAppContext();
+  const { setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, updateAllRecipeRatings } = useAppContext();
 
   const getData = async () => {
     try {
@@ -56,15 +56,21 @@ export default function Main() {
         const recipeData = doc.data();
         const recipeId = doc.id;
   
-        recipes.push(recipeData);
+        recipes.push({ id: recipeId, ...recipeData });
   
         if (recipeData.rating !== undefined) {
           ratings[recipeId] = recipeData.rating;
         }
       });
 
+      const sortedRecipes = recipes
+        .filter(recipe => recipe.rating !== undefined)
+        .sort((a, b) => b.rating - a.rating)
+        .slice(0, 30);
+
       setAllRecipeData(recipes);
       updateAllRecipeRatings(ratings);
+      setFeaturedRecipes(sortedRecipes);
     } catch (error) {
       console.error("Error getting documents: ", error);
     }

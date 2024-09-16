@@ -7,6 +7,7 @@ export const AppProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [theme, setTheme] = useState('light');
   const [allRecipeData, setAllRecipeData] = useState([]);
+  const [featuredRecipes, setFeaturedRecipes] = useState([]);
   const [allCategoriesData, setAllCategoriesData] = useState([]);
   const [allCountries, setAllCountries] = useState([]);
   const [savedRecipes, setSavedRecipes] = useState([]);
@@ -73,6 +74,8 @@ export const AppProvider = ({ children }) => {
       toggleTheme,
       allRecipeData,
       setAllRecipeData,
+      featuredRecipes,
+      setFeaturedRecipes,
       allCategoriesData,
       setAllCategoriesData,
       allCountries,
