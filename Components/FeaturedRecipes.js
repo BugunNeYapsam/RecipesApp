@@ -108,6 +108,7 @@ const FeaturedRecipes = ({ showAll }) => {
       flexDirection: 'row',
       flexWrap: 'wrap',
       justifyContent: 'space-between',
+      paddingBottom: "20%"
     },
     recipeCard: {
       width: '48%',
