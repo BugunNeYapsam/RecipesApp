@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingVertical: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
     paddingBottom: "20%"
   },
 });

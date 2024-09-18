@@ -9,16 +9,17 @@ import {
   Modal,
   Share,
   Image,
-  Linking
+  Linking,
+  Platform,
+  StatusBar
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-
 import whatsappIcon from '../assets/whatsapp.png';
 import instagramIcon from '../assets/instagram.png';
 import twitterIcon from '../assets/twitter.png';
 import linkedinIcon from '../assets/linkedin.png';
 
-export default function Settings({ navigation }) {
+export default function Settings() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -68,16 +69,10 @@ export default function Settings({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f8f8f8' }}>
-      <View style={styles.header}>
-        <Text numberOfLines={1} style={styles.headerTitle}>
-          Ayarlar
-        </Text>
-      </View>
-
+    <SafeAreaView style={styles.safeArea}>
+      <Text style={styles.text}>AYARLAR</Text>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={[styles.section, { paddingTop: 11 }]} />
-
         <View style={styles.section}>
           <View style={styles.sectionBody}>
             <View style={[styles.rowWrapper, styles.rowFirst]}>
@@ -178,7 +173,10 @@ export default function Settings({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  /** Header */
+  safeArea: {
+    flex: 1,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -197,7 +195,16 @@ const styles = StyleSheet.create({
     paddingTop: 23
   },
   content: {
+    flex: 1,
+    paddingVertical: 20,
     paddingHorizontal: 16,
+    paddingBottom: "20%"
+  },
+  text: {
+    color: '#65d6',
+    fontWeight: 'bold',
+    marginTop: 30,
+    marginLeft: 20,
   },
   section: {
     paddingVertical: 3,
@@ -274,6 +281,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    paddingBottom: "20%"
   },
   modalContent: {
     width: '100%',

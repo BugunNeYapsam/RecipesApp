@@ -57,13 +57,13 @@ const styles = StyleSheet.create({
   text: {
     color: '#65d6',
     fontWeight: 'bold',
-    margin: 11,
-    padding: 11,
+    marginTop: 30,
+    marginLeft: 20,
   },
   container: {
     flex: 1,
-    paddingVertical: 20,
-    paddingHorizontal: 10,
+    paddingVertical: 35,
+    paddingHorizontal: 16,
     paddingBottom: "20%"
   },
   noRecipesText: {
