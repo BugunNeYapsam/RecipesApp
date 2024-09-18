@@ -6,11 +6,15 @@ import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 
 export default function SearchFood({ updateRecipeRating }) {
-  const { allRecipeData, savedRecipes, addRecipe, removeRecipe } = useAppContext();
+  const { allRecipeData, savedRecipes, addRecipe, removeRecipe, isDarkMode } = useAppContext();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [expandedCardIndex, setExpandedCardIndex] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState('none');
   const [selectedChips, setSelectedChips] = React.useState([]);
+
+  const dynamicSafeAreaStyle = {
+    backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
+  };
 
   const sortRecipes = (recipes, order) => {
     if (order === 'asc') {
@@ -67,7 +71,7 @@ export default function SearchFood({ updateRecipeRating }) {
   }, [navigation]);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
       <View style={styles.container}>
         <SearchBar
           searchTerm={searchTerm}
@@ -77,6 +81,7 @@ export default function SearchFood({ updateRecipeRating }) {
           onSuggestionSelect={handleSuggestionSelect}
           selectedChips={selectedChips}
           onChipRemove={handleChipRemove}
+          isDarkMode={isDarkMode}
         />
         <ScrollView>
           {sortedRecipes?.map((r, index) => (
@@ -87,7 +92,6 @@ export default function SearchFood({ updateRecipeRating }) {
               foodName={r.isim}
               ingredients={r.malzemeler}
               recipeSteps={r.tarif}
-              imageUrl={"https://picsum.photos/200/300"}
               expanded={expandedCardIndex === index}
               toggleExpand={() => toggleExpand(index)}
               onSave={(isSaved) => handleSave(r, isSaved)}

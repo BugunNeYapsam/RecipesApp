@@ -4,8 +4,16 @@ import { useAppContext } from '../Context/AppContext';
 import RecipeCard from '../Components/RecipeCard';
 
 export default function Saved({ updateRecipeRating }) {
-  const { savedRecipes, removeRecipe } = useAppContext();
+  const { savedRecipes, removeRecipe, isDarkMode } = useAppContext();
   const [expandedCardIndex, setExpandedCardIndex] = useState(null);
+
+  const dynamicSafeAreaStyle = {
+    backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
+  };
+  
+  const dynamicPageTitleStyle = {
+    color: isDarkMode ? '#c781a4' : '#7f405f'
+  };
 
   const handleSave = (recipe) => {
     removeRecipe(recipe);
@@ -16,8 +24,8 @@ export default function Saved({ updateRecipeRating }) {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <Text style={styles.text}>KAYDEDİLENLER</Text>
+    <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
+      <Text style={[styles.text, dynamicPageTitleStyle]}>KAYDEDİLENLER</Text>
       <View style={styles.container}>
         <ScrollView>
           {savedRecipes.length > 0 ? (
@@ -30,7 +38,6 @@ export default function Saved({ updateRecipeRating }) {
                   foodName={r.isim}
                   ingredients={r.malzemeler}
                   recipeSteps={r.tarif}
-                  imageUrl={"https://picsum.photos/200/300"}
                   expanded={expandedCardIndex === index}
                   toggleExpand={() => toggleExpand(index)}
                   onSave={(isSaved) => handleSave(r, isSaved)}

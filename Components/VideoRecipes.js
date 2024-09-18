@@ -9,9 +9,17 @@ const videoRecipes = [
   { name: 'Best Beef Stroganoff', image: "" },
 ];
 
-const VideoRecipes = ({ showAll }) => {
+const VideoRecipes = ({ showAll, isDarkMode }) => {
   const navigation = useNavigation();
 
+  const dynamicPageTitleStyle = {
+    color: isDarkMode ? '#c781a4' : '#444'
+  };
+
+  const dynamicSeeAllStyle = {
+    color: isDarkMode ? '#5c86ff' : '#0445ff'
+  };
+  
   if (showAll) {
     return (
       <ScrollView style={styles.container}>
@@ -33,9 +41,9 @@ const VideoRecipes = ({ showAll }) => {
   return (
     <View>
       <View style={styles.header}>
-        <Text style={styles.sectionTitle}>Video Tarifler</Text>
+        <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>Video Tarifler</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Tüm Video Tarifler')}>
-          <Text style={styles.seeAll}>Tümünü Gör</Text>
+          <Text style={[styles.seeAll, dynamicSeeAllStyle]}>Tümünü Gör</Text>
         </TouchableOpacity>
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>

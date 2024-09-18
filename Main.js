@@ -8,12 +8,12 @@ import SearchFood from "./Screens/SearchFood";
 import Categories from "./Components/Categories";
 import FeaturedRecipes from "./Components/FeaturedRecipes";
 import VideoRecipes from "./Components/VideoRecipes";
-// import InAppPromotions from './Components/InAppPromotions';
 import FoodsOfCountries from './Components/FoodsOfCountries';
 import Saveds from './Screens/Saveds';
 import { db } from './Config/FirebaseConfig';
 import { collection, getDocs, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useAppContext } from './Context/AppContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Settings from './Screens/Settings';
 
@@ -36,15 +36,26 @@ const ExploreStack = () => {
       <Stack.Screen name="Tüm Ülkeler">
         {() => (<FoodsOfCountries showAll />)}
       </Stack.Screen>
-      {/* <Stack.Screen name="Tüm Promosyonlar">
-        {() => (<InAppPromotions showAll />)}
-      </Stack.Screen> */}
     </Stack.Navigator>
   );
 };
 
 export default function Main() {
-  const { setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, updateAllRecipeRatings } = useAppContext();
+  const { setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, updateAllRecipeRatings, setIsDarkMode } = useAppContext();
+
+  React.useEffect(() => {
+    const getDarkModePreference = async () => {
+      try {
+        const value = await AsyncStorage.getItem('darkMode');
+        if (value !== null) {
+          setIsDarkMode(JSON.parse(value));
+        }
+      } catch (e) {
+        console.error('Failed to fetch dark mode preference.', e);
+      }
+    };
+    getDarkModePreference();
+  }, []);
 
   const getData = async () => {
     try {

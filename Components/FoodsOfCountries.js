@@ -3,9 +3,17 @@ import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity } from 'rea
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 
-const FoodsOfCountries = ({ showAll }) => {
+const FoodsOfCountries = ({ showAll, isDarkMode }) => {
   const navigation = useNavigation();
   const { allCountries } = useAppContext();
+
+  const dynamicPageTitleStyle = {
+    color: isDarkMode ? '#c781a4' : '#444'
+  };
+
+  const dynamicSeeAllStyle = {
+    color: isDarkMode ? '#5c86ff' : '#0445ff'
+  };
 
   if (showAll) {
     return (
@@ -27,9 +35,9 @@ const FoodsOfCountries = ({ showAll }) => {
   return (
     <View>
       <View style={styles.header}>
-        <Text style={styles.sectionTitle}>Ülkelere Ait Yemekler</Text>
+        <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>Ülkelere Ait Yemekler</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Tüm Ülkeler')}>
-          <Text style={styles.seeAll}>Tümünü Gör</Text>
+          <Text style={[styles.seeAll, dynamicSeeAllStyle]}>Tümünü Gör</Text>
         </TouchableOpacity>
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
@@ -105,7 +113,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 10,
+    marginTop: 120,
   },
   grid: {
     flexDirection: 'row',

@@ -10,11 +10,15 @@ const suggestionsList = [
   "Fish Tacos", "Grilled Cheese", "Falafel", "Ramen", "Paella", "Chicken Wings"
 ];
 
-const SearchBar = ({ searchTerm, setSearchTerm, onSortPress, sortOrder, onSuggestionSelect, selectedChips, onChipRemove }) => {
+const SearchBar = ({ isDarkMode, searchTerm, setSearchTerm, onSortPress, sortOrder, onSuggestionSelect, selectedChips, onChipRemove }) => {
   const [isFocused, setIsFocused] = useState(false);
   const scrollViewRef = useRef(null);
   const [scrollX, setScrollX] = useState(0);
   const chipWidth = 100;
+
+  const dynamicChipStyle = {
+    backgroundColor: isDarkMode ? '#cc91a4' : '#dddfff'
+  };
 
   const filteredSuggestions = suggestionsList.filter(
     suggestion =>
@@ -54,7 +58,7 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSortPress, sortOrder, onSugges
   };
 
   const renderSuggestionChip = (item, index) => (
-    <TouchableOpacity key={index} style={styles.suggestionChip} onPress={() => onSuggestionSelect(item)}>
+    <TouchableOpacity key={index} style={[styles.suggestionChip, dynamicChipStyle]} onPress={() => onSuggestionSelect(item)}>
       <Text style={styles.chipText}>{item}</Text>
     </TouchableOpacity>
   );
@@ -62,16 +66,16 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSortPress, sortOrder, onSugges
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={isFocused ? ['#dddfff', '#ffffff'] : ['#ffffff', '#dddfff']}
+        colors={isFocused ? isDarkMode ? ['#cccddd', '#894d66'] : ['#dddfff', '#ffffff'] : isDarkMode ? ['#894d66', '#cccddd'] : ['#ffffff', '#dddfff']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}
       >
-        <MaterialIcons name="search" size={24} color="#888" style={styles.icon} />
+        <MaterialIcons name="search" size={24} color={isDarkMode ? "#222" : "#666"} style={styles.icon} />
         <TextInput
           style={styles.input}
           placeholder="Search recipes..."
-          placeholderTextColor="#aaa"
+          placeholderTextColor={isDarkMode ? "#222" : "#aaa"}
           value={searchTerm}
           onChangeText={setSearchTerm}
           onFocus={() => setIsFocused(true)}
@@ -205,7 +209,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   suggestionChip: {
-    backgroundColor: '#dddfff',
     paddingVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 20,

@@ -12,6 +12,7 @@ export const AppProvider = ({ children }) => {
   const [allCountries, setAllCountries] = useState([]);
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [recipeRatings, setRecipeRatings] = useState({});
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     const loadSavedRecipes = async () => {
@@ -82,7 +83,9 @@ export const AppProvider = ({ children }) => {
       setAllCountries,
       recipeRatings,
       updateSpecificRecipeRating,
-      updateAllRecipeRatings
+      updateAllRecipeRatings,
+      isDarkMode,
+      setIsDarkMode
     }}>
       {children}
     </AppContext.Provider>

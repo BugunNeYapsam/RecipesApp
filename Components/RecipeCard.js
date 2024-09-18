@@ -6,7 +6,7 @@ import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { useAppContext } from '../Context/AppContext';
 
 const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expanded, toggleExpand, saved, onSave, rating, updateRecipeRating }) => {
-  const { recipeRatings, updateSpecificRecipeRating } = useAppContext();
+  const { recipeRatings, updateSpecificRecipeRating, isDarkMode } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFailure, setShowFailure] = useState(false);
@@ -173,13 +173,13 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
     <TouchableOpacity onPress={toggleExpand} activeOpacity={0.8}>
       <View style={[styles.card, expanded && styles.cardExpanded]}>
         <LinearGradient
-          colors={['#dddfff', '#ffffff']}
+          colors={isDarkMode ? ['#894d66', '#cccddd'] : ['#dddfff', '#ffffff']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradient}
         >
           <View style={styles.header}>
-            <MaterialIcons name={expanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'} size={24} color="#888" />
+            <MaterialIcons name={expanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'} size={24} color={isDarkMode ? "#111" : "#888"} />
             <Text style={styles.title}>{foodName}</Text>
             { !expanded && <Image source={{ uri: imgUrl }} style={styles.image} resizeMode="cover" /> }
           </View>

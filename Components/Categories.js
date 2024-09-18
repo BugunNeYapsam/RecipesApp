@@ -3,12 +3,20 @@ import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity, Animated, 
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 
-const Categories = ({ showAll }) => {
+const Categories = ({ showAll, isDarkMode }) => {
   const navigation = useNavigation();
   const { allCategoriesData } = useAppContext();
   const [loading, setLoading] = useState(true);
   const shimmerValue = useRef(new Animated.Value(0)).current;
+  
+  const dynamicPageTitleStyle = {
+    color: isDarkMode ? '#c781a4' : '#444'
+  };
 
+  const dynamicSeeAllStyle = {
+    color: isDarkMode ? '#5c86ff' : '#0445ff'
+  };
+  
   useEffect(() => {
     if (allCategoriesData && allCategoriesData.length > 0) {
       setLoading(false);
@@ -68,9 +76,9 @@ const Categories = ({ showAll }) => {
   return (
     <View>
       <View style={styles.header}>
-        <Text style={styles.sectionTitle}>Kategoriler</Text>
+        <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>Kategoriler</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Tüm Kategoriler')}>
-          <Text style={styles.seeAll}>Tümünü Gör</Text>
+          <Text style={[styles.seeAll, dynamicSeeAllStyle]}>Tümünü Gör</Text>
         </TouchableOpacity>
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>

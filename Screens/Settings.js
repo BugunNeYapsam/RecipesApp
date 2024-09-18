@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -11,33 +11,57 @@ import {
   Image,
   Linking,
   Platform,
-  StatusBar
+  StatusBar,
+  Switch
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import whatsappIcon from '../assets/whatsapp.png';
 import instagramIcon from '../assets/instagram.png';
 import twitterIcon from '../assets/twitter.png';
 import linkedinIcon from '../assets/linkedin.png';
+import { useAppContext } from '../Context/AppContext';
 
 export default function Settings() {
+  const { isDarkMode, setIsDarkMode } = useAppContext();
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [isLanguageOptionsExpanded, setIsLanguageOptionsExpanded] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState('TR');
+
+  // Toggle dark mode and save preference in AsyncStorage
+  const toggleDarkMode = async () => {
+    const newValue = !isDarkMode;
+    setIsDarkMode(newValue);
+    try {
+      await AsyncStorage.setItem('darkMode', JSON.stringify(newValue));
+    } catch (e) {
+      console.error('Failed to save dark mode preference.', e);
+    }
+  };
+
+  const dynamicSafeAreaStyle = {
+    backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
+  };
+
+  const dynamicPageTitleStyle = {
+    color: isDarkMode ? '#c781a4' : '#7f405f'
+  };
+
+  const dynamicRowWrapperStyle = {
+    backgroundColor: isDarkMode ? '#CCCCCC' : '#FFFFFF'
+  };
 
   const handleShare = async (platform) => {
     try {
       const message = 'Bu harika uygulamayı denemelisiniz!';
-      const url = 'https://www.example.com'; // Uygulama linkini buraya ekleyin
+      const url = 'https://www.example.com';
 
-      if (platform === 'copy') {
-        await Share.share({
-          message,
-        });
-      } else {
-        await Share.share({
-          message,
-          url,
-        });
-      }
+      await Share.share({
+        message,
+        url,
+      });
     } catch (error) {
       console.log(error.message);
     }
@@ -69,32 +93,32 @@ export default function Settings() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <Text style={styles.text}>AYARLAR</Text>
+    <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
+      <Text style={[styles.text, dynamicPageTitleStyle]}>AYARLAR</Text>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={[styles.section, { paddingTop: 11 }]} />
         <View style={styles.section}>
           <View style={styles.sectionBody}>
-            <View style={[styles.rowWrapper, styles.rowFirst]}>
+            <View style={[styles.rowWrapper, dynamicRowWrapperStyle, styles.rowFirst]}>
               <TouchableOpacity
                 onPress={() => setIsExpanded(!isExpanded)}
                 style={styles.row}>
                 <Text style={styles.rowLabel}>İletişim</Text>
                 <View style={styles.rowSpacer} />
                 <FeatherIcon
-                  color="#bcbcbc"
+                  color={isDarkMode ? "#222222" : "#BCBCBC"}
                   name={isExpanded ? 'chevron-up' : 'chevron-down'}
                   size={19}
                 />
               </TouchableOpacity>
               {isExpanded && (
                 <View style={styles.expandedContent}>
-                  <Text style={styles.expandedText}>bugunneyapsamQgmail.com</Text>
+                  <Text style={styles.expandedText}>bugunneyapsam@gmail.com</Text>
                 </View>
               )}
             </View>
 
-            <View style={styles.rowWrapper}>
+            <View style={[styles.rowWrapper, dynamicRowWrapperStyle]}>
               <TouchableOpacity
                 onPress={() => {
                   // handle onPress
@@ -103,21 +127,21 @@ export default function Settings() {
                 <Text style={styles.rowLabel}>Play Store - Derecelendirme</Text>
                 <View style={styles.rowSpacer} />
                 <FeatherIcon
-                  color="#bcbcbc"
+                  color={isDarkMode ? "#222222" : "#BCBCBC"}
                   name={isExpanded ? 'chevron-up' : 'chevron-down'}
                   size={19}
                 />
               </TouchableOpacity>
             </View>
 
-            <View style={[styles.rowWrapper, styles.rowLast]}>
+            <View style={[styles.rowWrapper, dynamicRowWrapperStyle, styles.rowLast]}>
               <TouchableOpacity
                 onPress={() => setModalVisible(true)}
                 style={styles.row}>
                 <Text style={styles.rowLabel}>Paylaş</Text>
                 <View style={styles.rowSpacer} />
                 <FeatherIcon
-                  color="#bcbcbc"
+                  color={isDarkMode ? "#222222" : "#BCBCBC"}
                   name="share"
                   size={19}
                 />
@@ -126,6 +150,81 @@ export default function Settings() {
           </View>
         </View>
 
+        <View style={styles.section}>
+          <View style={styles.sectionBody}>
+            <View style={[styles.rowWrapper, dynamicRowWrapperStyle, styles.rowFirst]}>
+              <TouchableOpacity
+                onPress={() => setIsLanguageOptionsExpanded(!isLanguageOptionsExpanded)}
+                style={styles.row}>
+                <Text style={styles.rowLabel}>Dil Seçenekleri</Text>
+                <View style={styles.rowSpacer} />
+                <FeatherIcon
+                  color={isDarkMode ? "#222222" : "#BCBCBC"}
+                  name={isExpanded ? 'chevron-up' : 'chevron-down'}
+                  size={19}
+                />
+              </TouchableOpacity>
+              {isLanguageOptionsExpanded && (
+                <View style={styles.expandedContent}>
+                  <TouchableOpacity
+                    style={[
+                      styles.languageOption,
+                      selectedLanguage === 'TR' ? styles.selected : null,
+                    ]}
+                    onPress={() => setSelectedLanguage('TR')}
+                  >
+                    <Image
+                      source={require('../assets/flags/tr_flag.png')}
+                      style={styles.flag}
+                    />
+                    <Text
+                      style={[
+                        styles.languageText,
+                        selectedLanguage === 'TR' ? styles.selectedText : null,
+                      ]}
+                    >
+                      Türkçe
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.languageOption,
+                      selectedLanguage === 'EN' ? styles.selected : null,
+                    ]}
+                    onPress={() => setSelectedLanguage('EN')}
+                  >
+                    <Image
+                      source={require('../assets/flags/en_flag.png')}
+                      style={styles.flag}
+                    />
+                    <Text
+                      style={[
+                        styles.languageText,
+                        selectedLanguage === 'EN' ? styles.selectedText : null,
+                      ]}
+                    >
+                      English
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+
+            <View style={[styles.rowWrapper, dynamicRowWrapperStyle, styles.rowLast]}>
+              <View style={styles.row}>
+                <Text style={styles.rowLabel}>Tema</Text>
+                <View style={styles.rowSpacer} />
+                <Text style={styles.rowLabel}>{isDarkMode ? "Koyu Mod" : "Açık Mod"}</Text>
+                <Switch
+                  value={isDarkMode}
+                  onValueChange={toggleDarkMode} // Call toggleDarkMode here
+                  trackColor={{ false: '#767577', true: '#7E405E' }}
+                  thumbColor={isDarkMode ? '#6B2346' : '#f4f3f4'}
+                />
+              </View>
+            </View>
+          </View>
+        </View>
         <View style={styles.section}>
           <View style={styles.sectionBody} />
         </View>
@@ -177,46 +276,19 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    paddingHorizontal: 16,
-  },
-  headerTitle: {
-    fontSize: 19,
-    fontWeight: '600',
-    color: '#000',
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 0,
-    textAlign: 'center',
-    paddingTop: 23
-  },
   content: {
     flex: 1,
     paddingVertical: 20,
     paddingHorizontal: 16,
-    paddingBottom: "20%"
+    paddingBottom: '20%',
   },
   text: {
-    color: '#65d6',
     fontWeight: 'bold',
     marginTop: 30,
     marginLeft: 20,
   },
   section: {
     paddingVertical: 3,
-  },
-  sectionTitle: {
-    margin: 8,
-    marginLeft: 12,
-    fontSize: 13,
-    letterSpacing: 0.33,
-    fontWeight: '500',
-    color: '#a69f9f',
-    textTransform: 'uppercase',
   },
   sectionBody: {
     borderRadius: 12,
@@ -239,7 +311,6 @@ const styles = StyleSheet.create({
   },
   rowWrapper: {
     paddingLeft: 16,
-    backgroundColor: '#fff',
     borderTopWidth: 1,
     borderColor: '#f0f0f0',
   },
@@ -257,31 +328,47 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexBasis: 0,
   },
-  rowValue: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#ababab',
-    marginRight: 4,
-  },
   rowLast: {
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
   },
   expandedContent: {
+    marginRight: 15,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 10,
-    backgroundColor: '#f9f9f9',
-    marginRight: 15
+    backgroundColor: '#f2f2f2',
   },
-  expandedText: {
-    fontSize: 14,
-    color: '#000',
+  languageOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 10,
+    paddingHorizontal: 15,
+    backgroundColor: '#e0e0e0',
+  },
+  languageText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  selectedText: {
+    color: '#fff',
+  },
+  selected: {
+    backgroundColor: '#6B2346',
+  },
+  flag: {
+    width: 30,
+    height: 30,
+    marginLeft: -15,
+    marginRight: 10,
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    paddingBottom: "20%"
+    paddingBottom: '20%',
   },
   modalContent: {
     width: '100%',
@@ -311,6 +398,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffdddd',
     padding: 7,
     paddingHorizontal: 15,
-    borderRadius: 9
+    borderRadius: 9,
   },
 });

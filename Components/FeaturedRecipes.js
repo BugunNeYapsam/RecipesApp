@@ -3,10 +3,18 @@ import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity } from 'rea
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 
-const FeaturedRecipes = ({ showAll }) => {
+const FeaturedRecipes = ({ showAll, isDarkMode }) => {
     const navigation = useNavigation();
     const { featuredRecipes } = useAppContext();
 
+    const dynamicPageTitleStyle = {
+      color: isDarkMode ? '#c781a4' : '#444'
+    };
+  
+    const dynamicSeeAllStyle = {
+      color: isDarkMode ? '#5c86ff' : '#0445ff'
+    };
+    
     if (showAll) {
       return (
         <ScrollView style={styles.container}>
@@ -25,9 +33,9 @@ const FeaturedRecipes = ({ showAll }) => {
     return (
       <View>
         <View style={styles.header}>
-          <Text style={styles.sectionTitle}>Öne Çıkan Tarifler</Text>
+          <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>Öne Çıkan Tarifler</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Tüm Öne Çıkan Tarifler')}>
-            <Text style={styles.seeAll}>Tümünü Gör</Text>
+            <Text style={[styles.seeAll, dynamicSeeAllStyle]}>Tümünü Gör</Text>
           </TouchableOpacity>
         </View>
         <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>

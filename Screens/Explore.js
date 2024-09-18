@@ -3,23 +3,28 @@ import { ScrollView, StyleSheet, Platform, StatusBar, SafeAreaView, View, Image 
 import Categories from '../Components/Categories';
 import FeaturedRecipes from '../Components/FeaturedRecipes';
 import VideoRecipes from '../Components/VideoRecipes';
-// import InAppPromotions from '../Components/InAppPromotions';
 import FoodsOfCountries from '../Components/FoodsOfCountries';
 import headerImage from '../assets/headerBNY.png';
+import { useAppContext } from '../Context/AppContext';
 
 const Explore = () => {
+  const { isDarkMode } = useAppContext();
+
+  const dynamicSafeAreaStyle = {
+    backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
+  };
+  
   return (
-    <SafeAreaView style={styles.safeArea}>
-        <View style={{ marginTop: 5, marginBottom: -5, paddingBottom: 10 }}>
-          <Image source={headerImage} style={styles.headerImage} />
-        </View>
-        <ScrollView style={styles.container}>
-          <Categories />
-          <FeaturedRecipes />
-          <VideoRecipes />
-          <FoodsOfCountries />
-          {/* <InAppPromotions /> */}
-        </ScrollView>
+    <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
+      <View style={{ marginTop: 5, marginBottom: -5, paddingBottom: 10 }}>
+        <Image source={headerImage} style={styles.headerImage} />
+      </View>
+      <ScrollView style={styles.container}>
+        <Categories isDarkMode={isDarkMode} />
+        <FeaturedRecipes isDarkMode={isDarkMode} />
+        <VideoRecipes isDarkMode={isDarkMode} />
+        <FoodsOfCountries isDarkMode={isDarkMode} />
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -72,7 +77,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   safeArea: {
-    backgroundColor: '#ffffff',
     flex: 1,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
