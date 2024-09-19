@@ -16,6 +16,7 @@ export const AppProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('tr');
   const [languageStore, setLanguageStore] = useState(LanguagesFile);
+  const [selectedCategory, setSelectedCategory] = useState(undefined);
 
   useEffect(() => {
     const loadSavedRecipes = async () => {
@@ -91,7 +92,9 @@ export const AppProvider = ({ children }) => {
       setIsDarkMode,
       selectedLanguage,
       setSelectedLanguage,
-      languageStore
+      languageStore,
+      selectedCategory,
+      setSelectedCategory
     }}>
       {children}
     </AppContext.Provider>

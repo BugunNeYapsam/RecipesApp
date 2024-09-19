@@ -15,24 +15,23 @@ import { useAppContext } from './Context/AppContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Settings from './Screens/Settings';
+import CategoryDetail from './Components/CategoryDetail';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const ExploreStack = ({ retrieveAllData }) => {
-  const { selectedLanguage, languageStore } = useAppContext();
+  const { selectedLanguage, languageStore, selectedCategory } = useAppContext();
 
   return (
     <Stack.Navigator>
-      <Stack.Screen 
-        name="Bugün Ne Yapsam?" 
-        options={{ headerShown: false }}
-      >
+      <Stack.Screen  name="Bugün Ne Yapsam?" options={{ headerShown: false }}>
         {() => <Explore retrieveAllData={retrieveAllData} />}
       </Stack.Screen>
       <Stack.Screen name={languageStore[selectedLanguage]["all_categories"]}>
         {() => (<Categories showAll />)}
       </Stack.Screen>
+      <Stack.Screen name={selectedCategory?.name[selectedLanguage] || 'Back' } component={CategoryDetail} />
       <Stack.Screen name={languageStore[selectedLanguage]["all_featured_recipes"]}>
         {() => (<FeaturedRecipes showAll />)}
       </Stack.Screen>

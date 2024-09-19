@@ -5,7 +5,7 @@ import { useAppContext } from '../Context/AppContext';
 
 const Categories = ({ showAll, isDarkMode }) => {
   const navigation = useNavigation();
-  const { allCategoriesData, selectedLanguage, languageStore } = useAppContext();
+  const { allCategoriesData, selectedLanguage, languageStore, setSelectedCategory } = useAppContext();
   const [loading, setLoading] = useState(true);
   const shimmerValue = useRef(new Animated.Value(0)).current;
   
@@ -43,6 +43,11 @@ const Categories = ({ showAll, isDarkMode }) => {
 
     return () => shimmerAnimation.stop();
   }, [allCategoriesData, shimmerValue]);
+
+  const handleOnPressCategory = (category_object) => {
+    setSelectedCategory(category_object);
+    navigation.navigate(category_object?.name[selectedLanguage]);
+  }
 
   const renderPlaceholders = () => {
     const placeholders = new Array(6).fill(0);
@@ -83,7 +88,7 @@ const Categories = ({ showAll, isDarkMode }) => {
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
         {loading ? renderPlaceholders() : allCategoriesData?.map((category, index) => (
-          <TouchableOpacity key={index} style={styles.categoryCard}>
+          <TouchableOpacity key={index} style={styles.categoryCard} onPress={() => handleOnPressCategory(category)}>
             <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
             <View style={styles.categoryOverlay}>
               <Text style={styles.categoryName}>{category.name[selectedLanguage]}</Text>
