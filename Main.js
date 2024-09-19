@@ -31,7 +31,7 @@ const ExploreStack = ({ retrieveAllData }) => {
       <Stack.Screen name={languageStore[selectedLanguage]["all_categories"]}>
         {() => (<Categories showAll />)}
       </Stack.Screen>
-      <Stack.Screen name={selectedCategory?.name[selectedLanguage] || 'Back' } component={CategoryDetail} />
+      <Stack.Screen name={selectedCategory?.name[selectedLanguage] || 'Back' } component={CategoryDetail} options={{ headerShown: false }} />
       <Stack.Screen name={languageStore[selectedLanguage]["all_featured_recipes"]}>
         {() => (<FeaturedRecipes showAll />)}
       </Stack.Screen>

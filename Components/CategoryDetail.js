@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Platform, StatusBar, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Platform, StatusBar, ScrollView, TouchableOpacity } from 'react-native';
 import RecipeCard from '../Components/RecipeCard';
 import SearchBar from '../Components/SearchBar';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
+import { Ionicons } from '@expo/vector-icons'; // Importing an icon for the back button
 
 const CategoryDetail = ({ updateRecipeRating }) => {
   const { isDarkMode, selectedLanguage, languageStore, allRecipeData, savedRecipes, addRecipe, removeRecipe, selectedCategory, setSelectedCategory } = useAppContext();
@@ -12,14 +13,14 @@ const CategoryDetail = ({ updateRecipeRating }) => {
   const [sortOrder, setSortOrder] = React.useState('none');
   const [selectedChips, setSelectedChips] = React.useState([]);
   
-  React.useEffect(() => {
-    return () => {
-        setSelectedCategory(undefined);
-    };
-  }, []); 
+  const navigation = useNavigation(); // Getting navigation instance
   
   const dynamicSafeAreaStyle = {
     backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
+  };
+
+  const dynamicPageTitleStyle = {
+    color: isDarkMode ? '#c781a4' : '#7f405f'
   };
 
   const sortRecipes = (recipes, order) => {
@@ -70,6 +71,12 @@ const CategoryDetail = ({ updateRecipeRating }) => {
 
   return (
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
+        <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#c781a4' : '#7f405f'} />
+            </TouchableOpacity>
+            <Text style={[styles.text, dynamicPageTitleStyle]}>{selectedCategory?.name[selectedLanguage].toUpperCase() || '' }</Text>
+        </View>
         <View style={styles.container}>
             <SearchBar
                 searchTerm={searchTerm}
@@ -109,17 +116,24 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        marginBottom: 10,
+        marginTop: 30,
+    },
     container: {
         flex: 1,
-        marginTop: -30,
         paddingHorizontal: 16,
-        paddingBottom: "20%"
+        paddingBottom: "20%",
+        marginTop: 10,
     },
     text: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 25
-    },
+        marginLeft: 10,
+      },
 });
 
 export default CategoryDetail;
