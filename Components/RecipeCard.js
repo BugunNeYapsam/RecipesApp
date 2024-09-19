@@ -5,8 +5,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { useAppContext } from '../Context/AppContext';
 
-const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expanded, toggleExpand, saved, onSave, rating, updateRecipeRating }) => {
-  const { recipeRatings, updateSpecificRecipeRating, isDarkMode } = useAppContext();
+const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expanded, toggleExpand, saved, onSave, updateRecipeRating }) => {
+  const { recipeRatings, updateSpecificRecipeRating, isDarkMode, selectedLanguage, languageStore } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFailure, setShowFailure] = useState(false);
@@ -75,7 +75,7 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
       if (dbUpdateResult) {
         await saveRatingToDevice(validRating);
         await markAsRated(recipe_id);
-        setIsRated(true);  // Immediately disable the stars after successful rating
+        setIsRated(true);
         triggerSuccessAnimation();
       } else {
         triggerFailureAnimation();
@@ -189,7 +189,7 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
             { expanded && <Image source={{ uri: imgUrl }} style={styles.imageExpanded} resizeMode="cover" /> }
 
               <View style={styles.contentContainer}>
-                <Text style={styles.subtitle}>Malzemeler:</Text>
+                <Text style={styles.subtitle}>{languageStore[selectedLanguage]["ingredients"]}:</Text>
                 <View style={styles.ingredientsList}>
                   {ingredients.map((ingredient, index) => (
                     <Text key={index} style={styles.ingredientItem}>
@@ -197,7 +197,7 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
                     </Text>
                   ))}
                 </View>
-                <Text style={styles.subtitle}>Tarif:</Text>
+                <Text style={styles.subtitle}>{languageStore[selectedLanguage]["recipe"]}:</Text>
                 <View style={styles.stepsList}>
                   {recipeSteps.map((step, index) => (
                     <View key={index} style={styles.stepItemContainer}>

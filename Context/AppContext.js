@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LanguagesFile from "../Config/Languages.json";
 
 export const AppContext = createContext({});
 
@@ -13,6 +14,8 @@ export const AppProvider = ({ children }) => {
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [recipeRatings, setRecipeRatings] = useState({});
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState('tr');
+  const [languageStore, setLanguageStore] = useState(LanguagesFile);
 
   useEffect(() => {
     const loadSavedRecipes = async () => {
@@ -85,7 +88,10 @@ export const AppProvider = ({ children }) => {
       updateSpecificRecipeRating,
       updateAllRecipeRatings,
       isDarkMode,
-      setIsDarkMode
+      setIsDarkMode,
+      selectedLanguage,
+      setSelectedLanguage,
+      languageStore
     }}>
       {children}
     </AppContext.Provider>

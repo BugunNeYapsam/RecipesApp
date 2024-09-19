@@ -5,7 +5,7 @@ import { useAppContext } from '../Context/AppContext';
 
 const Categories = ({ showAll, isDarkMode }) => {
   const navigation = useNavigation();
-  const { allCategoriesData } = useAppContext();
+  const { allCategoriesData, selectedLanguage, languageStore } = useAppContext();
   const [loading, setLoading] = useState(true);
   const shimmerValue = useRef(new Animated.Value(0)).current;
   
@@ -64,7 +64,7 @@ const Categories = ({ showAll, isDarkMode }) => {
             <TouchableOpacity key={index} style={styles.categoryCard}>
               <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
               <View style={styles.categoryOverlay}>
-                <Text style={styles.categoryName}>{category.name}</Text>
+                <Text style={styles.categoryName}>{category.name[selectedLanguage]}</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -76,9 +76,9 @@ const Categories = ({ showAll, isDarkMode }) => {
   return (
     <View>
       <View style={styles.header}>
-        <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>Kategoriler</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Tüm Kategoriler')}>
-          <Text style={[styles.seeAll, dynamicSeeAllStyle]}>Tümünü Gör</Text>
+        <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["categories"]}</Text>
+        <TouchableOpacity onPress={() => navigation.navigate(languageStore[selectedLanguage]["all_categories"])}>
+          <Text style={[styles.seeAll, dynamicSeeAllStyle]}>{languageStore[selectedLanguage]["see_all"]}</Text>
         </TouchableOpacity>
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
@@ -86,7 +86,7 @@ const Categories = ({ showAll, isDarkMode }) => {
           <TouchableOpacity key={index} style={styles.categoryCard}>
             <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
             <View style={styles.categoryOverlay}>
-              <Text style={styles.categoryName}>{category.name}</Text>
+              <Text style={styles.categoryName}>{category.name[selectedLanguage]}</Text>
             </View>
           </TouchableOpacity>
         ))}
@@ -120,14 +120,14 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     width: 120,
-    height: 180,
+    height: 160,
     marginRight: 10,
     marginBottom: 10,
     borderRadius: 10,
     overflow: 'hidden',
     elevation: 2,
     backgroundColor: '#E3E3E3',
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: '#6B2346',
     shadowColor: '#6B2346',
     shadowOffset: { width: 0, height: 4 },
@@ -136,21 +136,23 @@ const styles = StyleSheet.create({
   },
   categoryImage: {
     width: '100%',
-    height: '75%',
+    height: '85%',
     resizeMode: 'cover',
   },
   categoryOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    paddingBottom: 10,
   },
   categoryName: {
     color: '#2A2A2A',
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 10,
+    borderRadius: 50,
+    backgroundColor: "#E3E3E3",
+    paddingHorizontal: 5,
   },
   grid: {
     flexDirection: 'row',

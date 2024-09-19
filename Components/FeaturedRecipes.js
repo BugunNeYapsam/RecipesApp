@@ -5,7 +5,7 @@ import { useAppContext } from '../Context/AppContext';
 
 const FeaturedRecipes = ({ showAll, isDarkMode }) => {
     const navigation = useNavigation();
-    const { featuredRecipes } = useAppContext();
+    const { featuredRecipes, selectedLanguage, languageStore } = useAppContext();
 
     const dynamicPageTitleStyle = {
       color: isDarkMode ? '#c781a4' : '#444'
@@ -33,9 +33,9 @@ const FeaturedRecipes = ({ showAll, isDarkMode }) => {
     return (
       <View>
         <View style={styles.header}>
-          <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>Öne Çıkan Tarifler</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Tüm Öne Çıkan Tarifler')}>
-            <Text style={[styles.seeAll, dynamicSeeAllStyle]}>Tümünü Gör</Text>
+          <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["featured_recipes"]}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate(languageStore[selectedLanguage]["all_featured_recipes"])}>
+            <Text style={[styles.seeAll, dynamicSeeAllStyle]}>{languageStore[selectedLanguage]["see_all"]}</Text>
           </TouchableOpacity>
         </View>
         <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
@@ -87,7 +87,7 @@ const FeaturedRecipes = ({ showAll, isDarkMode }) => {
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.2,
       shadowRadius: 2,
-      borderWidth: 1,
+      borderWidth: 0.5,
       borderColor: '#6B2346',
       shadowColor: '#6B2346',
       shadowOffset: { width: 0, height: 4 },

@@ -4,7 +4,7 @@ import { useAppContext } from '../Context/AppContext';
 import RecipeCard from '../Components/RecipeCard';
 
 export default function Saved({ updateRecipeRating }) {
-  const { savedRecipes, removeRecipe, isDarkMode } = useAppContext();
+  const { savedRecipes, removeRecipe, isDarkMode, selectedLanguage, languageStore } = useAppContext();
   const [expandedCardIndex, setExpandedCardIndex] = useState(null);
 
   const dynamicSafeAreaStyle = {
@@ -25,7 +25,7 @@ export default function Saved({ updateRecipeRating }) {
 
   return (
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
-      <Text style={[styles.text, dynamicPageTitleStyle]}>KAYDEDİLENLER</Text>
+      <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["saveds"].toUpperCase()}</Text>
       <View style={styles.container}>
         <ScrollView>
           {savedRecipes.length > 0 ? (
@@ -48,7 +48,7 @@ export default function Saved({ updateRecipeRating }) {
               </View>
             ))
           ) : (
-            <Text style={styles.noRecipesText}>No recipes saved yet.</Text>
+            <Text style={styles.noRecipesText}>{languageStore[selectedLanguage]["no_saved_recipes"]}</Text>
           )}
         </ScrollView>
       </View>

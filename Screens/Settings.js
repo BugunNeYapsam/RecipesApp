@@ -23,14 +23,12 @@ import linkedinIcon from '../assets/linkedin.png';
 import { useAppContext } from '../Context/AppContext';
 
 export default function Settings() {
-  const { isDarkMode, setIsDarkMode } = useAppContext();
+  const { isDarkMode, setIsDarkMode, selectedLanguage, setSelectedLanguage, languageStore } = useAppContext();
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [isLanguageOptionsExpanded, setIsLanguageOptionsExpanded] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('TR');
 
-  // Toggle dark mode and save preference in AsyncStorage
   const toggleDarkMode = async () => {
     const newValue = !isDarkMode;
     setIsDarkMode(newValue);
@@ -38,6 +36,15 @@ export default function Settings() {
       await AsyncStorage.setItem('darkMode', JSON.stringify(newValue));
     } catch (e) {
       console.error('Failed to save dark mode preference.', e);
+    }
+  };
+
+  const toggleLanguage = async (selected_language) => {
+    setSelectedLanguage(selected_language);
+    try {
+      await AsyncStorage.setItem('appLanguage', JSON.stringify(selected_language));
+    } catch (e) {
+      console.error('Failed to save language preference.', e);
     }
   };
 
@@ -94,7 +101,7 @@ export default function Settings() {
 
   return (
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
-      <Text style={[styles.text, dynamicPageTitleStyle]}>AYARLAR</Text>
+      <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["settings"].toUpperCase()}</Text>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={[styles.section, { paddingTop: 11 }]} />
         <View style={styles.section}>
@@ -103,7 +110,7 @@ export default function Settings() {
               <TouchableOpacity
                 onPress={() => setIsExpanded(!isExpanded)}
                 style={styles.row}>
-                <Text style={styles.rowLabel}>İletişim</Text>
+                <Text style={styles.rowLabel}>{languageStore[selectedLanguage]["contact"]}</Text>
                 <View style={styles.rowSpacer} />
                 <FeatherIcon
                   color={isDarkMode ? "#222222" : "#BCBCBC"}
@@ -124,7 +131,7 @@ export default function Settings() {
                   // handle onPress
                 }}
                 style={styles.row}>
-                <Text style={styles.rowLabel}>Play Store - Derecelendirme</Text>
+                <Text style={styles.rowLabel}>{languageStore[selectedLanguage]["rate_us"]}</Text>
                 <View style={styles.rowSpacer} />
                 <FeatherIcon
                   color={isDarkMode ? "#222222" : "#BCBCBC"}
@@ -138,7 +145,7 @@ export default function Settings() {
               <TouchableOpacity
                 onPress={() => setModalVisible(true)}
                 style={styles.row}>
-                <Text style={styles.rowLabel}>Paylaş</Text>
+                <Text style={styles.rowLabel}>{languageStore[selectedLanguage]["share"]}</Text>
                 <View style={styles.rowSpacer} />
                 <FeatherIcon
                   color={isDarkMode ? "#222222" : "#BCBCBC"}
@@ -156,7 +163,7 @@ export default function Settings() {
               <TouchableOpacity
                 onPress={() => setIsLanguageOptionsExpanded(!isLanguageOptionsExpanded)}
                 style={styles.row}>
-                <Text style={styles.rowLabel}>Dil Seçenekleri</Text>
+                <Text style={styles.rowLabel}>{languageStore[selectedLanguage]["languages"]}</Text>
                 <View style={styles.rowSpacer} />
                 <FeatherIcon
                   color={isDarkMode ? "#222222" : "#BCBCBC"}
@@ -169,9 +176,9 @@ export default function Settings() {
                   <TouchableOpacity
                     style={[
                       styles.languageOption,
-                      selectedLanguage === 'TR' ? styles.selected : null,
+                      selectedLanguage === 'tr' ? styles.selected : null,
                     ]}
-                    onPress={() => setSelectedLanguage('TR')}
+                    onPress={() => toggleLanguage('tr')}
                   >
                     <Image
                       source={require('../assets/flags/tr_flag.png')}
@@ -180,7 +187,7 @@ export default function Settings() {
                     <Text
                       style={[
                         styles.languageText,
-                        selectedLanguage === 'TR' ? styles.selectedText : null,
+                        selectedLanguage === 'tr' ? styles.selectedText : null,
                       ]}
                     >
                       Türkçe
@@ -189,9 +196,9 @@ export default function Settings() {
                   <TouchableOpacity
                     style={[
                       styles.languageOption,
-                      selectedLanguage === 'EN' ? styles.selected : null,
+                      selectedLanguage === 'en' ? styles.selected : null,
                     ]}
-                    onPress={() => setSelectedLanguage('EN')}
+                    onPress={() => toggleLanguage('en')}
                   >
                     <Image
                       source={require('../assets/flags/en_flag.png')}
@@ -200,7 +207,7 @@ export default function Settings() {
                     <Text
                       style={[
                         styles.languageText,
-                        selectedLanguage === 'EN' ? styles.selectedText : null,
+                        selectedLanguage === 'en' ? styles.selectedText : null,
                       ]}
                     >
                       English
@@ -212,12 +219,12 @@ export default function Settings() {
 
             <View style={[styles.rowWrapper, dynamicRowWrapperStyle, styles.rowLast]}>
               <View style={styles.row}>
-                <Text style={styles.rowLabel}>Tema</Text>
+                <Text style={styles.rowLabel}>{languageStore[selectedLanguage]["theme"]}</Text>
                 <View style={styles.rowSpacer} />
-                <Text style={styles.rowLabel}>{isDarkMode ? "Koyu Mod" : "Açık Mod"}</Text>
+                <Text style={styles.rowLabel}>{isDarkMode ? languageStore[selectedLanguage]["dark_theme"] : languageStore[selectedLanguage]["light_theme"]}</Text>
                 <Switch
                   value={isDarkMode}
-                  onValueChange={toggleDarkMode} // Call toggleDarkMode here
+                  onValueChange={toggleDarkMode}
                   trackColor={{ false: '#767577', true: '#7E405E' }}
                   thumbColor={isDarkMode ? '#6B2346' : '#f4f3f4'}
                 />
@@ -262,7 +269,7 @@ export default function Settings() {
             <TouchableOpacity
               onPress={() => setModalVisible(false)}
               style={styles.closeButton}>
-              <Text style={styles.modalButtonText}>Kapat</Text>
+              <Text style={styles.modalButtonText}>{languageStore[selectedLanguage]["close"]}</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -7,7 +7,6 @@ import Explore from "./Screens/Explore";
 import SearchFood from "./Screens/SearchFood";
 import Categories from "./Components/Categories";
 import FeaturedRecipes from "./Components/FeaturedRecipes";
-import VideoRecipes from "./Components/VideoRecipes";
 import FoodsOfCountries from './Components/FoodsOfCountries';
 import Saveds from './Screens/Saveds';
 import { db } from './Config/FirebaseConfig';
@@ -20,20 +19,24 @@ import Settings from './Screens/Settings';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const ExploreStack = () => {
+const ExploreStack = ({ retrieveAllData }) => {
+  const { selectedLanguage, languageStore } = useAppContext();
+
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Bugün Ne Yapsam?" component={Explore} options={{ headerShown: false }} />
-      <Stack.Screen name="Tüm Kategoriler">
+      <Stack.Screen 
+        name="Bugün Ne Yapsam?" 
+        options={{ headerShown: false }}
+      >
+        {() => <Explore retrieveAllData={retrieveAllData} />}
+      </Stack.Screen>
+      <Stack.Screen name={languageStore[selectedLanguage]["all_categories"]}>
         {() => (<Categories showAll />)}
       </Stack.Screen>
-      <Stack.Screen name="Tüm Öne Çıkan Tarifler">
+      <Stack.Screen name={languageStore[selectedLanguage]["all_featured_recipes"]}>
         {() => (<FeaturedRecipes showAll />)}
       </Stack.Screen>
-      <Stack.Screen name="Tüm Video Tarifler">
-        {() => (<VideoRecipes showAll />)}
-      </Stack.Screen>
-      <Stack.Screen name="Tüm Ülkeler">
+      <Stack.Screen name={languageStore[selectedLanguage]["all_foods_of_countries"]}>
         {() => (<FoodsOfCountries showAll />)}
       </Stack.Screen>
     </Stack.Navigator>
@@ -41,20 +44,33 @@ const ExploreStack = () => {
 };
 
 export default function Main() {
-  const { setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, updateAllRecipeRatings, setIsDarkMode } = useAppContext();
+  const { setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, updateAllRecipeRatings, setIsDarkMode, setSelectedLanguage, selectedLanguage, languageStore } = useAppContext();
+
+  const getDarkModePreference = async () => {
+    try {
+      const value = await AsyncStorage.getItem('darkMode');
+      if (value !== null) {
+        setIsDarkMode(JSON.parse(value));
+      }
+    } catch (e) {
+      console.error('Failed to fetch dark mode preference.', e);
+    }
+  };
+  
+  const getLanguagePreference = async () => {
+    try {
+      const value = await AsyncStorage.getItem('appLanguage');
+      if (value !== null) {
+        setSelectedLanguage(JSON.parse(value));
+      }
+    } catch (e) {
+      console.error('Failed to fetch language preference.', e);
+    }
+  };
 
   React.useEffect(() => {
-    const getDarkModePreference = async () => {
-      try {
-        const value = await AsyncStorage.getItem('darkMode');
-        if (value !== null) {
-          setIsDarkMode(JSON.parse(value));
-        }
-      } catch (e) {
-        console.error('Failed to fetch dark mode preference.', e);
-      }
-    };
     getDarkModePreference();
+    getLanguagePreference();
   }, []);
 
   const getData = async () => {
@@ -148,11 +164,14 @@ export default function Main() {
     }
   };
   
-
-  React.useEffect(() => {
+  const retrieveAllData = () => {
     getData();
     getCategories();
     getCountries();
+  }
+
+  React.useEffect(() => {
+    retrieveAllData();
   }, []);
 
   return (
@@ -164,7 +183,7 @@ export default function Main() {
             borderTopWidth: 0,
             elevation: 0,
             height: 65,
-            margin: 15, 
+            margin: 15,
             borderRadius: 15,
             position: 'absolute'
           },
@@ -175,8 +194,7 @@ export default function Main() {
         }}
       >
         <Tab.Screen
-          name="Keşfet"
-          component={ExploreStack}
+          name="Explore"
           options={{
             headerShown: false,
             tabBarItemStyle: { marginTop: 3 },
@@ -188,20 +206,22 @@ export default function Main() {
               />
             ),
             tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>Keşfet</Text>
+              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["explore"]}</Text>
             ),
           }}
-        />
+        >
+          {() => <ExploreStack retrieveAllData={retrieveAllData} />}
+        </Tab.Screen>
         <Tab.Screen
           name="Ara"
           options={{
             headerShown: false,
-            tabBarItemStyle: { marginTop: 3},
+            tabBarItemStyle: { marginTop: 3 },
             tabBarIcon: ({ focused }) => (
                 <MaterialIcons name="tune" color={focused ? "#ffffff" : "#ffdddd"} size={27} />
             ),
             tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>Filtre</Text>
+              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["filter"]}</Text>
             ),
           }}
         >
@@ -220,7 +240,7 @@ export default function Main() {
               />
             ),
             tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>Kaydedilenler</Text>
+              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["saveds"]}</Text>
             ),
           }}
         >
@@ -240,7 +260,7 @@ export default function Main() {
               />
             ),
             tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>Ayarlar</Text>
+              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["settings"]}</Text>
             ),
           }}
         />

@@ -1,20 +1,32 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Platform, StatusBar, SafeAreaView, View, Image } from 'react-native';
+import { ScrollView, StyleSheet, Platform, StatusBar, SafeAreaView, View, Image, RefreshControl } from 'react-native';
 import Categories from '../Components/Categories';
 import FeaturedRecipes from '../Components/FeaturedRecipes';
-import VideoRecipes from '../Components/VideoRecipes';
 import FoodsOfCountries from '../Components/FoodsOfCountries';
 import headerImage from '../assets/headerBNY.png';
 import { useAppContext } from '../Context/AppContext';
 
-const Explore = () => {
+const Explore = (props) => {
   const { isDarkMode } = useAppContext();
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    Promise.all([props.retrieveAllData()])
+      .then(() => setRefreshing(false))
+      .catch(() => setRefreshing(false));
+  }, []);
 
   const dynamicSafeAreaStyle = {
     backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
   };
   
   return (
+    <ScrollView 
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
       <View style={{ marginTop: 5, marginBottom: -5, paddingBottom: 10 }}>
         <Image source={headerImage} style={styles.headerImage} />
@@ -22,10 +34,10 @@ const Explore = () => {
       <ScrollView style={styles.container}>
         <Categories isDarkMode={isDarkMode} />
         <FeaturedRecipes isDarkMode={isDarkMode} />
-        <VideoRecipes isDarkMode={isDarkMode} />
         <FoodsOfCountries isDarkMode={isDarkMode} />
       </ScrollView>
     </SafeAreaView>
+    </ScrollView>
   );
 };
 

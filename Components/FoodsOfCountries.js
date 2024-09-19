@@ -5,7 +5,7 @@ import { useAppContext } from '../Context/AppContext';
 
 const FoodsOfCountries = ({ showAll, isDarkMode }) => {
   const navigation = useNavigation();
-  const { allCountries } = useAppContext();
+  const { allCountries, selectedLanguage, languageStore } = useAppContext();
 
   const dynamicPageTitleStyle = {
     color: isDarkMode ? '#c781a4' : '#444'
@@ -35,9 +35,9 @@ const FoodsOfCountries = ({ showAll, isDarkMode }) => {
   return (
     <View>
       <View style={styles.header}>
-        <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>Ülkelere Ait Yemekler</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Tüm Ülkeler')}>
-          <Text style={[styles.seeAll, dynamicSeeAllStyle]}>Tümünü Gör</Text>
+        <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["foods_of_countries"]}</Text>
+        <TouchableOpacity onPress={() => navigation.navigate(languageStore[selectedLanguage]["all_foods_of_countries"])}>
+          <Text style={[styles.seeAll, dynamicSeeAllStyle]}>{languageStore[selectedLanguage]["see_all"]}</Text>
         </TouchableOpacity>
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: '#6B2346',
     shadowColor: '#6B2346',
     shadowOffset: { width: 0, height: 4 },

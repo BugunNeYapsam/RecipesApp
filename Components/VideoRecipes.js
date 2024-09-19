@@ -2,6 +2,7 @@ import React from 'react';
 import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useAppContext } from '../Context/AppContext';
 
 const videoRecipes = [
   { name: 'How to Make Spaghetti Carbonara', image: "" },
@@ -11,6 +12,7 @@ const videoRecipes = [
 
 const VideoRecipes = ({ showAll, isDarkMode }) => {
   const navigation = useNavigation();
+  const { selectedLanguage, languageStore } = useAppContext();
 
   const dynamicPageTitleStyle = {
     color: isDarkMode ? '#c781a4' : '#444'
@@ -41,9 +43,9 @@ const VideoRecipes = ({ showAll, isDarkMode }) => {
   return (
     <View>
       <View style={styles.header}>
-        <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>Video Tarifler</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Tüm Video Tarifler')}>
-          <Text style={[styles.seeAll, dynamicSeeAllStyle]}>Tümünü Gör</Text>
+        <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["video_recipes"]}</Text>
+        <TouchableOpacity onPress={() => navigation.navigate(languageStore[selectedLanguage]["all_video_recipes"])}>
+          <Text style={[styles.seeAll, dynamicSeeAllStyle]}>{languageStore[selectedLanguage]["see_all"]}</Text>
         </TouchableOpacity>
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
@@ -99,7 +101,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: '#6B2346',
     shadowColor: '#6B2346',
     shadowOffset: { width: 0, height: 4 },
