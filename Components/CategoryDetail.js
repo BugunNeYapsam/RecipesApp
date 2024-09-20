@@ -38,7 +38,7 @@ const CategoryDetail = ({ updateRecipeRating }) => {
     return recipes;
   };
 
-  const filteredRecipes = allRecipeData?.filter(d => d.category == selectedCategory.name["en"]).filter(r => 
+  const filteredRecipes = allRecipeData?.filter(d => d.category == selectedCategory?.name["en"]).filter(r => 
     selectedChips.length > 0 
       ? selectedChips.some(chip => r.isim.toLowerCase().includes(chip.toLowerCase()))
       : r.isim.toLowerCase().includes(searchTerm.toLowerCase())
@@ -77,69 +77,69 @@ const CategoryDetail = ({ updateRecipeRating }) => {
 
   return (
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
-        <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#c781a4' : '#7f405f'} />
-            </TouchableOpacity>
-            <Text style={[styles.text, dynamicPageTitleStyle]}>{selectedCategory?.name[selectedLanguage]?.toUpperCase() || '' }</Text>
-        </View>
-        <View style={styles.container}>
-            <SearchBar
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-                onSortPress={handleSort}
-                sortOrder={sortOrder}
-                onSuggestionSelect={handleSuggestionSelect}
-                selectedChips={selectedChips}
-                onChipRemove={handleChipRemove}
-                isDarkMode={isDarkMode}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#c781a4' : '#7f405f'} />
+        </TouchableOpacity>
+        <Text style={[styles.text, dynamicPageTitleStyle]}>{selectedCategory?.name[selectedLanguage]?.toUpperCase() || '' }</Text>
+      </View>
+      <View style={styles.container}>
+        <SearchBar
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          onSortPress={handleSort}
+          sortOrder={sortOrder}
+          onSuggestionSelect={handleSuggestionSelect}
+          selectedChips={selectedChips}
+          onChipRemove={handleChipRemove}
+          isDarkMode={isDarkMode}
+        />
+        <ScrollView>
+          {sortedRecipes?.map((r, index) => (
+            <RecipeCard
+              key={index}
+              recipeID={r.id}
+              imgUrl={r.imageUrl}
+              foodName={r.isim}
+              ingredients={r.malzemeler}
+              recipeSteps={r.tarif}
+              expanded={expandedCardIndex === index}
+              toggleExpand={() => toggleExpand(index)}
+              onSave={(isSaved) => handleSave(r, isSaved)}
+              saved={savedRecipes.some(savedRecipe => savedRecipe.isim === r.isim)}
+              rating={r.rating || 0} 
+              updateRecipeRating={updateRecipeRating}
             />
-            <ScrollView>
-                {sortedRecipes?.map((r, index) => (
-                    <RecipeCard
-                        key={index}
-                        recipeID={r.id}
-                        imgUrl={r.imageUrl}
-                        foodName={r.isim}
-                        ingredients={r.malzemeler}
-                        recipeSteps={r.tarif}
-                        expanded={expandedCardIndex === index}
-                        toggleExpand={() => toggleExpand(index)}
-                        onSave={(isSaved) => handleSave(r, isSaved)}
-                        saved={savedRecipes.some(savedRecipe => savedRecipe.isim === r.isim)}
-                        rating={r.rating || 0} 
-                        updateRecipeRating={updateRecipeRating}
-                    />
-                ))}
-            </ScrollView>
-        </View>
+          ))}
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-    safeArea: {
-      flex: 1,
-      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-    },
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: 20,
-      marginBottom: 10,
-      marginTop: 30,
-    },
-    container: {
-      flex: 1,
-      paddingHorizontal: 16,
-      paddingBottom: "20%",
-      marginTop: 10,
-    },
-    text: {
-      fontSize: 16,
-      fontWeight: 'bold',
-      marginLeft: 10,
-    },
+  safeArea: {
+    flex: 1,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 10,
+    marginTop: 30,
+  },
+  container: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingBottom: "20%",
+    marginTop: 10,
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 10,
+  },
 });
 
 export default CategoryDetail;

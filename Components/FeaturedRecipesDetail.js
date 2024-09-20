@@ -12,7 +12,7 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFailure, setShowFailure] = useState(false);
   const [isRated, setIsRated] = useState(false);
-  const [saved, setSaved] = useState(savedRecipes.includes(selectedFeaturedRecipe.isim));
+  const [saved, setSaved] = useState(savedRecipes.includes(selectedFeaturedRecipe?.isim));
   const successOpacity = useRef(new Animated.Value(0)).current;
   const failureOpacity = useRef(new Animated.Value(0)).current;
   
@@ -20,12 +20,12 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
 
   useEffect(() => {
     const fetchRatedStatus = async () => {
-      const rated = await checkIfRated(selectedFeaturedRecipe.id);
+      const rated = await checkIfRated(selectedFeaturedRecipe?.id);
       setIsRated(rated);
     };
 
     fetchRatedStatus();
-  }, [selectedFeaturedRecipe.id]);
+  }, [selectedFeaturedRecipe?.id]);
 
   useEffect(() => {
     return () => {
@@ -43,7 +43,7 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
 
   const saveRatingToDevice = async (rating) => {
     try {
-      await AsyncStorage.setItem(`rating_${selectedFeaturedRecipe.isim}`, JSON.stringify(rating));
+      await AsyncStorage.setItem(`rating_${selectedFeaturedRecipe?.isim}`, JSON.stringify(rating));
     } catch (error) {
       console.error('Failed to save rating:', error);
       throw error;
@@ -212,11 +212,11 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
           style={styles.gradient}
         >
           <View style={styles.header}>
-            <Text style={styles.title}>{selectedFeaturedRecipe.isim}</Text>
+            <Text style={styles.title}>{selectedFeaturedRecipe?.isim}</Text>
           </View>
 
           <>
-            <Image source={{ uri: selectedFeaturedRecipe.imageUrl }} style={styles.imageExpanded} resizeMode="cover" />
+            <Image source={{ uri: selectedFeaturedRecipe?.imageUrl }} style={styles.imageExpanded} resizeMode="cover" />
             <View style={styles.contentContainer}>
               <Text style={styles.subtitle}>{languageStore[selectedLanguage]["ingredients"]}:</Text>
               <View style={styles.ingredientsList}>
@@ -239,9 +239,9 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
 
             <View style={styles.cardFooter}>
               <View style={styles.ratingContainer}>
-                <Text style={styles.ratingText}>{recipeRatings[selectedFeaturedRecipe.id]?.toFixed(1)}</Text>
+                <Text style={styles.ratingText}>{recipeRatings[selectedFeaturedRecipe?.id]?.toFixed(1)}</Text>
                 <View style={styles.starsContainer}>
-                  {renderStars(selectedFeaturedRecipe.id)}
+                  {renderStars(selectedFeaturedRecipe?.id)}
                 </View>
 
                 {loading ? (
