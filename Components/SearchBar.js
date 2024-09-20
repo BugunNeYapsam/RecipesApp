@@ -3,6 +3,7 @@ import { View, TextInput, StyleSheet, TouchableOpacity, Text, ScrollView } from 
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Path } from 'react-native-svg';
+import { useAppContext } from '../Context/AppContext';
 
 const suggestionsList = [
   "Spaghetti", "Chicken Curry", "Beef Stew", "Tacos", "Salad", "Pancakes", "Sushi",
@@ -11,6 +12,7 @@ const suggestionsList = [
 ];
 
 const SearchBar = ({ isDarkMode, searchTerm, setSearchTerm, onSortPress, sortOrder, onSuggestionSelect, selectedChips, onChipRemove }) => {
+  const { languageStore, selectedLanguage } = useAppContext();
   const [isFocused, setIsFocused] = useState(false);
   const scrollViewRef = useRef(null);
   const [scrollX, setScrollX] = useState(0);
@@ -74,7 +76,7 @@ const SearchBar = ({ isDarkMode, searchTerm, setSearchTerm, onSortPress, sortOrd
         <MaterialIcons name="search" size={24} color={isDarkMode ? "#222" : "#666"} style={styles.icon} />
         <TextInput
           style={styles.input}
-          placeholder="Search recipes..."
+          placeholder={languageStore[selectedLanguage]["search_recipes"]}
           placeholderTextColor={isDarkMode ? "#222" : "#aaa"}
           value={searchTerm}
           onChangeText={setSearchTerm}

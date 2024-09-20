@@ -30,7 +30,8 @@
         "close": "Kapat",
         "no_saved_recipes": "Henüz kaydedilmiş bir yemek yok...",
         "ingredients": "Malzemeler",
-        "recipe": "Tarif"
+        "recipe": "Tarif",
+        "back": "Geri"
     },
     "en": {
         "explore": "Explore",
@@ -63,7 +64,7 @@
         "close": "Close",
         "no_saved_recipes": "No recipes saved yet...",
         "ingredients": "Ingredients",
-        "recipe": "Recipe"
+        "recipe": "Recipe",
+        "back": "Back"
     }
-
 }

@@ -8,6 +8,7 @@ const Categories = ({ showAll, isDarkMode }) => {
   const { allCategoriesData, selectedLanguage, languageStore, setSelectedCategory } = useAppContext();
   const [loading, setLoading] = useState(true);
   const shimmerValue = useRef(new Animated.Value(0)).current;
+  const [categoryToNavigate, setCategoryToNavigate] = useState(null);
   
   const dynamicPageTitleStyle = {
     color: isDarkMode ? '#c781a4' : '#444'
@@ -17,6 +18,13 @@ const Categories = ({ showAll, isDarkMode }) => {
     color: isDarkMode ? '#5c86ff' : '#0445ff'
   };
   
+  useEffect(() => {
+    if (categoryToNavigate) {
+      navigation.navigate(categoryToNavigate?.name[selectedLanguage]);
+      setCategoryToNavigate(null);
+    }
+  }, [categoryToNavigate, selectedLanguage, navigation]);
+
   useEffect(() => {
     if (allCategoriesData && allCategoriesData.length > 0) {
       setLoading(false);
@@ -46,7 +54,7 @@ const Categories = ({ showAll, isDarkMode }) => {
 
   const handleOnPressCategory = (category_object) => {
     setSelectedCategory(category_object);
-    navigation.navigate(category_object?.name[selectedLanguage]);
+    setCategoryToNavigate(category_object);
   }
 
   const renderPlaceholders = () => {
@@ -66,7 +74,7 @@ const Categories = ({ showAll, isDarkMode }) => {
       <ScrollView style={styles.container}>
         <View style={styles.grid}>
           {loading ? renderPlaceholders() : allCategoriesData?.map((category, index) => (
-            <TouchableOpacity key={index} style={styles.categoryCard}>
+            <TouchableOpacity key={index} style={styles.categoryCard} onPress={() => handleOnPressCategory(category)}>
               <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
               <View style={styles.categoryOverlay}>
                 <Text style={styles.categoryName}>{category.name[selectedLanguage]}</Text>

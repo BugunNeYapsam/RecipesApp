@@ -17,7 +17,8 @@ export const AppProvider = ({ children }) => {
   const [selectedLanguage, setSelectedLanguage] = useState('tr');
   const [languageStore, setLanguageStore] = useState(LanguagesFile);
   const [selectedCategory, setSelectedCategory] = useState(undefined);
-
+  const [selectedFeaturedRecipe, setSelectedFeaturedRecipe] = useState(undefined);
+  
   useEffect(() => {
     const loadSavedRecipes = async () => {
       try {
@@ -94,7 +95,9 @@ export const AppProvider = ({ children }) => {
       setSelectedLanguage,
       languageStore,
       selectedCategory,
-      setSelectedCategory
+      setSelectedCategory,
+      selectedFeaturedRecipe,
+      setSelectedFeaturedRecipe
     }}>
       {children}
     </AppContext.Provider>

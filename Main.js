@@ -16,12 +16,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Settings from './Screens/Settings';
 import CategoryDetail from './Components/CategoryDetail';
+import FeaturedRecipesDetail from './Components/FeaturedRecipesDetail';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const ExploreStack = ({ retrieveAllData }) => {
-  const { selectedLanguage, languageStore, selectedCategory } = useAppContext();
+const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
+  const { selectedLanguage, languageStore, selectedCategory, selectedFeaturedRecipe } = useAppContext();
 
   return (
     <Stack.Navigator>
@@ -31,7 +32,18 @@ const ExploreStack = ({ retrieveAllData }) => {
       <Stack.Screen name={languageStore[selectedLanguage]["all_categories"]}>
         {() => (<Categories showAll />)}
       </Stack.Screen>
-      <Stack.Screen name={selectedCategory?.name[selectedLanguage] || 'Back' } component={CategoryDetail} options={{ headerShown: false }} />
+      {
+        selectedCategory &&
+        <Stack.Screen name={selectedCategory?.name[selectedLanguage]} options={{ headerShown: false }}>
+          {() => (<CategoryDetail updateRecipeRating={updateRecipeRating} />)}
+        </Stack.Screen>
+      }
+      {
+        selectedFeaturedRecipe && selectedFeaturedRecipe.isim &&
+        <Stack.Screen name={selectedFeaturedRecipe.isim} options={{ headerShown: false }}>
+          {() => (<FeaturedRecipesDetail selectedRecipe={selectedFeaturedRecipe} updateRecipeRating={updateRecipeRating} />)}
+        </Stack.Screen>
+      }
       <Stack.Screen name={languageStore[selectedLanguage]["all_featured_recipes"]}>
         {() => (<FeaturedRecipes showAll />)}
       </Stack.Screen>
@@ -209,7 +221,7 @@ export default function Main() {
             ),
           }}
         >
-          {() => <ExploreStack retrieveAllData={retrieveAllData} />}
+          {() => <ExploreStack retrieveAllData={retrieveAllData} updateRecipeRating={updateRecipeRating} />}
         </Tab.Screen>
         <Tab.Screen
           name="Ara"

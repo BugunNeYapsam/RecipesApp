@@ -5,7 +5,15 @@ import { useAppContext } from '../Context/AppContext';
 
 const FeaturedRecipes = ({ showAll, isDarkMode }) => {
     const navigation = useNavigation();
-    const { featuredRecipes, selectedLanguage, languageStore } = useAppContext();
+    const { featuredRecipes, selectedLanguage, languageStore, selectedFeaturedRecipe, setSelectedFeaturedRecipe } = useAppContext();
+    const [featuredRecipeToNavigate, setFeaturedRecipeToNavigate] = React.useState(null);
+
+    React.useEffect(() => {
+      if (selectedFeaturedRecipe) {
+        navigation.navigate(selectedFeaturedRecipe.isim);
+        setFeaturedRecipeToNavigate(null);
+      }
+    }, [featuredRecipeToNavigate, selectedLanguage, navigation]);
 
     const dynamicPageTitleStyle = {
       color: isDarkMode ? '#c781a4' : '#444'
@@ -14,13 +22,18 @@ const FeaturedRecipes = ({ showAll, isDarkMode }) => {
     const dynamicSeeAllStyle = {
       color: isDarkMode ? '#5c86ff' : '#0445ff'
     };
-    
+
+    const handleOnPressFeaturedRecipe = (featured_recipe_object) => {
+      setSelectedFeaturedRecipe(featured_recipe_object);
+      setFeaturedRecipeToNavigate(featured_recipe_object);
+    }
+
     if (showAll) {
       return (
         <ScrollView style={styles.container}>
           <View style={styles.grid}>
             {featuredRecipes?.map((recipe, index) => (
-              <TouchableOpacity key={index} style={styles.recipeCard}>
+              <TouchableOpacity key={index} style={styles.recipeCard} onPress={() => handleOnPressFeaturedRecipe(recipe)}>
                 <Image source={{ uri: recipe.imageUrl }} style={styles.recipeImage} />
                 <Text style={styles.recipeName}>{recipe.isim}</Text>
               </TouchableOpacity>
@@ -40,7 +53,7 @@ const FeaturedRecipes = ({ showAll, isDarkMode }) => {
         </View>
         <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
           {featuredRecipes?.map((recipe, index) => (
-            <TouchableOpacity key={index} style={styles.featuredCard}>
+            <TouchableOpacity key={index} style={styles.featuredCard} onPress={() => handleOnPressFeaturedRecipe(recipe)}>
               <Image source={{ uri: recipe.imageUrl }} style={styles.recipeImage} />
               <View style={styles.featuredOverlay}>
                 <Text style={styles.featuredName}>{recipe.isim}</Text>

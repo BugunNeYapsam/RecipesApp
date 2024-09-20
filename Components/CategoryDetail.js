@@ -4,16 +4,16 @@ import RecipeCard from '../Components/RecipeCard';
 import SearchBar from '../Components/SearchBar';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
-import { Ionicons } from '@expo/vector-icons'; // Importing an icon for the back button
+import { Ionicons } from '@expo/vector-icons';
 
 const CategoryDetail = ({ updateRecipeRating }) => {
-  const { isDarkMode, selectedLanguage, languageStore, allRecipeData, savedRecipes, addRecipe, removeRecipe, selectedCategory, setSelectedCategory } = useAppContext();
+  const { isDarkMode, selectedLanguage, allRecipeData, savedRecipes, addRecipe, removeRecipe, selectedCategory, setSelectedCategory } = useAppContext();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [expandedCardIndex, setExpandedCardIndex] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState('none');
   const [selectedChips, setSelectedChips] = React.useState([]);
   
-  const navigation = useNavigation(); // Getting navigation instance
+  const navigation = useNavigation();
   
   const dynamicSafeAreaStyle = {
     backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
@@ -22,6 +22,12 @@ const CategoryDetail = ({ updateRecipeRating }) => {
   const dynamicPageTitleStyle = {
     color: isDarkMode ? '#c781a4' : '#7f405f'
   };
+
+  React.useEffect(() => {
+    return () => {
+      setSelectedCategory(undefined);
+    }
+  }, []);
 
   const sortRecipes = (recipes, order) => {
     if (order === 'asc') {
@@ -113,27 +119,27 @@ const CategoryDetail = ({ updateRecipeRating }) => {
 
 const styles = StyleSheet.create({
     safeArea: {
-        flex: 1,
-        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+      flex: 1,
+      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     },
     header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        marginBottom: 10,
-        marginTop: 30,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      marginBottom: 10,
+      marginTop: 30,
     },
     container: {
-        flex: 1,
-        paddingHorizontal: 16,
-        paddingBottom: "20%",
-        marginTop: 10,
+      flex: 1,
+      paddingHorizontal: 16,
+      paddingBottom: "20%",
+      marginTop: 10,
     },
     text: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginLeft: 10,
-      },
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginLeft: 10,
+    },
 });
 
 export default CategoryDetail;
