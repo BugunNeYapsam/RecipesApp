@@ -16,13 +16,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Settings from './Screens/Settings';
 import CategoryDetail from './Components/CategoryDetail';
+import FoodsOfCountriesDetail from './Components/FoodsOfCountriesDetail';
 import FeaturedRecipesDetail from './Components/FeaturedRecipesDetail';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
-  const { selectedLanguage, languageStore, selectedCategory, selectedFeaturedRecipe } = useAppContext();
+  const { selectedLanguage, languageStore, selectedCategory, selectedFeaturedRecipe, selectedCountry } = useAppContext();
 
   return (
     <Stack.Navigator>
@@ -42,6 +43,12 @@ const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
         selectedFeaturedRecipe && selectedFeaturedRecipe.isim &&
         <Stack.Screen name={selectedFeaturedRecipe.isim} options={{ headerShown: false }}>
           {() => (<FeaturedRecipesDetail selectedRecipe={selectedFeaturedRecipe} updateRecipeRating={updateRecipeRating} />)}
+        </Stack.Screen>
+      }
+      {
+        selectedCountry &&
+        <Stack.Screen name={languageStore[selectedLanguage][selectedCountry]} options={{ headerShown: false }}>
+          {() => (<FoodsOfCountriesDetail updateRecipeRating={updateRecipeRating} />)}
         </Stack.Screen>
       }
       <Stack.Screen name={languageStore[selectedLanguage]["all_featured_recipes"]}>

@@ -101,7 +101,7 @@ export default function Settings() {
 
   return (
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
-      <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["settings"].toUpperCase()}</Text>
+      <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["settings"]?.toUpperCase()}</Text>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={[styles.section, { paddingTop: 11 }]} />
         <View style={styles.section}>

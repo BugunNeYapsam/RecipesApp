@@ -202,7 +202,7 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#c781a4' : '#7f405f'} />
         </TouchableOpacity>
-        <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["back"].toUpperCase() || '' }</Text>
+        <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["back"]?.toUpperCase() || '' }</Text>
       </View>
       <ScrollView style={[styles.card]}>
         <LinearGradient

@@ -5,7 +5,8 @@ import { useAppContext } from '../Context/AppContext';
 
 const FoodsOfCountries = ({ showAll, isDarkMode }) => {
   const navigation = useNavigation();
-  const { allCountries, selectedLanguage, languageStore } = useAppContext();
+  const { allCountries, selectedLanguage, languageStore, setSelectedCountry } = useAppContext();
+  const [countryToNavigate, setCountryToNavigate] = React.useState(null);
 
   const dynamicPageTitleStyle = {
     color: isDarkMode ? '#c781a4' : '#444'
@@ -14,16 +15,28 @@ const FoodsOfCountries = ({ showAll, isDarkMode }) => {
   const dynamicSeeAllStyle = {
     color: isDarkMode ? '#5c86ff' : '#0445ff'
   };
+    
+  React.useEffect(() => {
+    if (countryToNavigate) {
+      navigation.navigate(languageStore[selectedLanguage][countryToNavigate]);
+      setCountryToNavigate(null);
+    }
+  }, [countryToNavigate, selectedLanguage, navigation]);
+
+  const handleOnPressCountry = (country) => {
+    setSelectedCountry(country.code);
+    setCountryToNavigate(country.code);
+  }
 
   if (showAll) {
     return (
       <ScrollView style={styles.container}>
         <View style={styles.grid}>
           {allCountries?.map((country, index) => (
-            <TouchableOpacity key={index} style={styles.countryCard}>
+            <TouchableOpacity key={index} style={styles.countryCard} onPress={() => handleOnPressCountry(country)}>
               <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
               <View style={styles.countryOverlay}>
-                <Text style={styles.countryName}>{country.name}</Text>
+                <Text style={styles.countryName}>{languageStore[selectedLanguage][country.code]}</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -42,10 +55,10 @@ const FoodsOfCountries = ({ showAll, isDarkMode }) => {
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
         {allCountries?.map((country, index) => (
-          <TouchableOpacity key={index} style={styles.countryCard}>
+          <TouchableOpacity key={index} style={styles.countryCard} onPress={() => handleOnPressCountry(country)}>
             <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
             <View style={styles.countryOverlay}>
-              <Text style={styles.countryName}>{country.name}</Text>
+              <Text style={styles.countryName}>{languageStore[selectedLanguage][country.code]}</Text>
             </View>
           </TouchableOpacity>
         ))}
