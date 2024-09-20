@@ -22,22 +22,22 @@ const Explore = (props) => {
   };
   
   return (
-    <ScrollView 
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
-      <View style={{ marginTop: 5, marginBottom: -5, paddingBottom: 10 }}>
-        <Image source={headerImage} style={styles.headerImage} />
-      </View>
-      <ScrollView style={styles.container}>
-        <Categories isDarkMode={isDarkMode} />
-        <FeaturedRecipes isDarkMode={isDarkMode} />
-        <FoodsOfCountries isDarkMode={isDarkMode} />
+      <ScrollView 
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <View style={{ marginTop: 15, paddingBottom: 10 }}>
+          <Image source={headerImage} style={styles.headerImage} />
+        </View>
+        <ScrollView style={styles.container}>
+          <Categories isDarkMode={isDarkMode} />
+          <FeaturedRecipes isDarkMode={isDarkMode} />
+          <FoodsOfCountries isDarkMode={isDarkMode} />
+        </ScrollView>
       </ScrollView>
     </SafeAreaView>
-    </ScrollView>
   );
 };
 

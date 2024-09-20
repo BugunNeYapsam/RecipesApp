@@ -78,7 +78,6 @@ const FeaturedRecipes = ({ showAll, isDarkMode }) => {
     },
     sectionTitle: {
       fontSize: 18,
-      marginBottom: 10,
       fontWeight: 'bold',
     },
     seeAll: {
@@ -96,16 +95,8 @@ const FeaturedRecipes = ({ showAll, isDarkMode }) => {
       overflow: 'hidden',
       elevation: 2,
       backgroundColor: '#fff',
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 2,
-      borderWidth: 0.5,
+      borderWidth: 1,
       borderColor: '#6B2346',
-      shadowColor: '#6B2346',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.5,
-      shadowRadius: 6
     },
     featuredImage: {
       width: '100%',
@@ -114,7 +105,7 @@ const FeaturedRecipes = ({ showAll, isDarkMode }) => {
     },
     featuredOverlay: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+      backgroundColor: 'rgba(0, 0, 0, 0.1)',
       justifyContent: 'flex-end',
       alignItems: 'center',
       paddingBottom: 10,
@@ -138,10 +129,6 @@ const FeaturedRecipes = ({ showAll, isDarkMode }) => {
       overflow: 'hidden',
       elevation: 2,
       backgroundColor: '#fff',
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 2,
     },
     recipeImage: {
       width: '100%',

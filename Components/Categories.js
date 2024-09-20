@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: 10,
+    marginTop: 10,
   },
   sectionTitle: {
     fontSize: 18,
@@ -140,12 +140,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     elevation: 2,
     backgroundColor: '#E3E3E3',
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: '#6B2346',
-    shadowColor: '#6B2346',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
   },
   categoryImage: {
     width: '100%',
@@ -154,17 +150,17 @@ const styles = StyleSheet.create({
   },
   categoryOverlay: {
     ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
   categoryName: {
-    color: '#2A2A2A',
+    color: '#222',
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 2,
     borderRadius: 50,
-    backgroundColor: "#E3E3E3",
     paddingHorizontal: 5,
   },
   grid: {
