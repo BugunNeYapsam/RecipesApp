@@ -199,7 +199,7 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
   return (
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
       <View style={styles.headerBackButtonRow}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation?.goBack()}>
             <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#c781a4' : '#7f405f'} />
         </TouchableOpacity>
         <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["back"]?.toUpperCase() || '' }</Text>
