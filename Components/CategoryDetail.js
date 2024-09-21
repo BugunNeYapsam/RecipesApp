@@ -38,11 +38,17 @@ const CategoryDetail = ({ updateRecipeRating }) => {
     return recipes;
   };
 
-  const filteredRecipes = allRecipeData?.filter(d => d.category == selectedCategory?.name["en"]).filter(r => 
-    selectedChips.length > 0 
-      ? selectedChips.some(chip => r.isim.toLowerCase().includes(chip.toLowerCase()))
-      : r.isim.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredRecipes = allRecipeData?.filter(d => d.category === selectedCategory?.name["en"]).filter(r => {
+    const searchInRecipe = (text) => {
+      return r.isim.toLowerCase().includes(text) || r.malzemeler.join("--").toLowerCase().includes(text);
+    };
+
+    if (selectedChips.length > 0) {
+      return selectedChips.some(chip => searchInRecipe(chip.toLowerCase()));
+    }
+    
+    return searchInRecipe(searchTerm.toLowerCase());
+  });
 
   const sortedRecipes = sortRecipes(filteredRecipes, sortOrder);
 

@@ -6,9 +6,9 @@ import { Ionicons } from '@expo/vector-icons';
 
 const screenWidth = Dimensions.get('window').width;
 
-const FoodsOfCountries = ({ showAll, isDarkMode }) => {
+const FoodsOfCountries = ({ showAll }) => {
   const navigation = useNavigation();
-  const { allCountries, selectedLanguage, languageStore, setSelectedCountry } = useAppContext();
+  const { allCountries, selectedLanguage, languageStore, setSelectedCountry, isDarkMode } = useAppContext();
   const [loading, setLoading] = useState(true);
   const shimmerValue = useRef(new Animated.Value(0)).current;
   const [countryToNavigate, setCountryToNavigate] = useState(null);

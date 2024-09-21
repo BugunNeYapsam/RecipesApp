@@ -25,11 +25,19 @@ export default function SearchFood({ updateRecipeRating }) {
     return recipes;
   };
 
-  const filteredRecipes = allRecipeData?.filter(r => 
-    selectedChips.length > 0 
-      ? selectedChips.some(chip => r.isim.toLowerCase().includes(chip.toLowerCase()))
-      : r.isim.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const searchLower = searchTerm?.toLowerCase();
+  const selectedChipsLower = selectedChips.map(chip => chip.toLowerCase());
+  
+  const filteredRecipes = allRecipeData?.filter(recipe => {
+    const recipeNameLower = recipe.isim.toLowerCase();
+    const ingredientsLower = recipe.malzemeler.map(ingredient => ingredient.toLowerCase()).join("--");
+  
+    if (selectedChipsLower.length > 0) {
+      return selectedChipsLower.some(chip => recipeNameLower.includes(chip) || ingredientsLower.includes(chip));
+    }
+  
+    return recipeNameLower.includes(searchLower) || ingredientsLower.includes(searchLower);
+  });
 
   const sortedRecipes = sortRecipes(filteredRecipes, sortOrder);
 

@@ -6,9 +6,9 @@ import { Ionicons } from '@expo/vector-icons';
 
 const screenWidth = Dimensions.get('window').width;
 
-const FeaturedRecipes = ({ showAll, isDarkMode }) => {
+const FeaturedRecipes = ({ showAll }) => {
     const navigation = useNavigation();
-    const { featuredRecipes, selectedLanguage, languageStore, selectedFeaturedRecipe, setSelectedFeaturedRecipe } = useAppContext();
+    const { featuredRecipes, selectedLanguage, languageStore, selectedFeaturedRecipe, setSelectedFeaturedRecipe, isDarkMode } = useAppContext();
     const [loading, setLoading] = useState(true);
     const shimmerValue = useRef(new Animated.Value(0)).current;
     const [featuredRecipeToNavigate, setFeaturedRecipeToNavigate] = useState(null);
@@ -112,10 +112,10 @@ const FeaturedRecipes = ({ showAll, isDarkMode }) => {
         </View>
         <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
           {loading ? renderPlaceholders() : featuredRecipes.slice(0, 5)?.map((recipe, index) => (
-            <TouchableOpacity key={index} style={styles.featuredCard} onPress={() => handleOnPressFeaturedRecipe(recipe)}>
+            <TouchableOpacity key={index} style={styles.featuredCardHome} onPress={() => handleOnPressFeaturedRecipe(recipe)}>
               <Image source={{ uri: recipe.imageUrl }} style={styles.recipeImage} />
               <View style={styles.featuredOverlay}>
-                <Text style={styles.featuredName}>{recipe.isim}</Text>
+                <Text style={styles.recipeName}>{recipe.isim}</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -170,6 +170,17 @@ const FeaturedRecipes = ({ showAll, isDarkMode }) => {
       borderWidth: 1,
       borderColor: '#6B2346',
     },
+    featuredCardHome: {
+      width: 240,
+      height: 180,
+      marginRight: 10,
+      borderRadius: 10,
+      overflow: 'hidden',
+      elevation: 2,
+      backgroundColor: '#fff',
+      borderWidth: 1,
+      borderColor: '#6B2346',
+    },
     featuredImage: {
       width: '100%',
       height: '100%',
@@ -180,7 +191,6 @@ const FeaturedRecipes = ({ showAll, isDarkMode }) => {
       backgroundColor: 'rgba(0, 0, 0, 0.1)',
       justifyContent: 'flex-end',
       alignItems: 'center',
-      paddingBottom: 10,
     },
     featuredName: {
       color: '#fff',

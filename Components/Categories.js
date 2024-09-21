@@ -6,9 +6,9 @@ import { Ionicons } from '@expo/vector-icons';
 
 const screenWidth = Dimensions.get('window').width;
 
-const Categories = ({ showAll, isDarkMode }) => {
+const Categories = ({ showAll }) => {
   const navigation = useNavigation();
-  const { allCategoriesData, selectedLanguage, languageStore, setSelectedCategory } = useAppContext();
+  const { allCategoriesData, selectedLanguage, languageStore, setSelectedCategory, isDarkMode } = useAppContext();
   const [loading, setLoading] = useState(true);
   const shimmerValue = useRef(new Animated.Value(0)).current;
   const [categoryToNavigate, setCategoryToNavigate] = useState(null);
@@ -88,7 +88,7 @@ const Categories = ({ showAll, isDarkMode }) => {
         <ScrollView style={styles.container}>
           <View style={styles.grid}>
             {loading ? renderPlaceholders() : allCategoriesData?.map((category, index) => (
-              <TouchableOpacity key={index} style={styles.categoryCard} onPress={() => handleOnPressCategory(category)}>
+              <TouchableOpacity key={index} style={styles.categoryCardShowAll} onPress={() => handleOnPressCategory(category)}>
                 <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
                 <View style={styles.categoryOverlay}>
                   <Text style={styles.categoryName}>{category.name[selectedLanguage]}</Text>
@@ -172,6 +172,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#6B2346',
+  },
+  categoryCardShowAll: {
+    width: (screenWidth / 3) - 30,
+    height: 160,
+    marginRight: 10,
+    borderRadius: 10,
+    overflow: 'hidden',
+    elevation: 2,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#6B2346',
+    marginBottom: 10
   },
   categoryImage: {
     width: '100%',

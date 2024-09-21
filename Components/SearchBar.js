@@ -59,6 +59,13 @@ const SearchBar = ({ isDarkMode, searchTerm, setSearchTerm, onSortPress, sortOrd
     }
   };
 
+  const handleAddChip = () => {
+    if (searchTerm.trim() && !selectedChips.includes(searchTerm)) {
+      onSuggestionSelect(searchTerm);
+      setSearchTerm('');
+    }
+  };
+
   const renderSuggestionChip = (item, index) => (
     <TouchableOpacity key={index} style={[styles.suggestionChip, dynamicChipStyle]} onPress={() => onSuggestionSelect(item)}>
       <Text style={styles.chipText}>{item}</Text>
@@ -81,7 +88,10 @@ const SearchBar = ({ isDarkMode, searchTerm, setSearchTerm, onSortPress, sortOrd
           value={searchTerm}
           onChangeText={setSearchTerm}
           onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onBlur={() => {
+            setIsFocused(false);
+            handleAddChip();  // Add chip when focus is lost (clicked outside)
+          }}
         />
         <TouchableOpacity style={styles.sortButton} onPress={onSortPress}>
           {getSortIcon()}

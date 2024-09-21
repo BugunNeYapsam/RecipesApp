@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -18,6 +18,7 @@ import Settings from './Screens/Settings';
 import CategoryDetail from './Components/CategoryDetail';
 import FoodsOfCountriesDetail from './Components/FoodsOfCountriesDetail';
 import FeaturedRecipesDetail from './Components/FeaturedRecipesDetail';
+import { DefaultTheme, DarkTheme } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -62,7 +63,7 @@ const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
 };
 
 export default function Main() {
-  const { setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, updateAllRecipeRatings, setIsDarkMode, setSelectedLanguage, selectedLanguage, languageStore } = useAppContext();
+  const { setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, updateAllRecipeRatings, isDarkMode, setIsDarkMode, setSelectedLanguage, selectedLanguage, languageStore } = useAppContext();
 
   const getDarkModePreference = async () => {
     try {
@@ -192,8 +193,24 @@ export default function Main() {
     retrieveAllData();
   }, []);
 
+  const darkTheme = {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      background: '#2D2D2D'
+    },
+  };
+  
+  const lightTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: '#EEEEEE'
+    },
+  };
+  
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={isDarkMode ? darkTheme : lightTheme}>
       <Tab.Navigator
         screenOptions={{
           tabBarStyle: {

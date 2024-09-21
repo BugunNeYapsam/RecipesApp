@@ -17,12 +17,8 @@ const Explore = (props) => {
       .catch(() => setRefreshing(false));
   }, []);
 
-  const dynamicSafeAreaStyle = {
-    backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
-  };
-  
   return (
-    <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
+    <SafeAreaView style={styles.safeArea}>
       <ScrollView 
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
