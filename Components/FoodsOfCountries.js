@@ -1,12 +1,14 @@
-import React from 'react';
-import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 
 const FoodsOfCountries = ({ showAll, isDarkMode }) => {
   const navigation = useNavigation();
   const { allCountries, selectedLanguage, languageStore, setSelectedCountry } = useAppContext();
-  const [countryToNavigate, setCountryToNavigate] = React.useState(null);
+  const [loading, setLoading] = useState(true);
+  const shimmerValue = useRef(new Animated.Value(0)).current;
+  const [countryToNavigate, setCountryToNavigate] = useState(null);
 
   const dynamicPageTitleStyle = {
     color: isDarkMode ? '#c781a4' : '#444'
@@ -16,23 +18,62 @@ const FoodsOfCountries = ({ showAll, isDarkMode }) => {
     color: isDarkMode ? '#5c86ff' : '#0445ff'
   };
     
-  React.useEffect(() => {
+  useEffect(() => {
     if (countryToNavigate) {
       navigation.navigate(languageStore[selectedLanguage][countryToNavigate]);
       setCountryToNavigate(null);
     }
   }, [countryToNavigate, selectedLanguage, navigation]);
 
+  useEffect(() => {
+    if (allCountries && allCountries.length > 0) {
+      setLoading(false);
+    }
+
+    const shimmerAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(shimmerValue, {
+          toValue: 1,
+          duration: 1500,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shimmerValue, {
+          toValue: 0,
+          duration: 1500,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    shimmerAnimation.start();
+
+    return () => shimmerAnimation.stop();
+  }, [allCountries, shimmerValue]);
+
   const handleOnPressCountry = (country) => {
     setSelectedCountry(country.code);
     setCountryToNavigate(country.code);
   }
 
+  const renderPlaceholders = () => {
+    const placeholders = new Array(5).fill(0);
+    return placeholders.map((_, index) => (
+      <View key={index} style={styles.placeholderCard}>
+        <Animated.View style={[styles.placeholderImage, { opacity: shimmerValue }]} />
+        <View style={styles.placeholderOverlay}>
+          <Animated.View style={[styles.placeholderText, { opacity: shimmerValue }]} />
+        </View>
+      </View>
+    ));
+  };
+
   if (showAll) {
     return (
       <ScrollView style={styles.container}>
         <View style={styles.grid}>
-          {allCountries?.map((country, index) => (
+          {loading ? renderPlaceholders() : allCountries?.map((country, index) => (
             <TouchableOpacity key={index} style={styles.countryCard} onPress={() => handleOnPressCountry(country)}>
               <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
               <View style={styles.countryOverlay}>
@@ -49,12 +90,15 @@ const FoodsOfCountries = ({ showAll, isDarkMode }) => {
     <View>
       <View style={styles.header}>
         <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["foods_of_countries"]}</Text>
-        <TouchableOpacity onPress={() => navigation.navigate(languageStore[selectedLanguage]["all_foods_of_countries"])}>
-          <Text style={[styles.seeAll, dynamicSeeAllStyle]}>{languageStore[selectedLanguage]["see_all"]}</Text>
-        </TouchableOpacity>
+        {
+          !loading && 
+          <TouchableOpacity onPress={() => navigation.navigate(languageStore[selectedLanguage]["all_foods_of_countries"])}>
+            <Text style={[styles.seeAll, dynamicSeeAllStyle]}>{languageStore[selectedLanguage]["see_all"]}</Text>
+          </TouchableOpacity>
+        }
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
-        {allCountries?.map((country, index) => (
+        {loading ? renderPlaceholders() : allCountries?.map((country, index) => (
           <TouchableOpacity key={index} style={styles.countryCard} onPress={() => handleOnPressCountry(country)}>
             <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
             <View style={styles.countryOverlay}>
@@ -66,6 +110,7 @@ const FoodsOfCountries = ({ showAll, isDarkMode }) => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -122,13 +167,38 @@ const styles = StyleSheet.create({
     marginTop: 125,
     backgroundColor: "#D3D3D3",
     width: "100%",
-    paddingBottom: 5
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     paddingBottom: "25%"
+  },
+  placeholderCard: {
+    width: 120,
+    height: 150,
+    marginRight: 10,
+    marginBottom: 10,
+    borderRadius: 10,
+    backgroundColor: '#E0E0E0',
+    elevation: 2,
+  },
+  placeholderImage: {
+    width: '100%',
+    height: '75%',
+    borderRadius: 10,
+    backgroundColor: '#D0D0D0',
+  },
+  placeholderOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeholderText: {
+    width: '60%',
+    height: 20,
+    backgroundColor: '#C0C0C0',
+    borderRadius: 4,
   },
 });
 

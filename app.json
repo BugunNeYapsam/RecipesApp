@@ -1,4 +1,5 @@
 {
+      
   "expo": {
     "name": "BugunNeYapsam",
     "slug": "bugun-ne-yapsam",
@@ -8,8 +9,8 @@
     "userInterfaceStyle": "light",
     "entryPoint": "./App.js",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "image": "./assets/SplashScreen/splash.jpg",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "ios": {

@@ -58,7 +58,7 @@ const Categories = ({ showAll, isDarkMode }) => {
   }
 
   const renderPlaceholders = () => {
-    const placeholders = new Array(6).fill(0);
+    const placeholders = new Array(5).fill(0);
     return placeholders.map((_, index) => (
       <View key={index} style={styles.placeholderCard}>
         <Animated.View style={[styles.placeholderImage, { opacity: shimmerValue }]} />
@@ -90,9 +90,12 @@ const Categories = ({ showAll, isDarkMode }) => {
     <View>
       <View style={styles.header}>
         <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["categories"]}</Text>
-        <TouchableOpacity onPress={() => navigation.navigate(languageStore[selectedLanguage]["all_categories"])}>
-          <Text style={[styles.seeAll, dynamicSeeAllStyle]}>{languageStore[selectedLanguage]["see_all"]}</Text>
-        </TouchableOpacity>
+        {
+          !loading && 
+          <TouchableOpacity onPress={() => navigation.navigate(languageStore[selectedLanguage]["all_categories"])}>
+            <Text style={[styles.seeAll, dynamicSeeAllStyle]}>{languageStore[selectedLanguage]["see_all"]}</Text>
+          </TouchableOpacity>
+        }
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
         {loading ? renderPlaceholders() : allCategoriesData?.map((category, index) => (
@@ -171,7 +174,7 @@ const styles = StyleSheet.create({
   },
   placeholderCard: {
     width: 120,
-    height: 180,
+    height: 160,
     marginRight: 10,
     marginBottom: 10,
     borderRadius: 10,
@@ -181,6 +184,7 @@ const styles = StyleSheet.create({
   placeholderImage: {
     width: '100%',
     height: '75%',
+    borderRadius: 10,
     backgroundColor: '#D0D0D0',
   },
   placeholderOverlay: {
