@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     borderColor: '#6B2346',
   },
   categoryCardShowAll: {
-    width: (screenWidth / 3) - 30,
+    width: (screenWidth / 3) - 25,
     height: 160,
     marginRight: 10,
     borderRadius: 10,
