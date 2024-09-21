@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity, Animated, Easing } from 'react-native';
+import { View, ScrollView, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, Platform, StatusBar, Animated, Easing, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
+import { Ionicons } from '@expo/vector-icons';
+
+const screenWidth = Dimensions.get('window').width;
 
 const FoodsOfCountries = ({ showAll, isDarkMode }) => {
   const navigation = useNavigation();
@@ -9,6 +12,10 @@ const FoodsOfCountries = ({ showAll, isDarkMode }) => {
   const [loading, setLoading] = useState(true);
   const shimmerValue = useRef(new Animated.Value(0)).current;
   const [countryToNavigate, setCountryToNavigate] = useState(null);
+
+  const dynamicSafeAreaStyle = {
+    backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
+  };
 
   const dynamicPageTitleStyle = {
     color: isDarkMode ? '#c781a4' : '#444'
@@ -71,18 +78,26 @@ const FoodsOfCountries = ({ showAll, isDarkMode }) => {
 
   if (showAll) {
     return (
-      <ScrollView style={styles.container}>
-        <View style={styles.grid}>
-          {loading ? renderPlaceholders() : allCountries?.map((country, index) => (
-            <TouchableOpacity key={index} style={styles.countryCard} onPress={() => handleOnPressCountry(country)}>
-              <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
-              <View style={styles.countryOverlay}>
-                <Text style={styles.countryName}>{languageStore[selectedLanguage][country.code]}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+      <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
+        <View style={styles.headerNavButton}>
+          <TouchableOpacity onPress={() => navigation?.goBack()}>
+            <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#c781a4' : '#444'} />
+          </TouchableOpacity>
+          <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["foods_of_countries"]?.toUpperCase() || '' }</Text>
         </View>
-      </ScrollView>
+        <ScrollView style={styles.container}>
+          <View style={styles.grid}>
+            {loading ? renderPlaceholders() : allCountries?.map((country, index) => (
+              <TouchableOpacity key={index} style={styles.countryCard} onPress={() => handleOnPressCountry(country)}>
+                <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
+                <View style={styles.countryOverlay}>
+                  <Text style={styles.countryName}>{languageStore[selectedLanguage][country.code]}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 
@@ -98,7 +113,7 @@ const FoodsOfCountries = ({ showAll, isDarkMode }) => {
         }
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
-        {loading ? renderPlaceholders() : allCountries?.map((country, index) => (
+        {loading ? renderPlaceholders() : allCountries.slice(0, 5)?.map((country, index) => (
           <TouchableOpacity key={index} style={styles.countryCard} onPress={() => handleOnPressCountry(country)}>
             <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
             <View style={styles.countryOverlay}>
@@ -112,6 +127,11 @@ const FoodsOfCountries = ({ showAll, isDarkMode }) => {
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    padding: 10,
+  },
   container: {
     flex: 1,
     padding: 10,
@@ -121,6 +141,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 10,
+  },
+  headerNavButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 10,
+    marginTop: 30,
+    marginLeft: -10
   },
   sectionTitle: {
     fontSize: 18,
@@ -134,7 +162,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   countryCard: {
-    width: 120,
+    width: (screenWidth / 3) - 30,
     height: 150,
     marginRight: 10,
     borderRadius: 10,
@@ -199,6 +227,11 @@ const styles = StyleSheet.create({
     height: 20,
     backgroundColor: '#C0C0C0',
     borderRadius: 4,
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 10,
   },
 });
 

@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity, Animated, Easing } from 'react-native';
+import { View, ScrollView, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, Platform, StatusBar, Animated, Easing, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
+import { Ionicons } from '@expo/vector-icons';
+
+const screenWidth = Dimensions.get('window').width;
 
 const Categories = ({ showAll, isDarkMode }) => {
   const navigation = useNavigation();
@@ -9,7 +12,11 @@ const Categories = ({ showAll, isDarkMode }) => {
   const [loading, setLoading] = useState(true);
   const shimmerValue = useRef(new Animated.Value(0)).current;
   const [categoryToNavigate, setCategoryToNavigate] = useState(null);
-  
+
+  const dynamicSafeAreaStyle = {
+    backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
+  };
+
   const dynamicPageTitleStyle = {
     color: isDarkMode ? '#c781a4' : '#444'
   };
@@ -71,18 +78,26 @@ const Categories = ({ showAll, isDarkMode }) => {
 
   if (showAll) {
     return (
-      <ScrollView style={styles.container}>
-        <View style={styles.grid}>
-          {loading ? renderPlaceholders() : allCategoriesData?.map((category, index) => (
-            <TouchableOpacity key={index} style={styles.categoryCard} onPress={() => handleOnPressCategory(category)}>
-              <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
-              <View style={styles.categoryOverlay}>
-                <Text style={styles.categoryName}>{category.name[selectedLanguage]}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+      <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
+        <View style={styles.headerNavButton}>
+          <TouchableOpacity onPress={() => navigation?.goBack()}>
+            <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#c781a4' : '#444'} />
+          </TouchableOpacity>
+          <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["categories"]?.toUpperCase() || '' }</Text>
         </View>
-      </ScrollView>
+        <ScrollView style={styles.container}>
+          <View style={styles.grid}>
+            {loading ? renderPlaceholders() : allCategoriesData?.map((category, index) => (
+              <TouchableOpacity key={index} style={styles.categoryCard} onPress={() => handleOnPressCategory(category)}>
+                <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
+                <View style={styles.categoryOverlay}>
+                  <Text style={styles.categoryName}>{category.name[selectedLanguage]}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      </ SafeAreaView>
     );
   }
 
@@ -98,7 +113,7 @@ const Categories = ({ showAll, isDarkMode }) => {
         }
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
-        {loading ? renderPlaceholders() : allCategoriesData?.map((category, index) => (
+        {loading ? renderPlaceholders() : allCategoriesData.slice(0, 5)?.map((category, index) => (
           <TouchableOpacity key={index} style={styles.categoryCard} onPress={() => handleOnPressCategory(category)}>
             <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
             <View style={styles.categoryOverlay}>
@@ -112,6 +127,11 @@ const Categories = ({ showAll, isDarkMode }) => {
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    padding: 10,
+  },
   container: {
     flex: 1,
     padding: 10,
@@ -121,6 +141,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 10,
+  },
+  headerNavButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 10,
+    marginTop: 30,
+    marginLeft: -10
   },
   sectionTitle: {
     fontSize: 18,
@@ -135,14 +163,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   categoryCard: {
-    width: 120,
+    width: (screenWidth / 3) - 30,
     height: 160,
     marginRight: 10,
     marginBottom: 10,
     borderRadius: 10,
     overflow: 'hidden',
     elevation: 2,
-    backgroundColor: '#E3E3E3',
+    backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#6B2346',
   },
@@ -197,6 +225,11 @@ const styles = StyleSheet.create({
     height: 20,
     backgroundColor: '#C0C0C0',
     borderRadius: 4,
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 10,
   },
 });
 

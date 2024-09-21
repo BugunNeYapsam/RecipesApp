@@ -30,7 +30,7 @@ const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
       <Stack.Screen  name="Bugün Ne Yapsam?" options={{ headerShown: false }}>
         {() => <Explore retrieveAllData={retrieveAllData} />}
       </Stack.Screen>
-      <Stack.Screen name={languageStore[selectedLanguage]["all_categories"]}>
+      <Stack.Screen name={languageStore[selectedLanguage]["all_categories"]} options={{ headerShown: false }}>
         {() => (<Categories showAll />)}
       </Stack.Screen>
       {
@@ -51,10 +51,10 @@ const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
           {() => (<FoodsOfCountriesDetail updateRecipeRating={updateRecipeRating} />)}
         </Stack.Screen>
       }
-      <Stack.Screen name={languageStore[selectedLanguage]["all_featured_recipes"]}>
+      <Stack.Screen name={languageStore[selectedLanguage]["all_featured_recipes"]} options={{ headerShown: false }}>
         {() => (<FeaturedRecipes showAll />)}
       </Stack.Screen>
-      <Stack.Screen name={languageStore[selectedLanguage]["all_foods_of_countries"]}>
+      <Stack.Screen name={languageStore[selectedLanguage]["all_foods_of_countries"]} options={{ headerShown: false }}>
         {() => (<FoodsOfCountries showAll />)}
       </Stack.Screen>
     </Stack.Navigator>

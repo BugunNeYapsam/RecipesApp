@@ -181,8 +181,12 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
           <View style={styles.header}>
             <MaterialIcons name={expanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'} size={24} color={isDarkMode ? "#111" : "#888"} />
             <Text style={styles.title}>{foodName}</Text>
-            { !expanded && <Image source={{ uri: imgUrl }} style={styles.image} resizeMode="cover" /> }
           </View>
+
+          {
+            !expanded &&
+              <Image style={styles.imageContainer} source={{ uri: imgUrl }} resizeMode="cover" />
+           }
 
           {expanded && (
             <>
@@ -254,8 +258,8 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     marginLeft: -5,
+    width: "80%"
   },
   title: {
     fontSize: 18,
@@ -264,24 +268,25 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 10,
   },
-  image: {
+  imageContainer: {
+    justifyContent: 'center', // centers the image vertically
+    alignItems: 'center', // centers the image horizontally
     position: "absolute",
     right: 0,
     width: 100,
     height: 100,
-    borderRadius: 60,
+    borderRadius: 10,
     borderColor: "#555",
-    borderWidth: .5,
-    marginLeft: 10,
-    marginRight: -30,
+    borderWidth: 1,
+    marginTop: "-2%"
   },
   imageExpanded: {
     display: "flex",
     justifyContent: "center",
     height: 200,
-    borderRadius: 5,
+    borderRadius: 10,
     borderColor: "#555",
-    borderWidth: .5,
+    borderWidth: 1,
     marginTop: 20,
     marginBottom: 10,
   },
