@@ -90,6 +90,7 @@ export default function SearchFood({ updateRecipeRating }) {
           selectedChips={selectedChips}
           onChipRemove={handleChipRemove}
           isDarkMode={isDarkMode}
+          suggestionListWithoutCategory={true}
         />
         <ScrollView>
           {sortedRecipes?.map((r, index) => (

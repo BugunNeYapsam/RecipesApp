@@ -46,5 +46,13 @@
         "en": [
             "Cucumber", "Tomato", "Toast", "Egg", "Tea", "Cheese", "Olive"
         ]
+    },
+    "filter": {
+        "tr": [
+            "Et", "Balık", "Tavuk", "Salata", "Domates", "Biber", "Patlıcan", "Kabak", "Marul", "Brokoli", "Karnabahar", "Pırasa"
+        ],
+        "en": [
+            "Meat", "Fish", "Chicken", "Cucumber", "Tomato", "Pepper", "Eggplant", "Zucchini", "Lettuce", "Broccoli", "Cauliflower", "Leek"
+        ]
     }
 }
