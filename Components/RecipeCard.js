@@ -245,8 +245,8 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 20,
-    marginBottom: 20,
+    borderRadius: 15,
+    marginBottom: 15,
     overflow: 'hidden',
     borderWidth: .5,
     borderColor: "#555",
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: -5,
     width: "80%",
-    height: 50
+    height: 45
   },
   title: {
     fontSize: 18,

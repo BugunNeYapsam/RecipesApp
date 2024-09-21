@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     borderColor: '#6B2346',
   },
   categoryCardShowAll: {
-    width: (screenWidth / 3) - 25,
+    width: (screenWidth / 3) - 30,
     height: 160,
     marginRight: 10,
     borderRadius: 10,
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   },
   categoryName: {
     color: '#222',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 2,
