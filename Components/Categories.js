@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
     width: (screenWidth / 3) - 30,
     height: 160,
     marginRight: 10,
-    marginBottom: 10,
     borderRadius: 10,
     overflow: 'hidden',
     elevation: 2,
