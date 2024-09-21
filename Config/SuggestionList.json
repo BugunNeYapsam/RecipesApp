@@ -1,0 +1,50 @@
+{
+    "desserts": {
+        "tr": [
+            "Çikolata", "Kakao", "Vanilya", "Kabartma Tozu", "Süt", "Toz Şeker", "Un", "Krem Şanti", "Sos", "İrmik"
+        ],
+        "en": [
+            "Chocolate", "Cacao", "Vanilla", "Baking Powder", "Milk", "Sugar", "Flour", "Cream", "Sauce"
+        ]
+    },
+    "breakfast": {
+        "tr": [
+            "Tost", "Domates", "Peynir", "Zeytin", "Simit", "Bal", "Çay", "Reçel", "Tereyağı"
+        ],
+        "en": [
+            "Toast", "Tomato", "Cheese", "Olive", "Bread", "Honey", "Tea", "Jam", "Butter"
+        ]
+    },
+    "main dishes": {
+        "tr": [
+            "Et", "Tavuk", "Balık", "Pirinç", "Makarna", "Mantar", "Domates", "Patlıcan", "Kabak", "Biber"
+        ],
+        "en": [
+            "Meat", "Chicken", "Fish", "Rice", "Pasta", "Mushroom", "Tomato", "Eggplant", "Zucchini", "Pepper"
+        ]
+    },
+    "snacks": {
+        "tr": [
+            "Patates", "Çikolata", "Kakao", "Mısır", "Kurabiye"
+        ],
+        "en": [
+            "Potato", "Chocolate", "Cacao", "Popcorn", "Cookie"
+        ]
+    },
+    "vegetarian": {
+        "tr": [
+            "Salata", "Domates", "Biber", "Patlıcan", "Kabak", "Marul", "Brokoli", "Karnabahar", "Pırasa"
+        ],
+        "en": [
+            "Cucumber", "Tomato", "Pepper", "Eggplant", "Zucchini", "Lettuce", "Broccoli", "Cauliflower", "Leek"
+        ]
+    },
+    "quick & easy": {
+        "tr": [
+            "Salata", "Domates", "Tost", "Yumurta", "Çay", "Peynir", "Zeytin"
+        ],
+        "en": [
+            "Cucumber", "Tomato", "Toast", "Egg", "Tea", "Cheese", "Olive"
+        ]
+    }
+}

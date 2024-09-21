@@ -4,15 +4,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Path } from 'react-native-svg';
 import { useAppContext } from '../Context/AppContext';
-
-const suggestionsList = [
-  "Spaghetti", "Chicken Curry", "Beef Stew", "Tacos", "Salad", "Pancakes", "Sushi",
-  "Pizza", "Biryani", "Burger", "Fried Rice", "Omelette", "Lasagna", "Soup",
-  "Fish Tacos", "Grilled Cheese", "Falafel", "Ramen", "Paella", "Chicken Wings"
-];
+import SuggestionList from "../Config/SuggestionList.json";
 
 const SearchBar = ({ isDarkMode, searchTerm, setSearchTerm, onSortPress, sortOrder, onSuggestionSelect, selectedChips, onChipRemove }) => {
-  const { languageStore, selectedLanguage } = useAppContext();
+  const { languageStore, selectedLanguage, selectedCategory } = useAppContext();
   const [isFocused, setIsFocused] = useState(false);
   const scrollViewRef = useRef(null);
   const [scrollX, setScrollX] = useState(0);
@@ -22,7 +17,7 @@ const SearchBar = ({ isDarkMode, searchTerm, setSearchTerm, onSortPress, sortOrd
     backgroundColor: isDarkMode ? '#cc91a4' : '#dddfff'
   };
 
-  const filteredSuggestions = suggestionsList.filter(
+  const filteredSuggestions = SuggestionList[selectedCategory?.name?.en.toLowerCase()][selectedLanguage].filter(
     suggestion =>
       suggestion.toLowerCase().includes(searchTerm.toLowerCase()) &&
       !selectedChips.includes(suggestion)
