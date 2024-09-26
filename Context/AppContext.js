@@ -61,7 +61,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const removeRecipe = async (recipe) => {
-    const updatedRecipes = savedRecipes.filter(r => r.isim !== recipe.isim);
+    const updatedRecipes = savedRecipes.filter(r => r.id !== recipe.id);
     setSavedRecipes(updatedRecipes);
     try {
       await AsyncStorage.setItem('savedRecipes', JSON.stringify(updatedRecipes));

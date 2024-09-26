@@ -44,8 +44,8 @@ const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
         {() => (<FeaturedRecipes showAll />)}
       </Stack.Screen>
       {
-        selectedFeaturedRecipe && selectedFeaturedRecipe.isim &&
-        <Stack.Screen name={selectedFeaturedRecipe.isim} options={{ headerShown: false }}>
+        selectedFeaturedRecipe && selectedFeaturedRecipe.name[selectedLanguage] &&
+        <Stack.Screen name={selectedFeaturedRecipe.name[selectedLanguage]} options={{ headerShown: false }}>
           {() => (<FeaturedRecipesDetail selectedRecipe={selectedFeaturedRecipe} updateRecipeRating={updateRecipeRating} />)}
         </Stack.Screen>
       }

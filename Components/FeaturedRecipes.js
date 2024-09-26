@@ -27,7 +27,7 @@ const FeaturedRecipes = ({ showAll }) => {
 
     useEffect(() => {
       if (selectedFeaturedRecipe) {
-        navigation.navigate(selectedFeaturedRecipe.isim);
+        navigation.navigate(selectedFeaturedRecipe.name[selectedLanguage]);
         setFeaturedRecipeToNavigate(null);
       }
     }, [featuredRecipeToNavigate, selectedLanguage, navigation]);
@@ -90,7 +90,7 @@ const FeaturedRecipes = ({ showAll }) => {
               {loading ? renderPlaceholders() : featuredRecipes?.map((recipe, index) => (
                 <TouchableOpacity key={index} style={styles.recipeCard} onPress={() => handleOnPressFeaturedRecipe(recipe)}>
                   <Image source={{ uri: recipe.imageUrl }} style={styles.recipeImage} />
-                  <Text style={styles.recipeName}>{recipe.isim}</Text>
+                  <Text style={styles.recipeName}>{recipe.name[selectedLanguage]}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -115,7 +115,7 @@ const FeaturedRecipes = ({ showAll }) => {
             <TouchableOpacity key={index} style={styles.featuredCardHome} onPress={() => handleOnPressFeaturedRecipe(recipe)}>
               <Image source={{ uri: recipe.imageUrl }} style={styles.recipeImage} />
               <View style={styles.featuredOverlay}>
-                <Text style={styles.recipeName}>{recipe.isim}</Text>
+                <Text style={styles.recipeName}>{recipe.name[selectedLanguage]}</Text>
               </View>
             </TouchableOpacity>
           ))}

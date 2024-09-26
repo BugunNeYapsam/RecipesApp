@@ -27,6 +27,7 @@ export default function Saved({ updateRecipeRating }) {
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
       <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["saveds"]?.toUpperCase()}</Text>
       <View style={styles.container}>
+        {console.log(savedRecipes)}
         <ScrollView>
           {savedRecipes.length > 0 ? (
             savedRecipes.map((r, index) => (
@@ -35,13 +36,13 @@ export default function Saved({ updateRecipeRating }) {
                   key={index}
                   recipeID={r.id}
                   imgUrl={r.imageUrl}
-                  foodName={r.isim}
-                  ingredients={r.malzemeler}
-                  recipeSteps={r.tarif}
+                  foodName={r.name[selectedLanguage]}
+                  ingredients={r.ingredients[selectedLanguage]}
+                  recipeSteps={r.recipe[selectedLanguage]}
                   expanded={expandedCardIndex === index}
                   toggleExpand={() => toggleExpand(index)}
                   onSave={(isSaved) => handleSave(r, isSaved)}
-                  saved={savedRecipes.some(savedRecipe => savedRecipe.isim === r.isim)}
+                  saved={savedRecipes.some(savedRecipe => savedRecipe.id === r.id)}
                   rating={r.rating || 0} 
                   updateRecipeRating={updateRecipeRating}
                 />

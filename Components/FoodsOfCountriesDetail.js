@@ -31,15 +31,15 @@ const FoodsOfCountriesDetail = ({ updateRecipeRating }) => {
 
   const sortRecipes = (recipes, order) => {
     if (order === 'asc') {
-      return recipes.sort((a, b) => a.isim.localeCompare(b.isim));
+      return recipes.sort((a, b) => a.name[selectedLanguage].localeCompare(b.name[selectedLanguage]));
     } else if (order === 'desc') {
-      return recipes.sort((a, b) => b.isim.localeCompare(a.isim));
+      return recipes.sort((a, b) => b.name[selectedLanguage].localeCompare(a.name[selectedLanguage]));
     }
     return recipes;
   };
 
   const filteredRecipes = allRecipeData?.filter(d => d.country.includes(selectedCountry)).filter(r => {
-    const searchInRecipe = (text) => r.isim.toLowerCase().includes(text) || r.malzemeler.join("--").toLowerCase().includes(text);
+    const searchInRecipe = (text) => r.name[selectedLanguage].toLowerCase().includes(text) || r.ingredients[selectedLanguage].join("--").toLowerCase().includes(text);
   
     if (selectedChips.length > 0) {
       return selectedChips.some(chip => searchInRecipe(chip.toLowerCase()));
@@ -104,13 +104,13 @@ const FoodsOfCountriesDetail = ({ updateRecipeRating }) => {
               key={index}
               recipeID={r.id}
               imgUrl={r.imageUrl}
-              foodName={r.isim}
-              ingredients={r.malzemeler}
-              recipeSteps={r.tarif}
+              foodName={r.name[selectedLanguage]}
+              ingredients={r.ingredients[selectedLanguage]}
+              recipeSteps={r.recipe[selectedLanguage]}
               expanded={expandedCardIndex === index}
               toggleExpand={() => toggleExpand(index)}
               onSave={(isSaved) => handleSave(r, isSaved)}
-              saved={savedRecipes.some(savedRecipe => savedRecipe.isim === r.isim)}
+              saved={savedRecipes.some(savedRecipe => savedRecipe.id === r.id)}
               rating={r.rating || 0} 
               updateRecipeRating={updateRecipeRating}
             />

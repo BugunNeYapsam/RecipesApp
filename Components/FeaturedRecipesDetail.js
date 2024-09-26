@@ -12,7 +12,7 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFailure, setShowFailure] = useState(false);
   const [isRated, setIsRated] = useState(false);
-  const [saved, setSaved] = useState(savedRecipes.includes(selectedFeaturedRecipe?.isim));
+  const [saved, setSaved] = useState(savedRecipes.includes(selectedFeaturedRecipe?.name[selectedLanguage]));
   const successOpacity = useRef(new Animated.Value(0)).current;
   const failureOpacity = useRef(new Animated.Value(0)).current;
   
@@ -43,7 +43,7 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
 
   const saveRatingToDevice = async (rating) => {
     try {
-      await AsyncStorage.setItem(`rating_${selectedFeaturedRecipe?.isim}`, JSON.stringify(rating));
+      await AsyncStorage.setItem(`rating_${selectedFeaturedRecipe?.name[selectedLanguage]}`, JSON.stringify(rating));
     } catch (error) {
       console.error('Failed to save rating:', error);
       throw error;
@@ -212,7 +212,7 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
           style={styles.gradient}
         >
           <View style={styles.header}>
-            <Text style={styles.title}>{selectedFeaturedRecipe?.isim}</Text>
+            <Text style={styles.title}>{selectedFeaturedRecipe?.name[selectedLanguage]}</Text>
           </View>
 
           <>
@@ -220,7 +220,7 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
             <View style={styles.contentContainer}>
               <Text style={styles.subtitle}>{languageStore[selectedLanguage]["ingredients"]}:</Text>
               <View style={styles.ingredientsList}>
-                {selectedFeaturedRecipe?.malzemeler?.map((ingredient, index) => (
+                {selectedFeaturedRecipe?.ingredients[selectedLanguage]?.map((ingredient, index) => (
                   <Text key={index} style={styles.ingredientItem}>
                     • {ingredient}
                   </Text>
@@ -228,7 +228,7 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
               </View>
               <Text style={styles.subtitle}>{languageStore[selectedLanguage]["recipe"]}:</Text>
               <View style={styles.stepsList}>
-                {selectedFeaturedRecipe?.tarif?.map((step, index) => (
+                {selectedFeaturedRecipe?.recipe[selectedLanguage]?.map((step, index) => (
                   <View key={index} style={styles.stepItemContainer}>
                     <Text style={styles.stepNumber}>{index + 1}.</Text>
                     <Text style={styles.stepText}>{step.trim()}</Text>

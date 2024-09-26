@@ -18,9 +18,9 @@ export default function SearchFood({ updateRecipeRating }) {
 
   const sortRecipes = (recipes, order) => {
     if (order === 'asc') {
-      return recipes.sort((a, b) => a.isim.localeCompare(b.isim));
+      return recipes.sort((a, b) => a.name[selectedLanguage].localeCompare(b.name[selectedLanguage]));
     } else if (order === 'desc') {
-      return recipes.sort((a, b) => b.isim.localeCompare(a.isim));
+      return recipes.sort((a, b) => b.name[selectedLanguage].localeCompare(a.name[selectedLanguage]));
     }
     return recipes;
   };
@@ -29,8 +29,8 @@ export default function SearchFood({ updateRecipeRating }) {
   const selectedChipsLower = selectedChips.map(chip => chip.toLowerCase());
   
   const filteredRecipes = allRecipeData?.filter(recipe => {
-    const recipeNameLower = recipe.isim.toLowerCase();
-    const ingredientsLower = recipe.malzemeler.map(ingredient => ingredient.toLowerCase()).join("--");
+    const recipeNameLower = recipe.name[selectedLanguage].toLowerCase();
+    const ingredientsLower = recipe.ingredients[selectedLanguage].map(ingredient => ingredient.toLowerCase()).join("--");
   
     if (selectedChipsLower.length > 0) {
       return selectedChipsLower.some(chip => recipeNameLower.includes(chip) || ingredientsLower.includes(chip));
@@ -98,13 +98,13 @@ export default function SearchFood({ updateRecipeRating }) {
               key={index}
               recipeID={r.id}
               imgUrl={r.imageUrl}
-              foodName={r.isim}
-              ingredients={r.malzemeler}
-              recipeSteps={r.tarif}
+              foodName={r.name[selectedLanguage]}
+              ingredients={r.ingredients[selectedLanguage]}
+              recipeSteps={r.recipe[selectedLanguage]}
               expanded={expandedCardIndex === index}
               toggleExpand={() => toggleExpand(index)}
               onSave={(isSaved) => handleSave(r, isSaved)}
-              saved={savedRecipes.some(savedRecipe => savedRecipe.isim === r.isim)}
+              saved={savedRecipes.some(savedRecipe => savedRecipe.id === r.id)}
               rating={r.rating || 0} 
               updateRecipeRating={updateRecipeRating}
             />
