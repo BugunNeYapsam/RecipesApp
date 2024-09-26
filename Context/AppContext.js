@@ -19,6 +19,7 @@ export const AppProvider = ({ children }) => {
   const [selectedCategory, setSelectedCategory] = useState(undefined);
   const [selectedFeaturedRecipe, setSelectedFeaturedRecipe] = useState(undefined);
   const [selectedCountry, setSelectedCountry] = useState(undefined);
+  const [allSuggestions, setAllSuggestions] = useState([]);
   
   useEffect(() => {
     const loadSavedRecipes = async () => {
@@ -100,7 +101,9 @@ export const AppProvider = ({ children }) => {
       selectedFeaturedRecipe,
       setSelectedFeaturedRecipe,
       selectedCountry,
-      setSelectedCountry
+      setSelectedCountry,
+      allSuggestions,
+      setAllSuggestions
     }}>
       {children}
     </AppContext.Provider>

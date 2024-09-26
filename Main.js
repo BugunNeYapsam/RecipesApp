@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -40,30 +40,30 @@ const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
           {() => (<CategoryDetail updateRecipeRating={updateRecipeRating} />)}
         </Stack.Screen>
       }
+      <Stack.Screen name={languageStore[selectedLanguage]["all_featured_recipes"]} options={{ headerShown: false }}>
+        {() => (<FeaturedRecipes showAll />)}
+      </Stack.Screen>
       {
         selectedFeaturedRecipe && selectedFeaturedRecipe.isim &&
         <Stack.Screen name={selectedFeaturedRecipe.isim} options={{ headerShown: false }}>
           {() => (<FeaturedRecipesDetail selectedRecipe={selectedFeaturedRecipe} updateRecipeRating={updateRecipeRating} />)}
         </Stack.Screen>
       }
+      <Stack.Screen name={languageStore[selectedLanguage]["all_foods_of_countries"]} options={{ headerShown: false }}>
+        {() => (<FoodsOfCountries showAll />)}
+      </Stack.Screen>
       {
         selectedCountry &&
         <Stack.Screen name={languageStore[selectedLanguage][selectedCountry]} options={{ headerShown: false }}>
           {() => (<FoodsOfCountriesDetail updateRecipeRating={updateRecipeRating} />)}
         </Stack.Screen>
       }
-      <Stack.Screen name={languageStore[selectedLanguage]["all_featured_recipes"]} options={{ headerShown: false }}>
-        {() => (<FeaturedRecipes showAll />)}
-      </Stack.Screen>
-      <Stack.Screen name={languageStore[selectedLanguage]["all_foods_of_countries"]} options={{ headerShown: false }}>
-        {() => (<FoodsOfCountries showAll />)}
-      </Stack.Screen>
     </Stack.Navigator>
   );
 };
 
 export default function Main() {
-  const { setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, updateAllRecipeRatings, isDarkMode, setIsDarkMode, setSelectedLanguage, selectedLanguage, languageStore } = useAppContext();
+  const { setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, updateAllRecipeRatings, isDarkMode, setIsDarkMode, setSelectedLanguage, selectedLanguage, languageStore, setAllSuggestions } = useAppContext();
 
   const getDarkModePreference = async () => {
     try {
@@ -148,6 +148,19 @@ export default function Main() {
     }
   };
 
+  const getSuggestions = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "4"));
+      var suggestions = [];
+      querySnapshot.forEach((doc) => {
+        suggestions = doc.data();
+      });
+      setAllSuggestions(suggestions);
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+    }
+  };
+
   const updateRecipeRating = async (recipeId, newRating, updateSpecificRecipeRating) => {
     try {
       if (!db) throw new Error("Firestore not initialized correctly!");
@@ -187,6 +200,7 @@ export default function Main() {
     getData();
     getCategories();
     getCountries();
+    getSuggestions();
   }
 
   React.useEffect(() => {

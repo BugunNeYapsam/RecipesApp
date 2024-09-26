@@ -203,10 +203,9 @@ const styles = StyleSheet.create({
     paddingBottom: "25%"
   },
   placeholderCard: {
-    width: 120,
+    width: (screenWidth / 3) - 30,
     height: 150,
     marginRight: 10,
-    marginBottom: 10,
     borderRadius: 10,
     backgroundColor: '#E0E0E0',
     elevation: 2,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Platform, StatusBar, SafeAreaView, View, Image, RefreshControl } from 'react-native';
+import { ScrollView, StyleSheet, Platform, StatusBar, SafeAreaView, View, Image, RefreshControl, Text, Button } from 'react-native';
 import Categories from '../Components/Categories';
 import FeaturedRecipes from '../Components/FeaturedRecipes';
 import FoodsOfCountries from '../Components/FoodsOfCountries';
@@ -17,20 +17,33 @@ const Explore = (props) => {
       .catch(() => setRefreshing(false));
   }, []);
 
+  const dynamicLineStyle = {
+    backgroundColor: isDarkMode ? '#AAAAAA' : '#2F2F2F'
+  };
+
+  const dynamicDotStyle = {
+    color: isDarkMode ? '#AAAAAA' : '#2F2F2F'
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
+      <View style={styles.separatorContainer}>
+          <Image source={headerImage} style={styles.headerImage} />
+        </View>
+        <View style={styles.separatorContainer}>
+          <View style={[styles.line, dynamicLineStyle]} />
+          <Text style={[styles.dot, dynamicDotStyle]}>•</Text>
+          <View style={[styles.line, dynamicLineStyle]} />
+        </View>
       <ScrollView 
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <View style={{ marginTop: 15, paddingBottom: 10 }}>
-          <Image source={headerImage} style={styles.headerImage} />
-        </View>
         <ScrollView style={styles.container}>
-          <Categories isDarkMode={isDarkMode} />
-          <FeaturedRecipes isDarkMode={isDarkMode} />
-          <FoodsOfCountries isDarkMode={isDarkMode} />
+          <Categories />
+          <FeaturedRecipes />
+          <FoodsOfCountries />
         </ScrollView>
       </ScrollView>
     </SafeAreaView>
@@ -41,7 +54,8 @@ const styles = StyleSheet.create({
   headerImage: {
     width: 300,
     height: 50,
-    marginLeft: 1
+    marginLeft: 1,
+    marginTop: 5
   },
   header: {
     flexDirection: 'row',
@@ -95,6 +109,20 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     marginBottom: "20%"
+  },
+  separatorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 5
+  },
+  line: {
+    height: 0.5,
+    width: 150,
+  },
+  dot: {
+    marginHorizontal: 10,
+    fontSize: 10,
   },
 });
 

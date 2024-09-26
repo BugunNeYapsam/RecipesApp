@@ -4,10 +4,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Path } from 'react-native-svg';
 import { useAppContext } from '../Context/AppContext';
-import SuggestionList from "../Config/SuggestionList.json";
 
 const SearchBar = ({ isDarkMode, searchTerm, setSearchTerm, onSortPress, sortOrder, onSuggestionSelect, selectedChips, onChipRemove, suggestionListWithoutCategory }) => {
-  const { languageStore, selectedLanguage, selectedCategory } = useAppContext();
+  const { languageStore, selectedLanguage, selectedCategory, allSuggestions } = useAppContext();
   const [isFocused, setIsFocused] = useState(false);
   const scrollViewRef = useRef(null);
   const [scrollX, setScrollX] = useState(0);
@@ -18,14 +17,14 @@ const SearchBar = ({ isDarkMode, searchTerm, setSearchTerm, onSortPress, sortOrd
   };
 
   var filteredSuggestions = [];
-  if (suggestionListWithoutCategory) {
-    filteredSuggestions = SuggestionList["filter"][selectedLanguage].filter(
+  if (suggestionListWithoutCategory || !selectedCategory) {
+    filteredSuggestions = allSuggestions["filter"][selectedLanguage].filter(
       suggestion =>
         suggestion.toLowerCase().includes(searchTerm.toLowerCase()) &&
         !selectedChips.includes(suggestion)
     );
   } else {
-    filteredSuggestions = SuggestionList[selectedCategory?.name?.en.toLowerCase()][selectedLanguage].filter(
+    filteredSuggestions = allSuggestions[selectedCategory?.name?.en.toLowerCase()][selectedLanguage].filter(
       suggestion =>
         suggestion.toLowerCase().includes(searchTerm.toLowerCase()) &&
         !selectedChips.includes(suggestion)

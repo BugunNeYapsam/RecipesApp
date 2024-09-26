@@ -163,8 +163,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   categoryCard: {
-    width: (screenWidth / 3) - 30,
-    height: 160,
+    width: (screenWidth / 3) - 35,
+    height: 130,
     marginRight: 10,
     borderRadius: 10,
     overflow: 'hidden',
@@ -212,10 +212,9 @@ const styles = StyleSheet.create({
     paddingBottom: "25%"
   },
   placeholderCard: {
-    width: 120,
-    height: 160,
+    width: (screenWidth / 3) - 35,
+    height: 130,
     marginRight: 10,
-    marginBottom: 10,
     borderRadius: 10,
     backgroundColor: '#E0E0E0',
     elevation: 2,

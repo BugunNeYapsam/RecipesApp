@@ -1,11 +1,11 @@
 {
       
   "expo": {
-    "name": "BugunNeYapsam",
+    "name": "Bugun Ne Yapsam?",
     "slug": "bugun-ne-yapsam",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/bny_icon.png",
     "userInterfaceStyle": "light",
     "entryPoint": "./App.js",
     "splash": {
@@ -18,12 +18,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/bny_icon.png",
         "backgroundColor": "#ffffff"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/bny_icon.png"
     }
   }
 }
