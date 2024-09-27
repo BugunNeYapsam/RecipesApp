@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 
 export default function SearchFood({ updateRecipeRating }) {
-  const { allRecipeData, savedRecipes, addRecipe, removeRecipe, isDarkMode } = useAppContext();
+  const { allRecipeData, savedRecipes, addRecipe, removeRecipe, isDarkMode, selectedLanguage } = useAppContext();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [expandedCardIndex, setExpandedCardIndex] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState('none');

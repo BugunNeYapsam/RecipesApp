@@ -6,7 +6,7 @@ import { useAppContext } from '../Context/AppContext';
 
 const FeaturedRecipes = ({ showAll }) => {
     const navigation = useNavigation();
-    const { allRecipeData } = useAppContext();
+    const { allRecipeData, selectedLanguage } = useAppContext();
 
     if (showAll) {
       return (
