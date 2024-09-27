@@ -240,6 +240,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#C0C0C0',
     borderRadius: 4,
   },
+  text: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 10,
+  },
 });
 
 export default FeaturedRecipes;
