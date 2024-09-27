@@ -178,7 +178,7 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
           end={{ x: 1, y: 1 }}
           style={styles.gradient}
         >
-          <View style={styles.header}>
+          <View style={[styles.header, { width: expanded ? "100%" : "80%" }]}>
             <MaterialIcons name={expanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'} size={24} color={isDarkMode ? "#111" : "#888"} />
             <Text style={styles.title}>{foodName}</Text>
           </View>
@@ -259,7 +259,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: -5,
-    width: "80%",
     height: 45
   },
   title: {
