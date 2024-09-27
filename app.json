@@ -1,5 +1,4 @@
 {
-      
   "expo": {
     "name": "Bugun Ne Yapsam?",
     "slug": "bugun-ne-yapsam",
@@ -9,7 +8,7 @@
     "userInterfaceStyle": "light",
     "entryPoint": "./App.js",
     "splash": {
-      "image": "./assets/SplashScreen/splash.jpg",
+      "image": "./assets/SplashScreen/splash.png",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
@@ -20,10 +19,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/bny_icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.johnrussell.bugunneyapsam"
     },
     "web": {
       "favicon": "./assets/bny_icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1bdfec83-632e-42ac-80df-75873a247462"
+      }
     }
   }
 }

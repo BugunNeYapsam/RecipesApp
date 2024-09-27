@@ -1,0 +1,12 @@
+{
+  "id": 1,
+  "name": {"en": "", "tr": ""},
+  "imageUrl": "",
+  "category": "",
+  "country": [],
+  "ingredients": {"en": [], "tr": []},
+  "recipe": {"en": [], "tr": []},
+  "ratingTotal": 0,
+  "ratingCount": 0,
+  "rating": 0
+}

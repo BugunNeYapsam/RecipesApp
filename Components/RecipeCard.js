@@ -185,12 +185,16 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
 
           {
             !expanded &&
-              <Image style={styles.imageContainer} source={{ uri: imgUrl }} resizeMode="cover" />
-           }
+            <Image
+              style={styles.imageContainer}
+              source={imgUrl !== "" ? { uri: imgUrl } : require('../assets/FoodPlaceholder.png')}
+              resizeMode="cover"
+            />
+          }
 
           {expanded && (
             <>
-            { expanded && <Image source={{ uri: imgUrl }} style={styles.imageExpanded} resizeMode="cover" /> }
+            { expanded && <Image source={imgUrl !== "" ? { uri: imgUrl } : require('../assets/FoodPlaceholder.png')} style={styles.imageExpanded} resizeMode="cover" /> }
 
               <View style={styles.contentContainer}>
                 <Text style={styles.subtitle}>{languageStore[selectedLanguage]["ingredients"]}:</Text>
@@ -269,8 +273,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   imageContainer: {
-    justifyContent: 'center', // centers the image vertically
-    alignItems: 'center', // centers the image horizontally
+    justifyContent: 'center',
+    alignItems: 'center',
     position: "absolute",
     right: 0,
     width: 100,
