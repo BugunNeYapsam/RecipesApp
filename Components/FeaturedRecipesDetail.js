@@ -216,7 +216,7 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
           </View>
 
           <>
-            <Image source={{ uri: selectedFeaturedRecipe?.imageUrl }} style={styles.imageExpanded} resizeMode="cover" />
+            <Image source={selectedFeaturedRecipe?.imageUrl !== "" ? { uri: selectedFeaturedRecipe?.imageUrl } : require('../assets/FoodPlaceholder.png')} style={styles.imageExpanded} resizeMode="cover" />
             <View style={styles.contentContainer}>
               <Text style={styles.subtitle}>{languageStore[selectedLanguage]["ingredients"]}:</Text>
               <View style={styles.ingredientsList}>
@@ -313,6 +313,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     height: 200,
+    width: "100%",
     borderRadius: 5,
     borderColor: "#555",
     borderWidth: .5,

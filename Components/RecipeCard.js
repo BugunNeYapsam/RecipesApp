@@ -288,6 +288,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     height: 200,
+    width: "100%",
     borderRadius: 10,
     borderColor: "#555",
     borderWidth: 1,
