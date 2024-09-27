@@ -27,7 +27,6 @@ export default function Saved({ updateRecipeRating }) {
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
       <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["saveds"]?.toUpperCase()}</Text>
       <View style={styles.container}>
-        {console.log(savedRecipes)}
         <ScrollView>
           {savedRecipes.length > 0 ? (
             savedRecipes.map((r, index) => (
