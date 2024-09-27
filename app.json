@@ -1,5 +1,4 @@
 {
-      
   "expo": {
     "name": "Bugun Ne Yapsam?",
     "slug": "bugun-ne-yapsam",
@@ -20,10 +19,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/bny_icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.kdrbln.bugunneyapsam"
     },
     "web": {
       "favicon": "./assets/bny_icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2111a169-72e8-440e-a08a-c58d5bd6d6e1"
+      }
     }
   }
 }
