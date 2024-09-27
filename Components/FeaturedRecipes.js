@@ -89,7 +89,7 @@ const FeaturedRecipes = ({ showAll }) => {
             <View style={styles.grid}>
               {loading ? renderPlaceholders() : featuredRecipes?.map((recipe, index) => (
                 <TouchableOpacity key={index} style={styles.recipeCard} onPress={() => handleOnPressFeaturedRecipe(recipe)}>
-                  <Image source={{ uri: recipe.imageUrl }} style={styles.recipeImage} />
+                  <Image source={recipe?.imageUrl !== "" ? { uri: recipe?.imageUrl } : require('../assets/FoodPlaceholder.png')} style={styles.recipeImage} />
                   <Text style={styles.recipeName}>{recipe.name[selectedLanguage]}</Text>
                 </TouchableOpacity>
               ))}
@@ -113,7 +113,7 @@ const FeaturedRecipes = ({ showAll }) => {
         <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
           {loading ? renderPlaceholders() : featuredRecipes.slice(0, 5)?.map((recipe, index) => (
             <TouchableOpacity key={index} style={styles.featuredCardHome} onPress={() => handleOnPressFeaturedRecipe(recipe)}>
-              <Image source={{ uri: recipe.imageUrl }} style={styles.recipeImage} />
+              <Image source={recipe?.imageUrl !== "" ? { uri: recipe?.imageUrl } : require('../assets/FoodPlaceholder.png')} style={styles.recipeImage} />
               <View style={styles.featuredOverlay}>
                 <Text style={styles.recipeName}>{recipe.name[selectedLanguage]}</Text>
               </View>
