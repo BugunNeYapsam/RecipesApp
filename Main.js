@@ -110,7 +110,7 @@ export default function Main() {
       });
 
       const sortedRecipes = recipes
-        .filter(recipe => recipe.rating !== undefined)
+        .filter(recipe => recipe.rating !== undefined && recipe.country.includes("tr"))
         .sort((a, b) => b.rating - a.rating)
         .slice(0, 30);
 
