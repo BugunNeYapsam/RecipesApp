@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text } from 'react-native';
+import { Text, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -224,96 +224,99 @@ export default function Main() {
   };
   
   return (
-    <NavigationContainer theme={isDarkMode ? darkTheme : lightTheme}>
-      <Tab.Navigator
-        screenOptions={{
-          tabBarStyle: {
-            backgroundColor: "#6B2346",
-            borderTopWidth: 0,
-            elevation: 0,
-            height: 65,
-            margin: 15,
-            borderRadius: 15,
-            position: 'absolute'
-          },
-          tabBarLabelStyle: {
-            fontSize: 12,
-            marginBottom: 2,
-          },
-        }}
-      >
-        <Tab.Screen
-          name="Explore"
-          options={{
-            headerShown: false,
-            tabBarItemStyle: { marginTop: 3 },
-            tabBarIcon: ({ focused }) => (
-              <MaterialIcons
-                name="explore"
-                color={focused ? "#ffffff" : "#ffdddd"}
-                size={27}
-              />
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["explore"]}</Text>
-            ),
+    <>
+      <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} backgroundColor={isDarkMode ? "#2D2D2D": "#EEEEEE"} />
+      <NavigationContainer theme={isDarkMode ? darkTheme : lightTheme}>
+        <Tab.Navigator
+          screenOptions={{
+            tabBarStyle: {
+              backgroundColor: "#6B2346",
+              borderTopWidth: 0,
+              elevation: 0,
+              height: 65,
+              margin: 15,
+              borderRadius: 15,
+              position: 'absolute'
+            },
+            tabBarLabelStyle: {
+              fontSize: 12,
+              marginBottom: 2,
+            },
           }}
         >
-          {() => <ExploreStack retrieveAllData={retrieveAllData} updateRecipeRating={updateRecipeRating} />}
-        </Tab.Screen>
-        <Tab.Screen
-          name="Ara"
-          options={{
-            headerShown: false,
-            tabBarItemStyle: { marginTop: 3 },
-            tabBarIcon: ({ focused }) => (
-                <MaterialIcons name="tune" color={focused ? "#ffffff" : "#ffdddd"} size={27} />
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["filter"]}</Text>
-            ),
-          }}
-        >
-          {() => <SearchFood updateRecipeRating={updateRecipeRating} />}
-        </Tab.Screen>
-        <Tab.Screen
-          name="Kaydedilenler"
-          options={{
-            headerShown: false,
-            tabBarItemStyle: { marginTop: 3 },
-            tabBarIcon: ({ focused }) => (
-              <MaterialIcons
-                name="bookmark"
-                color={focused ? "#ffffff" : "#ffdddd"}
-                size={27}
-              />
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["saveds"]}</Text>
-            ),
-          }}
-        >
-          {() => <Saveds updateRecipeRating={updateRecipeRating} />}
-        </Tab.Screen>
-        <Tab.Screen
-          name="Ayarlar"
-          component={Settings}
-          options={{
-            headerShown: false,
-            tabBarItemStyle: { marginTop: 3 },
-            tabBarIcon: ({ focused }) => (
-              <MaterialIcons
-                name="settings"
-                color={focused ? "#ffffff" : "#ffdddd"}
-                size={27}
-              />
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["settings"]}</Text>
-            ),
-          }}
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
+          <Tab.Screen
+            name="Explore"
+            options={{
+              headerShown: false,
+              tabBarItemStyle: { marginTop: 3 },
+              tabBarIcon: ({ focused }) => (
+                <MaterialIcons
+                  name="explore"
+                  color={focused ? "#ffffff" : "#ffdddd"}
+                  size={27}
+                />
+              ),
+              tabBarLabel: ({ focused }) => (
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["explore"]}</Text>
+              ),
+            }}
+          >
+            {() => <ExploreStack retrieveAllData={retrieveAllData} updateRecipeRating={updateRecipeRating} />}
+          </Tab.Screen>
+          <Tab.Screen
+            name="Ara"
+            options={{
+              headerShown: false,
+              tabBarItemStyle: { marginTop: 3 },
+              tabBarIcon: ({ focused }) => (
+                  <MaterialIcons name="tune" color={focused ? "#ffffff" : "#ffdddd"} size={27} />
+              ),
+              tabBarLabel: ({ focused }) => (
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["filter"]}</Text>
+              ),
+            }}
+          >
+            {() => <SearchFood updateRecipeRating={updateRecipeRating} />}
+          </Tab.Screen>
+          <Tab.Screen
+            name="Kaydedilenler"
+            options={{
+              headerShown: false,
+              tabBarItemStyle: { marginTop: 3 },
+              tabBarIcon: ({ focused }) => (
+                <MaterialIcons
+                  name="bookmark"
+                  color={focused ? "#ffffff" : "#ffdddd"}
+                  size={27}
+                />
+              ),
+              tabBarLabel: ({ focused }) => (
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["saveds"]}</Text>
+              ),
+            }}
+          >
+            {() => <Saveds updateRecipeRating={updateRecipeRating} />}
+          </Tab.Screen>
+          <Tab.Screen
+            name="Ayarlar"
+            component={Settings}
+            options={{
+              headerShown: false,
+              tabBarItemStyle: { marginTop: 3 },
+              tabBarIcon: ({ focused }) => (
+                <MaterialIcons
+                  name="settings"
+                  color={focused ? "#ffffff" : "#ffdddd"}
+                  size={27}
+                />
+              ),
+              tabBarLabel: ({ focused }) => (
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["settings"]}</Text>
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </>
   );
 }

@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   categoryCard: {
-    width: (screenWidth / 3) - 35,
+    width: (screenWidth / 3) - 30,
     height: 130,
     marginRight: 10,
     borderRadius: 10,
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     paddingBottom: "25%"
   },
   placeholderCard: {
-    width: (screenWidth / 3) - 35,
+    width: (screenWidth / 3) - 30,
     height: 130,
     marginRight: 10,
     borderRadius: 10,
