@@ -3,7 +3,7 @@ import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AppProvider } from './Context/AppContext';
 import * as SplashScreen from 'expo-splash-screen';
-import Main from './Main';
+import { StatusBar } from 'react-native';import Main from './Main';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -11,8 +11,10 @@ export default function App() {
   useEffect(() => {
     async function prepare() {
       await new Promise(resolve => setTimeout(resolve, 2000));
-      SplashScreen.hideAsync();
+      await SplashScreen.hideAsync();
+      StatusBar.setHidden(false);
     }
+    StatusBar.setHidden(true);
 
     prepare();
   }, []);
@@ -21,6 +23,7 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AppProvider>
         <Main />
+        <StatusBar hidden={true} />
       </AppProvider>
     </GestureHandlerRootView>
   );
