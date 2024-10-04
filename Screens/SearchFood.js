@@ -12,9 +12,8 @@ export default function SearchFood({ updateRecipeRating }) {
   const [sortOrder, setSortOrder] = React.useState('none');
   const [selectedChips, setSelectedChips] = React.useState([]);
   
-  // Create a ref for the ScrollView
   const scrollViewRef = React.useRef();
-  const cardRefs = React.useRef({});  // Store refs for each card
+  const cardRefs = React.useRef({});
 
   const dynamicSafeAreaStyle = {
     backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
@@ -36,18 +35,19 @@ export default function SearchFood({ updateRecipeRating }) {
     const recipeNameLower = recipe.name[selectedLanguage].toLowerCase();
     const ingredientsLower = recipe.ingredients[selectedLanguage].map(ingredient => ingredient.toLowerCase()).join("--");
   
-    if (selectedChipsLower.length > 0) {
-      return selectedChipsLower.some(chip => recipeNameLower.includes(chip) || ingredientsLower.includes(chip));
-    }
+    const allChipsMatch = selectedChipsLower.every(chip => 
+      recipeNameLower.includes(chip) || ingredientsLower.includes(chip)
+    );
   
-    return recipeNameLower.includes(searchLower) || ingredientsLower.includes(searchLower);
+    const searchTermMatch = searchLower ? recipeNameLower.includes(searchLower) || ingredientsLower.includes(searchLower) : true;
+  
+    return allChipsMatch && searchTermMatch;
   });
 
   const sortedRecipes = sortRecipes(filteredRecipes, sortOrder);
 
   const toggleExpand = (index) => {
     setExpandedCardIndex(expandedCardIndex === index ? null : index);
-    // Scroll to the card if it's being expanded
     if (expandedCardIndex !== index && scrollViewRef.current) {
       const cardRef = cardRefs.current[index];
       if (cardRef) {

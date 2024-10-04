@@ -93,7 +93,7 @@ const SearchBar = ({ isDarkMode, searchTerm, setSearchTerm, onSortPress, sortOrd
           onFocus={() => setIsFocused(true)}
           onBlur={() => {
             setIsFocused(false);
-            handleAddChip();  // Add chip when focus is lost (clicked outside)
+            handleAddChip();
           }}
         />
         <TouchableOpacity style={styles.sortButton} onPress={onSortPress}>
