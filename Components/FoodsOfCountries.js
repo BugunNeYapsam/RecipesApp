@@ -113,7 +113,7 @@ const FoodsOfCountries = ({ showAll }) => {
         }
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
-        {loading ? renderPlaceholders() : allCountries.slice(0, 5)?.map((country, index) => (
+        {loading ? renderPlaceholders() : allCountries?.sort((a, b) => a.code.localeCompare(b.code))?.slice(0, 5).map((country, index) => (
           <TouchableOpacity key={index} style={styles.countryCard} onPress={() => handleOnPressCountry(country)}>
             <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
             <View style={styles.countryOverlay}>
