@@ -4,6 +4,7 @@ import Categories from '../Components/Categories';
 import FeaturedRecipes from '../Components/FeaturedRecipes';
 import FoodsOfCountries from '../Components/FoodsOfCountries';
 import headerImage from '../assets/headerBNY.png';
+import headerImageLight from '../assets/headerBNY_light.png';
 import { useAppContext } from '../Context/AppContext';
 
 const Explore = (props) => {
@@ -28,7 +29,7 @@ const Explore = (props) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.separatorContainer}>
-          <Image source={headerImage} style={styles.headerImage} />
+          <Image source={isDarkMode ? headerImage : headerImageLight} style={styles.headerImage} />
         </View>
         <View style={styles.separatorContainer}>
           <View style={[styles.line, dynamicLineStyle]} />

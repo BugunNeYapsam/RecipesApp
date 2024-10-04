@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollView, View, StyleSheet, SafeAreaView, Platform, StatusBar } from 'react-native';
+import { ScrollView, View, StyleSheet, SafeAreaView, Platform, StatusBar, findNodeHandle } from 'react-native';
 import RecipeCard from '../Components/RecipeCard';
 import SearchBar from '../Components/SearchBar';
 import { useNavigation } from '@react-navigation/native';
@@ -11,6 +11,10 @@ export default function SearchFood({ updateRecipeRating }) {
   const [expandedCardIndex, setExpandedCardIndex] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState('none');
   const [selectedChips, setSelectedChips] = React.useState([]);
+  
+  // Create a ref for the ScrollView
+  const scrollViewRef = React.useRef();
+  const cardRefs = React.useRef({});  // Store refs for each card
 
   const dynamicSafeAreaStyle = {
     backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
@@ -43,6 +47,15 @@ export default function SearchFood({ updateRecipeRating }) {
 
   const toggleExpand = (index) => {
     setExpandedCardIndex(expandedCardIndex === index ? null : index);
+    // Scroll to the card if it's being expanded
+    if (expandedCardIndex !== index && scrollViewRef.current) {
+      const cardRef = cardRefs.current[index];
+      if (cardRef) {
+        cardRef.measureLayout(findNodeHandle(scrollViewRef.current), (x, y) => {
+          scrollViewRef.current.scrollTo({ y: y, animated: true });
+        });
+      }
+    }
   };
 
   const handleSort = () => {
@@ -92,22 +105,23 @@ export default function SearchFood({ updateRecipeRating }) {
           isDarkMode={isDarkMode}
           suggestionListWithoutCategory={true}
         />
-        <ScrollView>
+        <ScrollView ref={scrollViewRef}>
           {sortedRecipes?.map((r, index) => (
-            <RecipeCard
-              key={index}
-              recipeID={r.id}
-              imgUrl={r.imageUrl}
-              foodName={r.name[selectedLanguage]}
-              ingredients={r.ingredients[selectedLanguage]}
-              recipeSteps={r.recipe[selectedLanguage]}
-              expanded={expandedCardIndex === index}
-              toggleExpand={() => toggleExpand(index)}
-              onSave={(isSaved) => handleSave(r, isSaved)}
-              saved={savedRecipes.some(savedRecipe => savedRecipe.id === r.id)}
-              rating={r.rating || 0} 
-              updateRecipeRating={updateRecipeRating}
-            />
+            <View key={index} ref={ref => cardRefs.current[index] = ref}>
+              <RecipeCard
+                recipeID={r.id}
+                imgUrl={r.imageUrl}
+                foodName={r.name[selectedLanguage]}
+                ingredients={r.ingredients[selectedLanguage]}
+                recipeSteps={r.recipe[selectedLanguage]}
+                expanded={expandedCardIndex === index}
+                toggleExpand={() => toggleExpand(index)}
+                onSave={(isSaved) => handleSave(r, isSaved)}
+                saved={savedRecipes.some(savedRecipe => savedRecipe.id === r.id)}
+                rating={r.rating || 0} 
+                updateRecipeRating={updateRecipeRating}
+              />
+            </View>
           ))}
         </ScrollView>
       </View>

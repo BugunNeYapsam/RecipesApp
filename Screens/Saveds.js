@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { ScrollView, View, StyleSheet, Text, SafeAreaView, Platform, StatusBar } from 'react-native';
+import React, { useState } from 'react';
+import { ScrollView, View, StyleSheet, Text, SafeAreaView, Platform, StatusBar, Image } from 'react-native';
 import { useAppContext } from '../Context/AppContext';
 import RecipeCard from '../Components/RecipeCard';
+import NotFoundImage from "../assets/no_saved_food_found.png";
 
 export default function Saved({ updateRecipeRating }) {
   const { savedRecipes, removeRecipe, isDarkMode, selectedLanguage, languageStore } = useAppContext();
@@ -48,7 +49,10 @@ export default function Saved({ updateRecipeRating }) {
               </View>
             ))
           ) : (
-            <Text style={styles.noRecipesText}>{languageStore[selectedLanguage]["no_saved_recipes"]}</Text>
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: "20%"}}>
+              <Image source={NotFoundImage} style={styles.image} />
+              <Text style={styles.noRecipesText}>{languageStore[selectedLanguage]["no_saved_recipes"]}</Text>
+            </View>
           )}
         </ScrollView>
       </View>
@@ -66,6 +70,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 30,
     marginLeft: 20,
+  },
+  image: {
+    width: "40%",
+    height: 120,
+    padding: 10,
+    marginBottom: 20,
   },
   container: {
     flex: 1,

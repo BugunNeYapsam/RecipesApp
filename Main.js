@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, StatusBar } from 'react-native';
+import { Text, StatusBar, View, ActivityIndicator, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -19,9 +19,15 @@ import CategoryDetail from './Components/CategoryDetail';
 import FoodsOfCountriesDetail from './Components/FoodsOfCountriesDetail';
 import FeaturedRecipesDetail from './Components/FeaturedRecipesDetail';
 import { DefaultTheme, DarkTheme } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
+const errorMessages = {
+  "en": "Oops! It seems we're having trouble connecting right now. Please check back in a moment.",
+  "tr": "Üzgünüz! Şu anda bağlantı kurmakta zorluk yaşıyoruz. Lütfen birazdan tekrar deneyin."
+}
 
 const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
   const { selectedLanguage, languageStore, selectedCategory, selectedFeaturedRecipe, selectedCountry } = useAppContext();
@@ -63,8 +69,8 @@ const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
 };
 
 export default function Main() {
-  const { setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, updateAllRecipeRatings, isDarkMode, setIsDarkMode, setSelectedLanguage, selectedLanguage, languageStore, setAllSuggestions } = useAppContext();
-
+  const {languageLoading, error, setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, updateAllRecipeRatings, isDarkMode, setIsDarkMode, setSelectedLanguage, selectedLanguage, languageStore, setAllSuggestions } = useAppContext();
+  
   const getDarkModePreference = async () => {
     try {
       const value = await AsyncStorage.getItem('darkMode');
@@ -86,11 +92,6 @@ export default function Main() {
       console.error('Failed to fetch language preference.', e);
     }
   };
-
-  React.useEffect(() => {
-    getDarkModePreference();
-    getLanguagePreference();
-  }, []);
 
   const getData = async () => {
     try {
@@ -204,6 +205,8 @@ export default function Main() {
   }
 
   React.useEffect(() => {
+    getDarkModePreference();
+    getLanguagePreference();
     retrieveAllData();
   }, []);
 
@@ -223,6 +226,23 @@ export default function Main() {
     },
   };
   
+  if (!languageLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#6B2346" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.center}>
+        <Icon name="error-outline" size={75} color="#6B2346" />
+        <Text style={styles.errorText}>{selectedLanguage ? errorMessages[selectedLanguage] : errorMessages["tr"]}</Text>
+      </View>
+    );
+  }
+
   return (
     <>
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} backgroundColor={isDarkMode ? "#2D2D2D": "#EEEEEE"} />
@@ -320,3 +340,18 @@ export default function Main() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    textAlign: "center",
+    color: '#6B2346',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+});

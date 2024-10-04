@@ -119,9 +119,12 @@ export default function Settings() {
                 />
               </TouchableOpacity>
               {isExpanded && (
+                <>
+                <Text style={styles.expandedTextTitle}>Dilek, görüş ve işbirliği için:</Text>
                 <View style={styles.expandedContent}>
                   <Text style={styles.expandedText}>bugunneyapsam@gmail.com</Text>
                 </View>
+                </>
               )}
             </View>
 
@@ -406,5 +409,9 @@ const styles = StyleSheet.create({
     padding: 7,
     paddingHorizontal: 15,
     borderRadius: 9,
+  },
+  expandedTextTitle: {
+    color: '#6B2346',
+    paddingVertical: 5,
   },
 });
