@@ -226,7 +226,7 @@ export default function Main() {
     },
   };
   
-  if (!languageLoading) {
+  if (languageLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#6B2346" />
