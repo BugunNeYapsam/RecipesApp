@@ -170,7 +170,7 @@ export default function Settings() {
                 <View style={styles.rowSpacer} />
                 <FeatherIcon
                   color={isDarkMode ? "#222222" : "#BCBCBC"}
-                  name={isExpanded ? 'chevron-up' : 'chevron-down'}
+                  name={isLanguageOptionsExpanded ? 'chevron-up' : 'chevron-down'}
                   size={19}
                 />
               </TouchableOpacity>
