@@ -115,7 +115,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 5
+    marginTop: 5,
+    marginBottom: 10
   },
   line: {
     height: 0.5,

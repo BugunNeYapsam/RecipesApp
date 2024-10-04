@@ -51,7 +51,7 @@ export default function Saved({ updateRecipeRating }) {
           ) : (
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: "20%"}}>
               <Image source={NotFoundImage} style={styles.image} />
-              <Text style={styles.noRecipesText}>{languageStore[selectedLanguage]["no_saved_recipes"]}</Text>
+              <Text style={[styles.noRecipesText, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["no_saved_recipes"]}</Text>
             </View>
           )}
         </ScrollView>
@@ -87,6 +87,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
     fontSize: 18,
-    color: '#333',
   },
 });

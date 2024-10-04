@@ -69,7 +69,7 @@ const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
 };
 
 export default function Main() {
-  const {languageLoading, error, setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, updateAllRecipeRatings, isDarkMode, setIsDarkMode, setSelectedLanguage, selectedLanguage, languageStore, setAllSuggestions } = useAppContext();
+  const {languageLoading, error, setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, setAppSettings, updateAllRecipeRatings, isDarkMode, setIsDarkMode, setSelectedLanguage, selectedLanguage, languageStore, setAllSuggestions } = useAppContext();
   
   const getDarkModePreference = async () => {
     try {
@@ -162,6 +162,19 @@ export default function Main() {
     }
   };
 
+  const getAppSettings = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "6"));
+      var settings = [];
+      querySnapshot.forEach((doc) => {
+        settings = doc.data();
+      });
+      setAppSettings(settings);
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+    }
+  };
+
   const updateRecipeRating = async (recipeId, newRating, updateSpecificRecipeRating) => {
     try {
       if (!db) throw new Error("Firestore not initialized correctly!");
@@ -202,6 +215,7 @@ export default function Main() {
     getCategories();
     getCountries();
     getSuggestions();
+    getAppSettings();
   }
 
   React.useEffect(() => {

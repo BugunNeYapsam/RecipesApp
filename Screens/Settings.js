@@ -23,7 +23,7 @@ import linkedinIcon from '../assets/linkedin.png';
 import { useAppContext } from '../Context/AppContext';
 
 export default function Settings() {
-  const { isDarkMode, setIsDarkMode, selectedLanguage, setSelectedLanguage, languageStore } = useAppContext();
+  const { isDarkMode, setIsDarkMode, selectedLanguage, setSelectedLanguage, languageStore, appSettings } = useAppContext();
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -122,7 +122,7 @@ export default function Settings() {
                 <>
                 <Text style={styles.expandedTextTitle}>Dilek, görüş ve işbirliği için:</Text>
                 <View style={styles.expandedContent}>
-                  <Text style={styles.expandedText}>bugunneyapsam@gmail.com</Text>
+                  <Text style={styles.expandedText}>{appSettings?.email}</Text>
                 </View>
                 </>
               )}

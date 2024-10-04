@@ -37,6 +37,7 @@ export const AppProvider = ({ children }) => {
   const [allSuggestions, setAllSuggestions] = useState([]);
   const [languageLoading, setLanguageLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [appSettings, setAppSettings] = useState({});
 
   useEffect(() => {
     const loadLanguages = async () => {
@@ -150,7 +151,9 @@ export const AppProvider = ({ children }) => {
         allSuggestions,
         setAllSuggestions,
         languageLoading,
-        error
+        error,
+        appSettings,
+        setAppSettings
       }}
     >
       {children}

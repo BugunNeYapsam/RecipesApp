@@ -4,7 +4,7 @@
     "slug": "bugun-ne-yapsam",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/bny_icon.png",
+    "icon": "./assets/bnyIcon.png",
     "userInterfaceStyle": "light",
     "entryPoint": "./App.js",
     "splash": {
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/bny_icon.png",
+        "foregroundImage": "./assets/bnyIcon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.johnrussell.bugunneyapsam"
