@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -7,23 +7,22 @@ import {
   Text,
   TouchableOpacity,
   Modal,
-  Share,
-  Image,
+    Image,
   Linking,
   Platform,
   StatusBar,
   Switch
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import whatsappIcon from '../assets/whatsapp.png';
 import instagramIcon from '../assets/instagram.png';
-import twitterIcon from '../assets/twitter.png';
+import xIcon from '../assets/x.png';
 import linkedinIcon from '../assets/linkedin.png';
 import { useAppContext } from '../Context/AppContext';
 
 export default function Settings() {
-  const { isDarkMode, setIsDarkMode, selectedLanguage, setSelectedLanguage, languageStore } = useAppContext();
+  const { isDarkMode, setIsDarkMode, selectedLanguage, setSelectedLanguage, languageStore, appSettings } = useAppContext();
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -48,6 +47,18 @@ export default function Settings() {
     }
   };
 
+  const handleModalOpen = () => {
+    setModalVisible(true);
+    StatusBar.setBackgroundColor('rgba(0, 0, 0, 0.5)', true);
+    StatusBar.setBarStyle('light-content', true);
+  };
+
+  const handleModalClose = () => {
+    setModalVisible(false);
+    StatusBar.setBackgroundColor('#FFFFFF', true);
+    StatusBar.setBarStyle('dark-content', true);
+  };
+  
   const dynamicSafeAreaStyle = {
     backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
   };
@@ -60,36 +71,28 @@ export default function Settings() {
     backgroundColor: isDarkMode ? '#CCCCCC' : '#FFFFFF'
   };
 
-  const handleShare = async (platform) => {
-    try {
-      const message = 'Bu harika uygulamayı denemelisiniz!';
-      const url = 'https://www.example.com';
-
-      await Share.share({
-        message,
-        url,
-      });
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
   const openShareUrl = (platform) => {
     let url = '';
+    const appLink = 'https://play.google.com/store/apps/details?id=com.bugunneyapsam';
+    const shareMessage = selectedLanguage == 'tr' ? 'Bu harika uygulamayı denemelisiniz!': 'Check out this awesome app!';
+
     switch (platform) {
       case 'whatsapp':
-        url = 'whatsapp://send?text=Bu%20harika%20uygulamayı%20denemelisiniz!%20https://www.example.com';
+        url = `whatsapp://send?text=${encodeURIComponent(shareMessage)}%20${encodeURIComponent(appLink)}`;
         break;
       case 'instagram':
         url = 'instagram://';
         break;
       case 'twitter':
-        url = 'twitter://post?message=Bu%20harika%20uygulamayı%20denemelisiniz!%20https://www.example.com';
+        url = `twitter://post?message=${encodeURIComponent(shareMessage)}%20${encodeURIComponent(appLink)}`;
         break;
       case 'linkedin':
-        url = 'linkedin://shareArticle?mini=true&url=https://www.example.com&title=Harika%20Uygulama&summary=Bu%20harika%20uygulamayı%20denemelisiniz!';
+        url = `linkedin://shareArticle?mini=true&url=${encodeURIComponent(appLink)}&title=Awesome%20App&summary=${encodeURIComponent(shareMessage)}`;
         break;
+      default:
+        url = '';
     }
+    
     Linking.canOpenURL(url).then((supported) => {
       if (supported) {
         Linking.openURL(url);
@@ -119,9 +122,12 @@ export default function Settings() {
                 />
               </TouchableOpacity>
               {isExpanded && (
+                <>
+                <Text style={styles.expandedTextTitle}>Dilek, görüş ve işbirliği için:</Text>
                 <View style={styles.expandedContent}>
-                  <Text style={styles.expandedText}>bugunneyapsam@gmail.com</Text>
+                  <Text style={styles.expandedText}>{appSettings?.email}</Text>
                 </View>
+                </>
               )}
             </View>
 
@@ -143,7 +149,7 @@ export default function Settings() {
 
             <View style={[styles.rowWrapper, dynamicRowWrapperStyle, styles.rowLast]}>
               <TouchableOpacity
-                onPress={() => setModalVisible(true)}
+                onPress={handleModalOpen}
                 style={styles.row}>
                 <Text style={styles.rowLabel}>{languageStore[selectedLanguage]["share"]}</Text>
                 <View style={styles.rowSpacer} />
@@ -167,7 +173,7 @@ export default function Settings() {
                 <View style={styles.rowSpacer} />
                 <FeatherIcon
                   color={isDarkMode ? "#222222" : "#BCBCBC"}
-                  name={isExpanded ? 'chevron-up' : 'chevron-down'}
+                  name={isLanguageOptionsExpanded ? 'chevron-up' : 'chevron-down'}
                   size={19}
                 />
               </TouchableOpacity>
@@ -241,7 +247,7 @@ export default function Settings() {
         transparent={true}
         visible={modalVisible}
         animationType="slide"
-        onRequestClose={() => setModalVisible(false)}>
+        onRequestClose={handleModalClose}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <ScrollView horizontal={true} contentContainerStyle={styles.modalIconsContainer}>
@@ -258,7 +264,7 @@ export default function Settings() {
               <TouchableOpacity
                 onPress={() => openShareUrl('twitter')}
                 style={styles.modalButton}>
-                <Image source={twitterIcon} style={styles.modalIcon} />
+                <Image source={xIcon} style={styles.modalIcon} />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => openShareUrl('linkedin')}
@@ -267,9 +273,9 @@ export default function Settings() {
               </TouchableOpacity>
             </ScrollView>
             <TouchableOpacity
-              onPress={() => setModalVisible(false)}
+              onPress={handleModalClose}
               style={styles.closeButton}>
-              <Text style={styles.modalButtonText}>{languageStore[selectedLanguage]["close"]}</Text>
+              <Text style={styles.modalButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -406,5 +412,9 @@ const styles = StyleSheet.create({
     padding: 7,
     paddingHorizontal: 15,
     borderRadius: 9,
+  },
+  expandedTextTitle: {
+    color: '#6B2346',
+    paddingVertical: 5,
   },
 });

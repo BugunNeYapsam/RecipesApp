@@ -1,8 +1,23 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import LanguagesFile from "../Config/Languages.json";
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../Config/FirebaseConfig';
 
 export const AppContext = createContext({});
+
+const getLanguages = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, "5"));
+    let langs = {};
+    querySnapshot.forEach((doc) => {
+      langs[doc.id] = doc.data();
+    });
+    return langs;
+  } catch (error) {
+    console.error('Failed to fetch languages:', error);
+    throw error;
+  }
+};
 
 export const AppProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -15,12 +30,40 @@ export const AppProvider = ({ children }) => {
   const [recipeRatings, setRecipeRatings] = useState({});
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('tr');
-  const [languageStore, setLanguageStore] = useState(LanguagesFile);
+  const [languageStore, setLanguageStore] = useState({});
   const [selectedCategory, setSelectedCategory] = useState(undefined);
   const [selectedFeaturedRecipe, setSelectedFeaturedRecipe] = useState(undefined);
   const [selectedCountry, setSelectedCountry] = useState(undefined);
   const [allSuggestions, setAllSuggestions] = useState([]);
-  
+  const [languageLoading, setLanguageLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [appSettings, setAppSettings] = useState({});
+
+  useEffect(() => {
+    const loadLanguages = async () => {
+      try {
+        setLanguageLoading(true);
+        setError(false);
+        const langs = await getLanguages();
+        setLanguageStore(langs);
+      } catch (error) {
+        setError(true);
+      } finally {
+        setLanguageLoading(false);
+      }
+    };
+
+    loadLanguages();
+  }, []);
+
+  useEffect(() => {
+    const loadLanguages = async () => {
+      const langs = await getLanguages();
+      setLanguageStore(langs);
+    };
+    loadLanguages();
+  }, []);
+
   useEffect(() => {
     const loadSavedRecipes = async () => {
       try {
@@ -48,7 +91,8 @@ export const AppProvider = ({ children }) => {
 
   const signIn = (userData) => setUser(userData);
   const signOut = () => setUser(null);
-  const toggleTheme = () => setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+
+  const toggleTheme = () => setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
 
   const addRecipe = async (recipe) => {
     const updatedRecipes = [...savedRecipes, recipe];
@@ -61,7 +105,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const removeRecipe = async (recipe) => {
-    const updatedRecipes = savedRecipes.filter(r => r.id !== recipe.id);
+    const updatedRecipes = savedRecipes.filter((r) => r.id !== recipe.id);
     setSavedRecipes(updatedRecipes);
     try {
       await AsyncStorage.setItem('savedRecipes', JSON.stringify(updatedRecipes));
@@ -71,40 +115,47 @@ export const AppProvider = ({ children }) => {
   };
 
   return (
-    <AppContext.Provider value={{
-      savedRecipes,
-      addRecipe,
-      removeRecipe,
-      user,
-      signIn,
-      signOut,
-      theme,
-      toggleTheme,
-      allRecipeData,
-      setAllRecipeData,
-      featuredRecipes,
-      setFeaturedRecipes,
-      allCategoriesData,
-      setAllCategoriesData,
-      allCountries,
-      setAllCountries,
-      recipeRatings,
-      updateSpecificRecipeRating,
-      updateAllRecipeRatings,
-      isDarkMode,
-      setIsDarkMode,
-      selectedLanguage,
-      setSelectedLanguage,
-      languageStore,
-      selectedCategory,
-      setSelectedCategory,
-      selectedFeaturedRecipe,
-      setSelectedFeaturedRecipe,
-      selectedCountry,
-      setSelectedCountry,
-      allSuggestions,
-      setAllSuggestions
-    }}>
+    <AppContext.Provider
+      value={{
+        savedRecipes,
+        addRecipe,
+        removeRecipe,
+        user,
+        signIn,
+        signOut,
+        theme,
+        toggleTheme,
+        allRecipeData,
+        setAllRecipeData,
+        featuredRecipes,
+        setFeaturedRecipes,
+        allCategoriesData,
+        setAllCategoriesData,
+        allCountries,
+        setAllCountries,
+        recipeRatings,
+        updateSpecificRecipeRating,
+        updateAllRecipeRatings,
+        isDarkMode,
+        setIsDarkMode,
+        selectedLanguage,
+        setSelectedLanguage,
+        languageStore,
+        setLanguageStore,
+        selectedCategory,
+        setSelectedCategory,
+        selectedFeaturedRecipe,
+        setSelectedFeaturedRecipe,
+        selectedCountry,
+        setSelectedCountry,
+        allSuggestions,
+        setAllSuggestions,
+        languageLoading,
+        error,
+        appSettings,
+        setAppSettings
+      }}
+    >
       {children}
     </AppContext.Provider>
   );

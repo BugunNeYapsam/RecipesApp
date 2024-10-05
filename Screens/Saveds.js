@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { ScrollView, View, StyleSheet, Text, SafeAreaView, Platform, StatusBar } from 'react-native';
+import React, { useState } from 'react';
+import { ScrollView, View, StyleSheet, Text, SafeAreaView, Platform, StatusBar, Image, Dimensions } from 'react-native';
 import { useAppContext } from '../Context/AppContext';
 import RecipeCard from '../Components/RecipeCard';
+import NotFoundImage from "../assets/no_saved_food_found.png";
+
+const { width, height } = Dimensions.get('window');
 
 export default function Saved({ updateRecipeRating }) {
   const { savedRecipes, removeRecipe, isDarkMode, selectedLanguage, languageStore } = useAppContext();
@@ -27,7 +30,6 @@ export default function Saved({ updateRecipeRating }) {
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
       <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["saveds"]?.toUpperCase()}</Text>
       <View style={styles.container}>
-        {console.log(savedRecipes)}
         <ScrollView>
           {savedRecipes.length > 0 ? (
             savedRecipes.map((r, index) => (
@@ -49,7 +51,10 @@ export default function Saved({ updateRecipeRating }) {
               </View>
             ))
           ) : (
-            <Text style={styles.noRecipesText}>{languageStore[selectedLanguage]["no_saved_recipes"]}</Text>
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: "20%"}}>
+              <Image source={NotFoundImage} style={styles.image} />
+              <Text style={[styles.noRecipesText, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["no_saved_recipes"]}</Text>
+            </View>
           )}
         </ScrollView>
       </View>
@@ -68,6 +73,12 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginLeft: 20,
   },
+  image: {
+    width: width * 0.35,
+    height: height * 0.15,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+  },
   container: {
     flex: 1,
     paddingVertical: 35,
@@ -78,6 +89,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
     fontSize: 18,
-    color: '#333',
   },
 });

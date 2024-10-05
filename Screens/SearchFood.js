@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollView, View, StyleSheet, SafeAreaView, Platform, StatusBar } from 'react-native';
+import { ScrollView, View, StyleSheet, SafeAreaView, Platform, StatusBar, findNodeHandle } from 'react-native';
 import RecipeCard from '../Components/RecipeCard';
 import SearchBar from '../Components/SearchBar';
 import { useNavigation } from '@react-navigation/native';
@@ -11,6 +11,9 @@ export default function SearchFood({ updateRecipeRating }) {
   const [expandedCardIndex, setExpandedCardIndex] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState('none');
   const [selectedChips, setSelectedChips] = React.useState([]);
+  
+  const scrollViewRef = React.useRef();
+  const cardRefs = React.useRef({});
 
   const dynamicSafeAreaStyle = {
     backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
@@ -32,17 +35,27 @@ export default function SearchFood({ updateRecipeRating }) {
     const recipeNameLower = recipe.name[selectedLanguage].toLowerCase();
     const ingredientsLower = recipe.ingredients[selectedLanguage].map(ingredient => ingredient.toLowerCase()).join("--");
   
-    if (selectedChipsLower.length > 0) {
-      return selectedChipsLower.some(chip => recipeNameLower.includes(chip) || ingredientsLower.includes(chip));
-    }
+    const allChipsMatch = selectedChipsLower.every(chip => 
+      recipeNameLower.includes(chip) || ingredientsLower.includes(chip)
+    );
   
-    return recipeNameLower.includes(searchLower) || ingredientsLower.includes(searchLower);
+    const searchTermMatch = searchLower ? recipeNameLower.includes(searchLower) || ingredientsLower.includes(searchLower) : true;
+  
+    return allChipsMatch && searchTermMatch;
   });
 
   const sortedRecipes = sortRecipes(filteredRecipes, sortOrder);
 
   const toggleExpand = (index) => {
     setExpandedCardIndex(expandedCardIndex === index ? null : index);
+    if (expandedCardIndex !== index && scrollViewRef.current) {
+      const cardRef = cardRefs.current[index];
+      if (cardRef) {
+        cardRef.measureLayout(findNodeHandle(scrollViewRef.current), (x, y) => {
+          scrollViewRef.current.scrollTo({ y: y, animated: true });
+        });
+      }
+    }
   };
 
   const handleSort = () => {
@@ -92,22 +105,23 @@ export default function SearchFood({ updateRecipeRating }) {
           isDarkMode={isDarkMode}
           suggestionListWithoutCategory={true}
         />
-        <ScrollView>
+        <ScrollView ref={scrollViewRef}>
           {sortedRecipes?.map((r, index) => (
-            <RecipeCard
-              key={index}
-              recipeID={r.id}
-              imgUrl={r.imageUrl}
-              foodName={r.name[selectedLanguage]}
-              ingredients={r.ingredients[selectedLanguage]}
-              recipeSteps={r.recipe[selectedLanguage]}
-              expanded={expandedCardIndex === index}
-              toggleExpand={() => toggleExpand(index)}
-              onSave={(isSaved) => handleSave(r, isSaved)}
-              saved={savedRecipes.some(savedRecipe => savedRecipe.id === r.id)}
-              rating={r.rating || 0} 
-              updateRecipeRating={updateRecipeRating}
-            />
+            <View key={index} ref={ref => cardRefs.current[index] = ref}>
+              <RecipeCard
+                recipeID={r.id}
+                imgUrl={r.imageUrl}
+                foodName={r.name[selectedLanguage]}
+                ingredients={r.ingredients[selectedLanguage]}
+                recipeSteps={r.recipe[selectedLanguage]}
+                expanded={expandedCardIndex === index}
+                toggleExpand={() => toggleExpand(index)}
+                onSave={(isSaved) => handleSave(r, isSaved)}
+                saved={savedRecipes.some(savedRecipe => savedRecipe.id === r.id)}
+                rating={r.rating || 0} 
+                updateRecipeRating={updateRecipeRating}
+              />
+            </View>
           ))}
         </ScrollView>
       </View>

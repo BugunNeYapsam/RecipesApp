@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text } from 'react-native';
+import { Text, StatusBar, View, ActivityIndicator, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -19,9 +19,15 @@ import CategoryDetail from './Components/CategoryDetail';
 import FoodsOfCountriesDetail from './Components/FoodsOfCountriesDetail';
 import FeaturedRecipesDetail from './Components/FeaturedRecipesDetail';
 import { DefaultTheme, DarkTheme } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
+const errorMessages = {
+  "en": "Oops! It seems we're having trouble connecting right now. Please check back in a moment.",
+  "tr": "Üzgünüz! Şu anda bağlantı kurmakta zorluk yaşıyoruz. Lütfen birazdan tekrar deneyin."
+}
 
 const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
   const { selectedLanguage, languageStore, selectedCategory, selectedFeaturedRecipe, selectedCountry } = useAppContext();
@@ -63,8 +69,8 @@ const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
 };
 
 export default function Main() {
-  const { setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, updateAllRecipeRatings, isDarkMode, setIsDarkMode, setSelectedLanguage, selectedLanguage, languageStore, setAllSuggestions } = useAppContext();
-
+  const {languageLoading, error, setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, setAppSettings, updateAllRecipeRatings, isDarkMode, setIsDarkMode, setSelectedLanguage, selectedLanguage, languageStore, setAllSuggestions } = useAppContext();
+  
   const getDarkModePreference = async () => {
     try {
       const value = await AsyncStorage.getItem('darkMode');
@@ -87,11 +93,6 @@ export default function Main() {
     }
   };
 
-  React.useEffect(() => {
-    getDarkModePreference();
-    getLanguagePreference();
-  }, []);
-
   const getData = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "1"));
@@ -110,7 +111,7 @@ export default function Main() {
       });
 
       const sortedRecipes = recipes
-        .filter(recipe => recipe.rating !== undefined)
+        .filter(recipe => recipe.rating !== undefined && recipe.country.includes("tr"))
         .sort((a, b) => b.rating - a.rating)
         .slice(0, 30);
 
@@ -161,6 +162,19 @@ export default function Main() {
     }
   };
 
+  const getAppSettings = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "6"));
+      var settings = [];
+      querySnapshot.forEach((doc) => {
+        settings = doc.data();
+      });
+      setAppSettings(settings);
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+    }
+  };
+
   const updateRecipeRating = async (recipeId, newRating, updateSpecificRecipeRating) => {
     try {
       if (!db) throw new Error("Firestore not initialized correctly!");
@@ -201,9 +215,12 @@ export default function Main() {
     getCategories();
     getCountries();
     getSuggestions();
+    getAppSettings();
   }
 
   React.useEffect(() => {
+    getDarkModePreference();
+    getLanguagePreference();
     retrieveAllData();
   }, []);
 
@@ -223,97 +240,132 @@ export default function Main() {
     },
   };
   
+  if (languageLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#6B2346" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.center}>
+        <Icon name="error-outline" size={75} color="#6B2346" />
+        <Text style={styles.errorText}>{selectedLanguage ? errorMessages[selectedLanguage] : errorMessages["tr"]}</Text>
+      </View>
+    );
+  }
+
   return (
-    <NavigationContainer theme={isDarkMode ? darkTheme : lightTheme}>
-      <Tab.Navigator
-        screenOptions={{
-          tabBarStyle: {
-            backgroundColor: "#6B2346",
-            borderTopWidth: 0,
-            elevation: 0,
-            height: 65,
-            margin: 15,
-            borderRadius: 15,
-            position: 'absolute'
-          },
-          tabBarLabelStyle: {
-            fontSize: 12,
-            marginBottom: 2,
-          },
-        }}
-      >
-        <Tab.Screen
-          name="Explore"
-          options={{
-            headerShown: false,
-            tabBarItemStyle: { marginTop: 3 },
-            tabBarIcon: ({ focused }) => (
-              <MaterialIcons
-                name="explore"
-                color={focused ? "#ffffff" : "#ffdddd"}
-                size={27}
-              />
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["explore"]}</Text>
-            ),
+    <>
+      <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} backgroundColor={isDarkMode ? "#2D2D2D": "#EEEEEE"} />
+      <NavigationContainer theme={isDarkMode ? darkTheme : lightTheme}>
+        <Tab.Navigator
+          screenOptions={{
+            tabBarStyle: {
+              backgroundColor: "#6B2346",
+              borderTopWidth: 0,
+              elevation: 0,
+              height: 65,
+              margin: 15,
+              borderRadius: 15,
+              position: 'absolute'
+            },
+            tabBarLabelStyle: {
+              fontSize: 12,
+              marginBottom: 2,
+            },
           }}
         >
-          {() => <ExploreStack retrieveAllData={retrieveAllData} updateRecipeRating={updateRecipeRating} />}
-        </Tab.Screen>
-        <Tab.Screen
-          name="Ara"
-          options={{
-            headerShown: false,
-            tabBarItemStyle: { marginTop: 3 },
-            tabBarIcon: ({ focused }) => (
-                <MaterialIcons name="tune" color={focused ? "#ffffff" : "#ffdddd"} size={27} />
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["filter"]}</Text>
-            ),
-          }}
-        >
-          {() => <SearchFood updateRecipeRating={updateRecipeRating} />}
-        </Tab.Screen>
-        <Tab.Screen
-          name="Kaydedilenler"
-          options={{
-            headerShown: false,
-            tabBarItemStyle: { marginTop: 3 },
-            tabBarIcon: ({ focused }) => (
-              <MaterialIcons
-                name="bookmark"
-                color={focused ? "#ffffff" : "#ffdddd"}
-                size={27}
-              />
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["saveds"]}</Text>
-            ),
-          }}
-        >
-          {() => <Saveds updateRecipeRating={updateRecipeRating} />}
-        </Tab.Screen>
-        <Tab.Screen
-          name="Ayarlar"
-          component={Settings}
-          options={{
-            headerShown: false,
-            tabBarItemStyle: { marginTop: 3 },
-            tabBarIcon: ({ focused }) => (
-              <MaterialIcons
-                name="settings"
-                color={focused ? "#ffffff" : "#ffdddd"}
-                size={27}
-              />
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["settings"]}</Text>
-            ),
-          }}
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
+          <Tab.Screen
+            name="Explore"
+            options={{
+              headerShown: false,
+              tabBarItemStyle: { marginTop: 3 },
+              tabBarIcon: ({ focused }) => (
+                <MaterialIcons
+                  name="explore"
+                  color={focused ? "#ffffff" : "#ffdddd"}
+                  size={27}
+                />
+              ),
+              tabBarLabel: ({ focused }) => (
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["explore"]}</Text>
+              ),
+            }}
+          >
+            {() => <ExploreStack retrieveAllData={retrieveAllData} updateRecipeRating={updateRecipeRating} />}
+          </Tab.Screen>
+          <Tab.Screen
+            name="Ara"
+            options={{
+              headerShown: false,
+              tabBarItemStyle: { marginTop: 3 },
+              tabBarIcon: ({ focused }) => (
+                  <MaterialIcons name="tune" color={focused ? "#ffffff" : "#ffdddd"} size={27} />
+              ),
+              tabBarLabel: ({ focused }) => (
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["filter"]}</Text>
+              ),
+            }}
+          >
+            {() => <SearchFood updateRecipeRating={updateRecipeRating} />}
+          </Tab.Screen>
+          <Tab.Screen
+            name="Kaydedilenler"
+            options={{
+              headerShown: false,
+              tabBarItemStyle: { marginTop: 3 },
+              tabBarIcon: ({ focused }) => (
+                <MaterialIcons
+                  name="bookmark"
+                  color={focused ? "#ffffff" : "#ffdddd"}
+                  size={27}
+                />
+              ),
+              tabBarLabel: ({ focused }) => (
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["saveds"]}</Text>
+              ),
+            }}
+          >
+            {() => <Saveds updateRecipeRating={updateRecipeRating} />}
+          </Tab.Screen>
+          <Tab.Screen
+            name="Ayarlar"
+            component={Settings}
+            options={{
+              headerShown: false,
+              tabBarItemStyle: { marginTop: 3 },
+              tabBarIcon: ({ focused }) => (
+                <MaterialIcons
+                  name="settings"
+                  color={focused ? "#ffffff" : "#ffdddd"}
+                  size={27}
+                />
+              ),
+              tabBarLabel: ({ focused }) => (
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["settings"]}</Text>
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    textAlign: "center",
+    color: '#6B2346',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+});

@@ -87,7 +87,7 @@ const FoodsOfCountries = ({ showAll }) => {
         </View>
         <ScrollView style={styles.container}>
           <View style={styles.grid}>
-            {loading ? renderPlaceholders() : allCountries?.map((country, index) => (
+            {loading ? renderPlaceholders() : allCountries?.sort((a, b) => languageStore[selectedLanguage][a.code].localeCompare(languageStore[selectedLanguage][b.code]))?.map((country, index) => (
               <TouchableOpacity key={index} style={styles.countryCard} onPress={() => handleOnPressCountry(country)}>
                 <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
                 <View style={styles.countryOverlay}>
@@ -113,7 +113,7 @@ const FoodsOfCountries = ({ showAll }) => {
         }
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
-        {loading ? renderPlaceholders() : allCountries.slice(0, 5)?.map((country, index) => (
+        {loading ? renderPlaceholders() : allCountries?.sort((a, b) => languageStore[selectedLanguage][a.code].localeCompare(languageStore[selectedLanguage][b.code]))?.slice(0, 5).map((country, index) => (
           <TouchableOpacity key={index} style={styles.countryCard} onPress={() => handleOnPressCountry(country)}>
             <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
             <View style={styles.countryOverlay}>
@@ -162,9 +162,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   countryCard: {
-    width: (screenWidth / 3) - 30,
-    height: 150,
+    width: (screenWidth / 4),
+    height: 85,
     marginRight: 10,
+    paddingBottom: 10,
     borderRadius: 10,
     overflow: 'hidden',
     marginBottom: 10,
@@ -176,10 +177,9 @@ const styles = StyleSheet.create({
     borderColor: '#6B2346',
   },
   countryFlag: {
-    marginTop: -25,
+    marginTop: -15,
     width: '100%',
     height: '90%',
-    resizeMode: 'cover',
   },
   countryOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 125,
+    marginTop: 60,
     backgroundColor: "#D3D3D3",
     width: "100%",
   },
@@ -203,9 +203,10 @@ const styles = StyleSheet.create({
     paddingBottom: "25%"
   },
   placeholderCard: {
-    width: (screenWidth / 3) - 30,
-    height: 150,
+    width: (screenWidth / 4),
+    height: 85,
     marginRight: 10,
+    paddingBottom: 10,
     borderRadius: 10,
     backgroundColor: '#E0E0E0',
     elevation: 2,
@@ -223,7 +224,8 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     width: '60%',
-    height: 20,
+    marginTop: 10,
+    height: 15,
     backgroundColor: '#C0C0C0',
     borderRadius: 4,
   },

@@ -4,21 +4,21 @@
     "slug": "bugun-ne-yapsam",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/bny_icon.png",
+    "icon": "./assets/bnyLogo1024.png",
     "userInterfaceStyle": "light",
     "entryPoint": "./App.js",
     "splash": {
-      "image": "./assets/SplashScreen/splash.png",
-      "resizeMode": "cover",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/SplashScreen/splash.jpg",
+      "resizeMode": "contain",
+      "backgroundColor": "#4C1E35"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/bny_icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/bnyLogo512.png",
+        "backgroundColor": "#3F1626"
       },
       "package": "com.kdrbln.bugunneyapsam"
     },
