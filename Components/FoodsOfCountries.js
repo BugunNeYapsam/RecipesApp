@@ -87,7 +87,7 @@ const FoodsOfCountries = ({ showAll }) => {
         </View>
         <ScrollView style={styles.container}>
           <View style={styles.grid}>
-            {loading ? renderPlaceholders() : allCountries?.sort((a, b) => languageStore[selectedLanguage][a.code].localeCompare(languageStore[selectedLanguage][b.code]))?.map((country, index) => (
+            {loading ? renderPlaceholders() : [...allCountries]?.sort((a, b) => showAll ? languageStore[selectedLanguage][a.code].localeCompare(languageStore[selectedLanguage][b.code]) : 0).map((country, index) => (
               <TouchableOpacity key={index} style={styles.countryCard} onPress={() => handleOnPressCountry(country)}>
                 <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
                 <View style={styles.countryOverlay}>
@@ -113,7 +113,7 @@ const FoodsOfCountries = ({ showAll }) => {
         }
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
-        {loading ? renderPlaceholders() : allCountries?.sort((a, b) => languageStore[selectedLanguage][a.code].localeCompare(languageStore[selectedLanguage][b.code]))?.slice(0, 5).map((country, index) => (
+        {loading ? renderPlaceholders() : allCountries?.slice(0, 5).map((country, index) => (
           <TouchableOpacity key={index} style={styles.countryCard} onPress={() => handleOnPressCountry(country)}>
             <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
             <View style={styles.countryOverlay}>

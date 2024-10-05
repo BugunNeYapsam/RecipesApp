@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollView, View, StyleSheet, SafeAreaView, Platform, StatusBar, findNodeHandle } from 'react-native';
+import { ScrollView, View, StyleSheet, SafeAreaView, Platform, StatusBar, findNodeHandle, LayoutAnimation } from 'react-native';
 import RecipeCard from '../Components/RecipeCard';
 import SearchBar from '../Components/SearchBar';
 import { useNavigation } from '@react-navigation/native';
@@ -11,7 +11,7 @@ export default function SearchFood({ updateRecipeRating }) {
   const [expandedCardIndex, setExpandedCardIndex] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState('none');
   const [selectedChips, setSelectedChips] = React.useState([]);
-  
+
   const scrollViewRef = React.useRef();
   const cardRefs = React.useRef({});
 
@@ -21,41 +21,49 @@ export default function SearchFood({ updateRecipeRating }) {
 
   const sortRecipes = (recipes, order) => {
     if (order === 'asc') {
-      return recipes.sort((a, b) => a.name[selectedLanguage].localeCompare(b.name[selectedLanguage]));
+      return recipes.sort((a, b) => a?.name[selectedLanguage]?.localeCompare(b?.name[selectedLanguage]));
     } else if (order === 'desc') {
-      return recipes.sort((a, b) => b.name[selectedLanguage].localeCompare(a.name[selectedLanguage]));
+      return recipes.sort((a, b) => b?.name[selectedLanguage]?.localeCompare(a?.name[selectedLanguage]));
     }
     return recipes;
   };
 
   const searchLower = searchTerm?.toLowerCase();
   const selectedChipsLower = selectedChips.map(chip => chip.toLowerCase());
-  
+
   const filteredRecipes = allRecipeData?.filter(recipe => {
     const recipeNameLower = recipe.name[selectedLanguage].toLowerCase();
     const ingredientsLower = recipe.ingredients[selectedLanguage].map(ingredient => ingredient.toLowerCase()).join("--");
-  
+
     const allChipsMatch = selectedChipsLower.every(chip => 
       recipeNameLower.includes(chip) || ingredientsLower.includes(chip)
     );
-  
+
     const searchTermMatch = searchLower ? recipeNameLower.includes(searchLower) || ingredientsLower.includes(searchLower) : true;
-  
+
     return allChipsMatch && searchTermMatch;
   });
 
   const sortedRecipes = sortRecipes(filteredRecipes, sortOrder);
 
   const toggleExpand = (index) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpandedCardIndex(expandedCardIndex === index ? null : index);
-    if (expandedCardIndex !== index && scrollViewRef.current) {
-      const cardRef = cardRefs.current[index];
-      if (cardRef) {
-        cardRef.measureLayout(findNodeHandle(scrollViewRef.current), (x, y) => {
-          scrollViewRef.current.scrollTo({ y: y, animated: true });
-        });
+
+    setTimeout(() => {
+      if (expandedCardIndex !== index && scrollViewRef.current) {
+        const cardRef = cardRefs.current[index];
+        if (cardRef) {
+          cardRef.measureLayout(
+            findNodeHandle(scrollViewRef.current),
+            (x, y) => {
+              scrollViewRef.current.scrollTo({ y: y, animated: true });
+            },
+            (error) => console.error("Failed to measure layout:", error)
+          );
+        }
       }
-    }
+    }, 200);
   };
 
   const handleSort = () => {
