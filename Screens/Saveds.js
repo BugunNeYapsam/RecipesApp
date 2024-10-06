@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ScrollView, View, StyleSheet, Text, SafeAreaView, Platform, StatusBar, Image, Dimensions } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { ScrollView, View, StyleSheet, Text, SafeAreaView, Platform, StatusBar, Image, Dimensions, findNodeHandle, LayoutAnimation } from 'react-native';
 import { useAppContext } from '../Context/AppContext';
 import RecipeCard from '../Components/RecipeCard';
 import NotFoundImage from "../assets/no_saved_food_found.png";
@@ -9,6 +9,8 @@ const { width, height } = Dimensions.get('window');
 export default function Saved({ updateRecipeRating }) {
   const { savedRecipes, removeRecipe, isDarkMode, selectedLanguage, languageStore } = useAppContext();
   const [expandedCardIndex, setExpandedCardIndex] = useState(null);
+  const scrollViewRef = useRef();
+  const cardRefs = useRef({});
 
   const dynamicSafeAreaStyle = {
     backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
@@ -23,17 +25,33 @@ export default function Saved({ updateRecipeRating }) {
   };
 
   const toggleExpand = (index) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpandedCardIndex(expandedCardIndex === index ? null : index);
+
+    setTimeout(() => {
+      if (expandedCardIndex !== index && scrollViewRef.current) {
+        const cardRef = cardRefs.current[index];
+        if (cardRef) {
+          cardRef.measureLayout(
+            findNodeHandle(scrollViewRef.current),
+            (x, y) => {
+              scrollViewRef.current.scrollTo({ y: y, animated: true });
+            },
+            (error) => console.error("Failed to measure layout:", error)
+          );
+        }
+      }
+    }, 200);
   };
 
   return (
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
       <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["saveds"]?.toUpperCase()}</Text>
       <View style={styles.container}>
-        <ScrollView>
+        <ScrollView ref={scrollViewRef}>
           {savedRecipes.length > 0 ? (
             savedRecipes.map((r, index) => (
-              <View key={index} style={styles.recipeContainer}>
+              <View key={index} ref={ref => cardRefs.current[index] = ref} style={styles.recipeContainer}>
                 <RecipeCard
                   key={index}
                   recipeID={r.id}
