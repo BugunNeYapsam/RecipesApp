@@ -29,12 +29,17 @@ const errorMessages = {
   "tr": "Üzgünüz! Şu anda bağlantı kurmakta zorluk yaşıyoruz. Lütfen birazdan tekrar deneyin."
 }
 
+const maintenanceMessages = {
+  "en": "Our app is temporarily down for maintenance. Please check back later.",
+  "tr": "Uygulamamız geçici olarak bakımda. Lütfen daha sonra tekrar kontrol edin."
+}
+
 const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
   const { selectedLanguage, languageStore, selectedCategory, selectedFeaturedRecipe, selectedCountry } = useAppContext();
 
   return (
     <Stack.Navigator>
-      <Stack.Screen  name="Bugün Ne Yapsam?" options={{ headerShown: false }}>
+      <Stack.Screen name="Bugün Ne Yapsam?" options={{ headerShown: false }}>
         {() => <Explore retrieveAllData={retrieveAllData} />}
       </Stack.Screen>
       <Stack.Screen name={languageStore[selectedLanguage]["all_categories"]} options={{ headerShown: false }}>
@@ -69,29 +74,7 @@ const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
 };
 
 export default function Main() {
-  const {languageLoading, error, setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, setAppSettings, updateAllRecipeRatings, isDarkMode, setIsDarkMode, setSelectedLanguage, selectedLanguage, languageStore, setAllSuggestions } = useAppContext();
-  
-  const getDarkModePreference = async () => {
-    try {
-      const value = await AsyncStorage.getItem('darkMode');
-      if (value !== null) {
-        setIsDarkMode(JSON.parse(value));
-      }
-    } catch (e) {
-      console.error('Failed to fetch dark mode preference.', e);
-    }
-  };
-  
-  const getLanguagePreference = async () => {
-    try {
-      const value = await AsyncStorage.getItem('appLanguage');
-      if (value !== null) {
-        setSelectedLanguage(JSON.parse(value));
-      }
-    } catch (e) {
-      console.error('Failed to fetch language preference.', e);
-    }
-  };
+  const { languageLoading, error, setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, appSettings, updateAllRecipeRatings, isDarkMode, setIsDarkMode, setSelectedLanguage, selectedLanguage, languageStore, setAllSuggestions } = useAppContext();
 
   const getData = async () => {
     try {
@@ -102,9 +85,9 @@ export default function Main() {
       querySnapshot.forEach((doc) => {
         const recipeData = doc.data();
         const recipeId = doc.id;
-  
+
         recipes.push({ id: recipeId, ...recipeData });
-  
+
         if (recipeData.rating !== undefined) {
           ratings[recipeId] = recipeData.rating;
         }
@@ -162,84 +145,79 @@ export default function Main() {
     }
   };
 
-  const getAppSettings = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, "6"));
-      var settings = [];
-      querySnapshot.forEach((doc) => {
-        settings = doc.data();
-      });
-      setAppSettings(settings);
-    } catch (error) {
-      console.error("Error getting documents: ", error);
-    }
+  const retrieveAllData = () => {
+    getData();
+    getCategories();
+    getCountries();
+    getSuggestions();
   };
+
+  React.useEffect(() => {
+    const getDarkModePreference = async () => {
+      try {
+        const value = await AsyncStorage.getItem('darkMode');
+        if (value !== null) {
+          setIsDarkMode(JSON.parse(value));
+        }
+      } catch (e) {
+        console.error('Failed to fetch dark mode preference.', e);
+      }
+    };
+
+    const getLanguagePreference = async () => {
+      try {
+        const value = await AsyncStorage.getItem('appLanguage');
+        if (value !== null) {
+          setSelectedLanguage(JSON.parse(value));
+        }
+      } catch (e) {
+        console.error('Failed to fetch language preference.', e);
+      }
+    };
+
+    getDarkModePreference();
+    getLanguagePreference();
+
+    if (!appSettings?.isMaintenanceOn && !error && !languageLoading) {
+      retrieveAllData();
+    }
+  }, [appSettings, error, languageLoading]);
 
   const updateRecipeRating = async (recipeId, newRating, updateSpecificRecipeRating) => {
     try {
       if (!db) throw new Error("Firestore not initialized correctly!");
-  
+
       const recipeDocRef = doc(db, "1", recipeId.toString());
       const recipeDoc = await getDoc(recipeDocRef);
-  
+
       if (!recipeDoc.exists()) {
         throw new Error("Recipe document does not exist!");
       }
-  
+
       const recipeData = recipeDoc.data();
       const currentRatingTotal = recipeData.ratingTotal || 0;
       const currentRatingCount = recipeData.ratingCount || 0;
-  
+
       const updatedRatingTotal = currentRatingTotal + newRating;
       const updatedRatingCount = currentRatingCount + 1;
-  
+
       const newAverageRating = updatedRatingTotal / updatedRatingCount;
-  
+
       await updateDoc(recipeDocRef, {
         ratingTotal: updatedRatingTotal,
         ratingCount: updatedRatingCount,
         rating: newAverageRating
       });
-  
+
       updateSpecificRecipeRating(recipeId, newAverageRating);
-  
+
       return true;
     } catch (error) {
       console.error("Error updating rating:", error);
       return false;
     }
   };
-  
-  const retrieveAllData = () => {
-    getData();
-    getCategories();
-    getCountries();
-    getSuggestions();
-    getAppSettings();
-  }
 
-  React.useEffect(() => {
-    getDarkModePreference();
-    getLanguagePreference();
-    retrieveAllData();
-  }, []);
-
-  const darkTheme = {
-    ...DarkTheme,
-    colors: {
-      ...DarkTheme.colors,
-      background: '#2D2D2D'
-    },
-  };
-  
-  const lightTheme = {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      background: '#EEEEEE'
-    },
-  };
-  
   if (languageLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -248,18 +226,47 @@ export default function Main() {
     );
   }
 
-  if (error) {
+  if (appSettings?.isMaintenanceOn) {
     return (
       <View style={styles.center}>
-        <Icon name="error-outline" size={75} color="#6B2346" />
-        <Text style={styles.errorText}>{selectedLanguage ? errorMessages[selectedLanguage] : errorMessages["tr"]}</Text>
+        <Icon name="build" size={75} color="#6B2346" />
+        <Text style={[styles.errorText, { width: selectedLanguage == "tr" ? "75%" : "80%" }]}>
+          {selectedLanguage ? maintenanceMessages[selectedLanguage] : maintenanceMessages["tr"]}
+        </Text>
       </View>
     );
   }
 
+  if (error) {
+    return (
+      <View style={styles.center}>
+        <Icon name="error-outline" size={75} color="#6B2346" />
+        <Text style={[styles.errorText, { width: "85%" }]}>
+          {selectedLanguage ? errorMessages[selectedLanguage] : errorMessages["tr"]}
+        </Text>
+      </View>
+    );
+  }
+
+  const darkTheme = {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      background: '#2D2D2D'
+    },
+  };
+
+  const lightTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: '#EEEEEE'
+    },
+  };
+
   return (
     <>
-      <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} backgroundColor={isDarkMode ? "#2D2D2D": "#EEEEEE"} />
+      <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} backgroundColor={isDarkMode ? "#2D2D2D" : "#EEEEEE"} />
       <NavigationContainer theme={isDarkMode ? darkTheme : lightTheme}>
         <Tab.Navigator
           screenOptions={{
@@ -291,7 +298,9 @@ export default function Main() {
                 />
               ),
               tabBarLabel: ({ focused }) => (
-                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["explore"]}</Text>
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>
+                  {languageStore[selectedLanguage]["explore"]}
+                </Text>
               ),
             }}
           >
@@ -303,10 +312,12 @@ export default function Main() {
               headerShown: false,
               tabBarItemStyle: { marginTop: 3 },
               tabBarIcon: ({ focused }) => (
-                  <MaterialIcons name="tune" color={focused ? "#ffffff" : "#ffdddd"} size={27} />
+                <MaterialIcons name="tune" color={focused ? "#ffffff" : "#ffdddd"} size={27} />
               ),
               tabBarLabel: ({ focused }) => (
-                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["filter"]}</Text>
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>
+                  {languageStore[selectedLanguage]["filter"]}
+                </Text>
               ),
             }}
           >
@@ -318,14 +329,12 @@ export default function Main() {
               headerShown: false,
               tabBarItemStyle: { marginTop: 3 },
               tabBarIcon: ({ focused }) => (
-                <MaterialIcons
-                  name="bookmark"
-                  color={focused ? "#ffffff" : "#ffdddd"}
-                  size={27}
-                />
+                <MaterialIcons name="bookmark" color={focused ? "#ffffff" : "#ffdddd"} size={27} />
               ),
               tabBarLabel: ({ focused }) => (
-                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["saveds"]}</Text>
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>
+                  {languageStore[selectedLanguage]["saveds"]}
+                </Text>
               ),
             }}
           >
@@ -338,14 +347,12 @@ export default function Main() {
               headerShown: false,
               tabBarItemStyle: { marginTop: 3 },
               tabBarIcon: ({ focused }) => (
-                <MaterialIcons
-                  name="settings"
-                  color={focused ? "#ffffff" : "#ffdddd"}
-                  size={27}
-                />
+                <MaterialIcons name="settings" color={focused ? "#ffffff" : "#ffdddd"} size={27} />
               ),
               tabBarLabel: ({ focused }) => (
-                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>{languageStore[selectedLanguage]["settings"]}</Text>
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>
+                  {languageStore[selectedLanguage]["settings"]}
+                </Text>
               ),
             }}
           />

@@ -216,8 +216,11 @@ const styles = StyleSheet.create({
     height: 130,
     marginRight: 10,
     borderRadius: 10,
-    backgroundColor: '#E0E0E0',
+    overflow: 'hidden',
     elevation: 2,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#D0D0D0',
   },
   placeholderImage: {
     width: '100%',

@@ -19,6 +19,20 @@ const getLanguages = async () => {
   }
 };
 
+const getAppSettings = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, "6"));
+    let settings = {};
+    querySnapshot.forEach((doc) => {
+      settings = doc.data();
+    });
+    return settings;
+  } catch (error) {
+    console.error("Error getting documents: ", error);
+    throw error;
+  }
+};
+
 export const AppProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [theme, setTheme] = useState('light');
@@ -53,15 +67,17 @@ export const AppProvider = ({ children }) => {
       }
     };
 
-    loadLanguages();
-  }, []);
-
-  useEffect(() => {
-    const loadLanguages = async () => {
-      const langs = await getLanguages();
-      setLanguageStore(langs);
+    const loadAppSettings = async () => {
+      try {
+        const settings = await getAppSettings();
+        setAppSettings(settings);
+      } catch (error) {
+        setError(true);
+      }
     };
+
     loadLanguages();
+    loadAppSettings();
   }, []);
 
   useEffect(() => {

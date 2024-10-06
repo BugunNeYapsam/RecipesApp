@@ -220,8 +220,11 @@ const styles = StyleSheet.create({
     height: 180,
     marginRight: 10,
     borderRadius: 10,
-    backgroundColor: '#E0E0E0',
     elevation: 2,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#D0D0D0',
   },
   placeholderImage: {
     width: '100%',
