@@ -7,7 +7,7 @@ import {
   Text,
   TouchableOpacity,
   Modal,
-    Image,
+  Image,
   Linking,
   Platform,
   StatusBar,
@@ -73,7 +73,7 @@ export default function Settings() {
 
   const openShareUrl = (platform) => {
     let url = '';
-    const appLink = 'https://play.google.com/store/apps/details?id=com.bugunneyapsam';
+    const appLink = appSettings?.appLink;
     const shareMessage = selectedLanguage == 'tr' ? 'Bu harika uygulamayı denemelisiniz!': 'Check out this awesome app!';
 
     switch (platform) {
@@ -123,10 +123,10 @@ export default function Settings() {
               </TouchableOpacity>
               {isExpanded && (
                 <>
-                <Text style={styles.expandedTextTitle}>Dilek, görüş ve işbirliği için:</Text>
-                <View style={styles.expandedContent}>
-                  <Text style={styles.expandedText}>{appSettings?.email}</Text>
-                </View>
+                  <Text style={styles.expandedTextTitle}>Dilek, görüş ve işbirliği için:</Text>
+                  <View style={styles.expandedContent}>
+                    <Text style={styles.expandedText}>{appSettings?.email}</Text>
+                  </View>
                 </>
               )}
             </View>
@@ -134,16 +134,16 @@ export default function Settings() {
             <View style={[styles.rowWrapper, dynamicRowWrapperStyle]}>
               <TouchableOpacity
                 onPress={() => {
-                  // handle onPress
+                  const url = appSettings?.playStoreAppId;
+                  Linking.openURL(url).catch((err) => 
+                    console.error("Failed to open Play Store", err)
+                  );
                 }}
-                style={styles.row}>
+                style={styles.row}
+              >
                 <Text style={styles.rowLabel}>{languageStore[selectedLanguage]["rate_us"]}</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon
-                  color={isDarkMode ? "#222222" : "#BCBCBC"}
-                  name={isExpanded ? 'chevron-up' : 'chevron-down'}
-                  size={19}
-                />
+                <FeatherIcon color={isDarkMode ? "#222222" : "#BCBCBC"} />
               </TouchableOpacity>
             </View>
 
