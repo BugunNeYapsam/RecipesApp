@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { ScrollView, View, StyleSheet, Text, SafeAreaView, Platform, StatusBar, Image, Dimensions, findNodeHandle, LayoutAnimation } from 'react-native';
+import { View, StyleSheet, Text, SafeAreaView, Platform, StatusBar, Image, Dimensions, findNodeHandle, LayoutAnimation, FlatList } from 'react-native';
 import { useAppContext } from '../Context/AppContext';
 import RecipeCard from '../Components/RecipeCard';
 import NotFoundImage from "../assets/no_saved_food_found.png";
@@ -15,7 +15,7 @@ export default function Saved({ updateRecipeRating }) {
   const dynamicSafeAreaStyle = {
     backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
   };
-  
+
   const dynamicPageTitleStyle = {
     color: isDarkMode ? '#c781a4' : '#7f405f'
   };
@@ -35,7 +35,7 @@ export default function Saved({ updateRecipeRating }) {
           cardRef.measureLayout(
             findNodeHandle(scrollViewRef.current),
             (x, y) => {
-              scrollViewRef.current.scrollTo({ y: y, animated: true });
+              scrollViewRef.current.scrollToOffset({ offset: y, animated: true });
             },
             (error) => console.error("Failed to measure layout:", error)
           );
@@ -44,37 +44,43 @@ export default function Saved({ updateRecipeRating }) {
     }, 200);
   };
 
+  const renderRecipe = ({ item, index }) => (
+    <View ref={ref => cardRefs.current[index] = ref} style={styles.recipeContainer}>
+      <RecipeCard
+        key={index}
+        recipeID={item.id}
+        imgUrl={item.imageUrl}
+        foodName={item.name[selectedLanguage]}
+        ingredients={item.ingredients[selectedLanguage]}
+        recipeSteps={item.recipe[selectedLanguage]}
+        expanded={expandedCardIndex === index}
+        toggleExpand={() => toggleExpand(index)}
+        onSave={(isSaved) => handleSave(item, isSaved)}
+        saved={savedRecipes.some(savedRecipe => savedRecipe.id === item.id)}
+        rating={item.rating || 0}
+        updateRecipeRating={updateRecipeRating}
+      />
+    </View>
+  );
+
   return (
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
       <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["saveds"]?.toUpperCase()}</Text>
       <View style={styles.container}>
-        <ScrollView ref={scrollViewRef}>
-          {savedRecipes.length > 0 ? (
-            savedRecipes.map((r, index) => (
-              <View key={index} ref={ref => cardRefs.current[index] = ref} style={styles.recipeContainer}>
-                <RecipeCard
-                  key={index}
-                  recipeID={r.id}
-                  imgUrl={r.imageUrl}
-                  foodName={r.name[selectedLanguage]}
-                  ingredients={r.ingredients[selectedLanguage]}
-                  recipeSteps={r.recipe[selectedLanguage]}
-                  expanded={expandedCardIndex === index}
-                  toggleExpand={() => toggleExpand(index)}
-                  onSave={(isSaved) => handleSave(r, isSaved)}
-                  saved={savedRecipes.some(savedRecipe => savedRecipe.id === r.id)}
-                  rating={r.rating || 0} 
-                  updateRecipeRating={updateRecipeRating}
-                />
-              </View>
-            ))
-          ) : (
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: "20%"}}>
-              <Image source={NotFoundImage} style={styles.image} />
-              <Text style={[styles.noRecipesText, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["no_saved_recipes"]}</Text>
-            </View>
-          )}
-        </ScrollView>
+        {savedRecipes.length > 0 ? (
+          <FlatList
+            ref={scrollViewRef}
+            data={savedRecipes}
+            renderItem={renderRecipe}
+            keyExtractor={(item, index) => index.toString()}
+            contentContainerStyle={{ paddingBottom: "20%" }}
+          />
+        ) : (
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: "20%" }}>
+            <Image source={NotFoundImage} style={styles.image} />
+            <Text style={[styles.noRecipesText, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["no_saved_recipes"]}</Text>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
