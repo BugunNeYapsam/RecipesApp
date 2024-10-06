@@ -5,17 +5,24 @@ import { db } from '../Config/FirebaseConfig';
 
 export const AppContext = createContext({});
 
-const getLanguages = async () => {
+const getLanguages = async (setError) => {
   try {
-    const querySnapshot = await getDocs(collection(db, "5"));
+    const collectionRef = collection(db, "5");
+    const querySnapshot = await getDocs(collectionRef);
+
+    if (querySnapshot.empty) {
+      throw new Error('No such collection or collection is empty');
+    }
+
     let langs = {};
     querySnapshot.forEach((doc) => {
       langs[doc.id] = doc.data();
     });
     return langs;
   } catch (error) {
-    console.error('Failed to fetch languages:', error);
-    throw error;
+    console.error('Firestore error:', error.code, error.message);
+    setError(true);
+    throw new Error('Firestore error: ' + error.message);
   }
 };
 
@@ -58,7 +65,7 @@ export const AppProvider = ({ children }) => {
       try {
         setLanguageLoading(true);
         setError(false);
-        const langs = await getLanguages();
+        const langs = await getLanguages(setError);
         setLanguageStore(langs);
       } catch (error) {
         setError(true);

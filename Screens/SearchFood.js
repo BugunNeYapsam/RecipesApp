@@ -52,7 +52,6 @@ export default function SearchFood({ updateRecipeRating }) {
   const sortedRecipes = sortRecipes(filteredRecipes, sortOrder);
 
   const toggleExpand = React.useCallback((index) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpandedCardIndex(expandedCardIndex === index ? null : index);
 
     setTimeout(() => {

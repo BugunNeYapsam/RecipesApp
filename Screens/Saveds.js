@@ -1,10 +1,13 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { View, StyleSheet, Text, SafeAreaView, Platform, StatusBar, Image, Dimensions, findNodeHandle, LayoutAnimation, FlatList } from 'react-native';
 import { useAppContext } from '../Context/AppContext';
 import RecipeCard from '../Components/RecipeCard';
 import NotFoundImage from "../assets/no_saved_food_found.png";
 
 const { width, height } = Dimensions.get('window');
+
+// Memoized RecipeCard component to prevent unnecessary re-renders
+const MemoizedRecipeCard = React.memo(RecipeCard);
 
 export default function Saved({ updateRecipeRating }) {
   const { savedRecipes, removeRecipe, isDarkMode, selectedLanguage, languageStore } = useAppContext();
@@ -20,12 +23,11 @@ export default function Saved({ updateRecipeRating }) {
     color: isDarkMode ? '#c781a4' : '#7f405f'
   };
 
-  const handleSave = (recipe) => {
+  const handleSave = useCallback((recipe) => {
     removeRecipe(recipe);
-  };
+  }, [removeRecipe]);
 
-  const toggleExpand = (index) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  const toggleExpand = useCallback((index) => {
     setExpandedCardIndex(expandedCardIndex === index ? null : index);
 
     setTimeout(() => {
@@ -42,11 +44,11 @@ export default function Saved({ updateRecipeRating }) {
         }
       }
     }, 200);
-  };
+  }, [expandedCardIndex]);
 
-  const renderRecipe = ({ item, index }) => (
+  const renderRecipe = useCallback(({ item, index }) => (
     <View ref={ref => cardRefs.current[index] = ref} style={styles.recipeContainer}>
-      <RecipeCard
+      <MemoizedRecipeCard
         key={index}
         recipeID={item.id}
         imgUrl={item.imageUrl}
@@ -61,7 +63,7 @@ export default function Saved({ updateRecipeRating }) {
         updateRecipeRating={updateRecipeRating}
       />
     </View>
-  );
+  ), [expandedCardIndex, selectedLanguage, toggleExpand, handleSave, savedRecipes, updateRecipeRating]);
 
   return (
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
@@ -73,6 +75,10 @@ export default function Saved({ updateRecipeRating }) {
             data={savedRecipes}
             renderItem={renderRecipe}
             keyExtractor={(item, index) => index.toString()}
+            initialNumToRender={10}
+            maxToRenderPerBatch={5}
+            windowSize={5}
+            removeClippedSubviews={true}
             contentContainerStyle={{ paddingBottom: "20%" }}
           />
         ) : (

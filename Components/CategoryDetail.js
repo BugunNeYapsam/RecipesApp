@@ -1,10 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Platform, StatusBar, TouchableOpacity, findNodeHandle, LayoutAnimation, FlatList } from 'react-native';
 import RecipeCard from '../Components/RecipeCard';
 import SearchBar from '../Components/SearchBar';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 import { Ionicons } from '@expo/vector-icons';
+
+const MemoizedRecipeCard = React.memo(RecipeCard);
 
 const CategoryDetail = ({ updateRecipeRating }) => {
   const { isDarkMode, selectedLanguage, allRecipeData, savedRecipes, addRecipe, removeRecipe, selectedCategory, setSelectedCategory } = useAppContext();
@@ -29,34 +31,35 @@ const CategoryDetail = ({ updateRecipeRating }) => {
   React.useEffect(() => {
     return () => {
       setSelectedCategory(undefined);
-    }
-  }, []);
+    };
+  }, [setSelectedCategory]);
 
-  const sortRecipes = (recipes, order) => {
+  const sortRecipes = useCallback((recipes, order) => {
     if (order === 'asc') {
       return recipes.sort((a, b) => a.name[selectedLanguage].localeCompare(b.name[selectedLanguage]));
     } else if (order === 'desc') {
       return recipes.sort((a, b) => b.name[selectedLanguage].localeCompare(a.name[selectedLanguage]));
     }
     return recipes;
-  };
+  }, [selectedLanguage]);
 
-  const filteredRecipes = allRecipeData?.filter(d => d.category === selectedCategory?.name["en"]).filter(r => {
-    const searchInRecipe = (text) => {
-      return r.name[selectedLanguage].toLowerCase().includes(text) || r.ingredients[selectedLanguage].join("--").toLowerCase().includes(text);
-    };
+  const filteredRecipes = useMemo(() => {
+    return allRecipeData?.filter(d => d.category === selectedCategory?.name["en"]).filter(r => {
+      const searchInRecipe = (text) => {
+        return r.name[selectedLanguage].toLowerCase().includes(text) || r.ingredients[selectedLanguage].join("--").toLowerCase().includes(text);
+      };
 
-    if (selectedChips.length > 0) {
-      return selectedChips.some(chip => searchInRecipe(chip.toLowerCase()));
-    }
+      if (selectedChips.length > 0) {
+        return selectedChips.some(chip => searchInRecipe(chip.toLowerCase()));
+      }
 
-    return searchInRecipe(searchTerm.toLowerCase());
-  });
+      return searchInRecipe(searchTerm.toLowerCase());
+    });
+  }, [allRecipeData, selectedCategory, selectedChips, searchTerm, selectedLanguage]);
 
-  const sortedRecipes = sortRecipes(filteredRecipes, sortOrder);
+  const sortedRecipes = useMemo(() => sortRecipes(filteredRecipes, sortOrder), [filteredRecipes, sortOrder, sortRecipes]);
 
-  const toggleExpand = (index) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  const toggleExpand = useCallback((index) => {
     setExpandedCardIndex(expandedCardIndex === index ? null : index);
 
     setTimeout(() => {
@@ -73,37 +76,36 @@ const CategoryDetail = ({ updateRecipeRating }) => {
         }
       }
     }, 200);
-  };
+  }, [expandedCardIndex]);
 
-  const handleSort = () => {
+  const handleSort = useCallback(() => {
     setSortOrder(prevOrder => {
       if (prevOrder === 'none') return 'asc';
       if (prevOrder === 'asc') return 'desc';
       return 'none';
     });
-  };
+  }, []);
 
-  const handleSuggestionSelect = (suggestion) => {
+  const handleSuggestionSelect = useCallback((suggestion) => {
     setSelectedChips(prevChips => [...prevChips, suggestion]);
     setSearchTerm('');
-  };
+  }, []);
 
-  const handleChipRemove = (chip) => {
+  const handleChipRemove = useCallback((chip) => {
     setSelectedChips(prevChips => prevChips.filter(c => c !== chip));
-  };
+  }, []);
 
-  const handleSave = (recipe, isSaved) => {
+  const handleSave = useCallback((recipe, isSaved) => {
     if (isSaved) {
       addRecipe(recipe);
     } else {
       removeRecipe(recipe);
     }
-  };
+  }, [addRecipe, removeRecipe]);
 
-  const renderRecipe = ({ item, index }) => (
+  const renderRecipe = useCallback(({ item, index }) => (
     <View key={index} ref={ref => cardRefs.current[index] = ref}>
-      <RecipeCard
-        key={index}
+      <MemoizedRecipeCard
         recipeID={item.id}
         imgUrl={item.imageUrl}
         foodName={item.name[selectedLanguage]}
@@ -117,7 +119,7 @@ const CategoryDetail = ({ updateRecipeRating }) => {
         updateRecipeRating={updateRecipeRating}
       />
     </View>
-  );
+  ), [expandedCardIndex, selectedLanguage, handleSave, toggleExpand, savedRecipes, updateRecipeRating]);
 
   return (
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
@@ -143,6 +145,10 @@ const CategoryDetail = ({ updateRecipeRating }) => {
           data={sortedRecipes}
           renderItem={renderRecipe}
           keyExtractor={(item, index) => index.toString()}
+          initialNumToRender={10}
+          maxToRenderPerBatch={5}
+          windowSize={5}
+          removeClippedSubviews={true}
           contentContainerStyle={{ paddingBottom: "20%" }}
         />
       </View>
