@@ -91,7 +91,7 @@ const Categories = ({ showAll }) => {
               <TouchableOpacity key={index} style={styles.categoryCardShowAll} onPress={() => handleOnPressCategory(category)}>
                 <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
                 <View style={styles.categoryOverlay}>
-                  <Text style={styles.categoryName}>{category.name[selectedLanguage]}</Text>
+                  <Text style={[styles.categoryName, { marginBottom: 2 }]}>{category.name[selectedLanguage]}</Text>
                 </View>
               </TouchableOpacity>
             ))}
@@ -202,7 +202,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     borderRadius: 50,
-    paddingHorizontal: 5,
   },
   grid: {
     flexDirection: 'row',

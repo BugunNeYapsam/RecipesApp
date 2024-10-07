@@ -24,11 +24,11 @@ const SearchBar = ({ isDarkMode, searchTerm, setSearchTerm, onSortPress, sortOrd
         !selectedChips.includes(suggestion)
     );
   } else {
-    filteredSuggestions = allSuggestions[selectedCategory?.name?.en.toLowerCase()][selectedLanguage].filter(
+    filteredSuggestions = allSuggestions?.[selectedCategory?.name?.en?.toLowerCase()]?.[selectedLanguage]?.filter(
       suggestion =>
         suggestion.toLowerCase().includes(searchTerm.toLowerCase()) &&
         !selectedChips.includes(suggestion)
-    );
+    ) ?? [];
   };
 
   const scrollSuggestions = (direction) => {

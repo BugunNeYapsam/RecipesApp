@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     elevation: 2,
-    backgroundColor: '#fff',
+    backgroundColor: '#D9D9D9',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#6B2346',
