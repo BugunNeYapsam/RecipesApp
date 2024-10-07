@@ -63,15 +63,20 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
   const handleRating = async (recipe_id, newRating) => {
     const validRating = Math.max(0, Math.min(5, newRating));
     setLoading(true);
-  
+    
     const hasRated = await checkIfRated(recipe_id);
+    console.log("Has Rated:", hasRated); // Debugging log
+  
     if (hasRated) {
       setLoading(false);
       return;
     }
   
     try {
-      const dbUpdateResult = await updateRecipeRating(recipe_id, newRating, updateSpecificRecipeRating);  
+      console.log("Valid Rating:", validRating); // Debugging log
+      const dbUpdateResult = await updateRecipeRating(recipe_id, validRating, updateSpecificRecipeRating);
+      console.log("DB Update Result:", dbUpdateResult); // Debugging log
+      
       if (dbUpdateResult) {
         await saveRatingToDevice(validRating);
         await markAsRated(recipe_id);
@@ -81,6 +86,7 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
         triggerFailureAnimation();
       }
     } catch (error) {
+      console.error("Error during rating update:", error);
       triggerFailureAnimation();
     } finally {
       setLoading(false);

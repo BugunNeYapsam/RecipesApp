@@ -75,11 +75,10 @@ export default function Saved({ updateRecipeRating }) {
             data={savedRecipes}
             renderItem={renderRecipe}
             keyExtractor={(item, index) => index.toString()}
-            initialNumToRender={10}
+            initialNumToRender={5}
             maxToRenderPerBatch={5}
             windowSize={5}
             removeClippedSubviews={true}
-            contentContainerStyle={{ paddingBottom: "20%" }}
           />
         ) : (
           <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: "20%" }}>

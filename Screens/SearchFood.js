@@ -5,7 +5,6 @@ import SearchBar from '../Components/SearchBar';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 
-// Memoized RecipeCard component to prevent unnecessary re-renders
 const MemoizedRecipeCard = React.memo(RecipeCard);
 
 export default function SearchFood({ updateRecipeRating }) {
@@ -140,11 +139,10 @@ export default function SearchFood({ updateRecipeRating }) {
           data={sortedRecipes}
           renderItem={renderRecipe}
           keyExtractor={(item, index) => index.toString()}
-          initialNumToRender={10}
+          initialNumToRender={5}
           maxToRenderPerBatch={5}
           windowSize={5}
           removeClippedSubviews={true}
-          contentContainerStyle={{ paddingBottom: "20%" }}
         />
       </View>
     </SafeAreaView>

@@ -145,11 +145,10 @@ const CategoryDetail = ({ updateRecipeRating }) => {
           data={sortedRecipes}
           renderItem={renderRecipe}
           keyExtractor={(item, index) => index.toString()}
-          initialNumToRender={10}
+          initialNumToRender={5}
           maxToRenderPerBatch={5}
           windowSize={5}
           removeClippedSubviews={true}
-          contentContainerStyle={{ paddingBottom: "20%" }}
         />
       </View>
     </SafeAreaView>

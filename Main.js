@@ -20,6 +20,7 @@ import FoodsOfCountriesDetail from './Components/FoodsOfCountriesDetail';
 import FeaturedRecipesDetail from './Components/FeaturedRecipesDetail';
 import { DefaultTheme, DarkTheme } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { runTransaction } from "firebase/firestore";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -186,31 +187,36 @@ export default function Main() {
   const updateRecipeRating = async (recipeId, newRating, updateSpecificRecipeRating) => {
     try {
       if (!db) throw new Error("Firestore not initialized correctly!");
-
+  
       const recipeDocRef = doc(db, "1", recipeId.toString());
-      const recipeDoc = await getDoc(recipeDocRef);
-
-      if (!recipeDoc.exists()) {
-        throw new Error("Recipe document does not exist!");
-      }
-
-      const recipeData = recipeDoc.data();
-      const currentRatingTotal = recipeData.ratingTotal || 0;
-      const currentRatingCount = recipeData.ratingCount || 0;
-
-      const updatedRatingTotal = currentRatingTotal + newRating;
-      const updatedRatingCount = currentRatingCount + 1;
-
-      const newAverageRating = updatedRatingTotal / updatedRatingCount;
-
-      await updateDoc(recipeDocRef, {
-        ratingTotal: updatedRatingTotal,
-        ratingCount: updatedRatingCount,
-        rating: newAverageRating
+  
+      await runTransaction(db, async (transaction) => {
+        const recipeDoc = await transaction.get(recipeDocRef);
+  
+        if (!recipeDoc.exists()) {
+          throw new Error("Recipe document does not exist!");
+        }
+  
+        const recipeData = recipeDoc.data();
+        const currentRatingTotal = recipeData.ratingTotal || 0;
+        const currentRatingCount = recipeData.ratingCount || 0;
+  
+        console.log(currentRatingTotal + " --- " + newRating)
+        const updatedRatingTotal = currentRatingTotal + newRating;
+        const updatedRatingCount = currentRatingCount + 1;
+  
+        const newAverageRating = updatedRatingTotal / updatedRatingCount;
+        console.log(newAverageRating)
+  
+        transaction.update(recipeDocRef, {
+          ratingTotal: updatedRatingTotal,
+          ratingCount: updatedRatingCount,
+          rating: newAverageRating,
+        });
+  
+        updateSpecificRecipeRating(recipeId, newAverageRating);
       });
-
-      updateSpecificRecipeRating(recipeId, newAverageRating);
-
+  
       return true;
     } catch (error) {
       console.error("Error updating rating:", error);
