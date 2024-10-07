@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   recipeName: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginVertical: 5,
+    marginVertical: 4,
     textAlign: 'center',
   },
   placeholderCard: {

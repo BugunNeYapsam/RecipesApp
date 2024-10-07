@@ -201,12 +201,10 @@ export default function Main() {
         const currentRatingTotal = recipeData.ratingTotal || 0;
         const currentRatingCount = recipeData.ratingCount || 0;
   
-        console.log(currentRatingTotal + " --- " + newRating)
         const updatedRatingTotal = currentRatingTotal + newRating;
         const updatedRatingCount = currentRatingCount + 1;
   
         const newAverageRating = updatedRatingTotal / updatedRatingCount;
-        console.log(newAverageRating)
   
         transaction.update(recipeDocRef, {
           ratingTotal: updatedRatingTotal,

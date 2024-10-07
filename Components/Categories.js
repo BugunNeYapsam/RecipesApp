@@ -201,7 +201,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 2,
     borderRadius: 50,
     paddingHorizontal: 5,
   },
