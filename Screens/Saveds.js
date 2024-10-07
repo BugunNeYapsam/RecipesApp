@@ -81,7 +81,7 @@ export default function Saved({ updateRecipeRating }) {
             removeClippedSubviews={true}
           />
         ) : (
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: "20%" }}>
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: "-50%" }}>
             <Image source={NotFoundImage} style={styles.image} />
             <Text style={[styles.noRecipesText, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["no_saved_recipes"]}</Text>
           </View>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -11,17 +11,19 @@ import {
   Linking,
   Platform,
   StatusBar,
-  Switch
+  Switch,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import whatsappIcon from '../assets/whatsapp.png';
-import instagramIcon from '../assets/instagram.png';
 import xIcon from '../assets/x.png';
 import linkedinIcon from '../assets/linkedin.png';
+import * as Clipboard from 'expo-clipboard';
 import { useAppContext } from '../Context/AppContext';
 
 export default function Settings() {
+  const [toastVisible, setToastVisible] = useState(false);
   const { isDarkMode, setIsDarkMode, selectedLanguage, setSelectedLanguage, languageStore, appSettings } = useAppContext();
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -49,39 +51,39 @@ export default function Settings() {
 
   const handleModalOpen = () => {
     setModalVisible(true);
-    StatusBar.setBackgroundColor('rgba(0, 0, 0, 0.5)', true);
-    StatusBar.setBarStyle('light-content', true);
-  };
+    StatusBar.setBackgroundColor(isDarkMode ? '#101010' : '#7A7A7A');
+    StatusBar.setBarStyle(isDarkMode ? 'light-content' : 'dark-content');
+};
 
   const handleModalClose = () => {
     setModalVisible(false);
-    StatusBar.setBackgroundColor('#FFFFFF', true);
-    StatusBar.setBarStyle('dark-content', true);
-  };
-  
+    StatusBar.setBackgroundColor(isDarkMode ? '#2D2D2D' : '#EEEEEE');
+    StatusBar.setBarStyle(isDarkMode ? 'light-content' : 'dark-content');
+};
+
   const dynamicSafeAreaStyle = {
-    backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
+    backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE',
   };
 
   const dynamicPageTitleStyle = {
-    color: isDarkMode ? '#c781a4' : '#7f405f'
+    color: isDarkMode ? '#c781a4' : '#7f405f',
   };
 
   const dynamicRowWrapperStyle = {
-    backgroundColor: isDarkMode ? '#CCCCCC' : '#FFFFFF'
+    backgroundColor: isDarkMode ? '#CCCCCC' : '#FFFFFF',
   };
 
   const openShareUrl = (platform) => {
     let url = '';
     const appLink = appSettings?.appLink;
-    const shareMessage = selectedLanguage == 'tr' ? 'Bu harika uygulamayı denemelisiniz!': 'Check out this awesome app!';
+    const shareMessage =
+      selectedLanguage == 'tr'
+        ? 'Bu harika uygulamayı denemelisiniz!'
+        : 'Check out this awesome app!';
 
     switch (platform) {
       case 'whatsapp':
         url = `whatsapp://send?text=${encodeURIComponent(shareMessage)}%20${encodeURIComponent(appLink)}`;
-        break;
-      case 'instagram':
-        url = 'instagram://';
         break;
       case 'twitter':
         url = `twitter://post?message=${encodeURIComponent(shareMessage)}%20${encodeURIComponent(appLink)}`;
@@ -92,7 +94,7 @@ export default function Settings() {
       default:
         url = '';
     }
-    
+
     Linking.canOpenURL(url).then((supported) => {
       if (supported) {
         Linking.openURL(url);
@@ -102,21 +104,28 @@ export default function Settings() {
     });
   };
 
+  const handleCopyToClipboard = async () => {
+    const appLink = appSettings?.appLink;
+    if (appLink) {
+        await Clipboard.setStringAsync(appLink);
+        setToastVisible(true);
+        setTimeout(() => setToastVisible(false), 2000);
+    }
+};
+
   return (
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
-      <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["settings"]?.toUpperCase()}</Text>
+      <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]['settings']?.toUpperCase()}</Text>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={[styles.section, { paddingTop: 11 }]} />
         <View style={styles.section}>
           <View style={styles.sectionBody}>
             <View style={[styles.rowWrapper, dynamicRowWrapperStyle, styles.rowFirst]}>
-              <TouchableOpacity
-                onPress={() => setIsExpanded(!isExpanded)}
-                style={styles.row}>
-                <Text style={styles.rowLabel}>{languageStore[selectedLanguage]["contact"]}</Text>
+              <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)} style={styles.row}>
+                <Text style={styles.rowLabel}>{languageStore[selectedLanguage]['contact']}</Text>
                 <View style={styles.rowSpacer} />
                 <FeatherIcon
-                  color={isDarkMode ? "#222222" : "#BCBCBC"}
+                  color={isDarkMode ? '#222222' : '#BCBCBC'}
                   name={isExpanded ? 'chevron-up' : 'chevron-down'}
                   size={19}
                 />
@@ -135,29 +144,21 @@ export default function Settings() {
               <TouchableOpacity
                 onPress={() => {
                   const url = appSettings?.playStoreAppId;
-                  Linking.openURL(url).catch((err) => 
-                    console.error("Failed to open Play Store", err)
-                  );
+                  Linking.openURL(url).catch((err) => console.error('Failed to open Play Store', err));
                 }}
                 style={styles.row}
               >
-                <Text style={styles.rowLabel}>{languageStore[selectedLanguage]["rate_us"]}</Text>
+                <Text style={styles.rowLabel}>{languageStore[selectedLanguage]['rate_us']}</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon color={isDarkMode ? "#222222" : "#BCBCBC"} />
+                <FeatherIcon color={isDarkMode ? '#222222' : '#BCBCBC'} />
               </TouchableOpacity>
             </View>
 
             <View style={[styles.rowWrapper, dynamicRowWrapperStyle, styles.rowLast]}>
-              <TouchableOpacity
-                onPress={handleModalOpen}
-                style={styles.row}>
-                <Text style={styles.rowLabel}>{languageStore[selectedLanguage]["share"]}</Text>
+              <TouchableOpacity onPress={handleModalOpen} style={styles.row}>
+                <Text style={styles.rowLabel}>{languageStore[selectedLanguage]['share']}</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon
-                  color={isDarkMode ? "#222222" : "#BCBCBC"}
-                  name="share"
-                  size={19}
-                />
+                <FeatherIcon color={isDarkMode ? '#222222' : '#BCBCBC'} name="share" size={19} />
               </TouchableOpacity>
             </View>
           </View>
@@ -168,11 +169,12 @@ export default function Settings() {
             <View style={[styles.rowWrapper, dynamicRowWrapperStyle, styles.rowFirst]}>
               <TouchableOpacity
                 onPress={() => setIsLanguageOptionsExpanded(!isLanguageOptionsExpanded)}
-                style={styles.row}>
-                <Text style={styles.rowLabel}>{languageStore[selectedLanguage]["languages"]}</Text>
+                style={styles.row}
+              >
+                <Text style={styles.rowLabel}>{languageStore[selectedLanguage]['languages']}</Text>
                 <View style={styles.rowSpacer} />
                 <FeatherIcon
-                  color={isDarkMode ? "#222222" : "#BCBCBC"}
+                  color={isDarkMode ? '#222222' : '#BCBCBC'}
                   name={isLanguageOptionsExpanded ? 'chevron-up' : 'chevron-down'}
                   size={19}
                 />
@@ -180,16 +182,10 @@ export default function Settings() {
               {isLanguageOptionsExpanded && (
                 <View style={styles.expandedContent}>
                   <TouchableOpacity
-                    style={[
-                      styles.languageOption,
-                      selectedLanguage === 'tr' ? styles.selected : null,
-                    ]}
+                    style={[styles.languageOption, selectedLanguage === 'tr' ? styles.selected : null]}
                     onPress={() => toggleLanguage('tr')}
                   >
-                    <Image
-                      source={require('../assets/flags/tr_flag.png')}
-                      style={styles.flag}
-                    />
+                    <Image source={require('../assets/flags/tr_flag.png')} style={styles.flag} />
                     <Text
                       style={[
                         styles.languageText,
@@ -200,16 +196,10 @@ export default function Settings() {
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={[
-                      styles.languageOption,
-                      selectedLanguage === 'en' ? styles.selected : null,
-                    ]}
+                    style={[styles.languageOption, selectedLanguage === 'en' ? styles.selected : null]}
                     onPress={() => toggleLanguage('en')}
                   >
-                    <Image
-                      source={require('../assets/flags/en_flag.png')}
-                      style={styles.flag}
-                    />
+                    <Image source={require('../assets/flags/en_flag.png')} style={styles.flag} />
                     <Text
                       style={[
                         styles.languageText,
@@ -225,9 +215,11 @@ export default function Settings() {
 
             <View style={[styles.rowWrapper, dynamicRowWrapperStyle, styles.rowLast]}>
               <View style={styles.row}>
-                <Text style={styles.rowLabel}>{languageStore[selectedLanguage]["theme"]}</Text>
+                <Text style={styles.rowLabel}>{languageStore[selectedLanguage]['theme']}</Text>
                 <View style={styles.rowSpacer} />
-                <Text style={styles.rowLabel}>{isDarkMode ? languageStore[selectedLanguage]["dark_theme"] : languageStore[selectedLanguage]["light_theme"]}</Text>
+                <Text style={styles.rowLabel}>
+                  {isDarkMode ? languageStore[selectedLanguage]['dark_theme'] : languageStore[selectedLanguage]['light_theme']}
+                </Text>
                 <Switch
                   value={isDarkMode}
                   onValueChange={toggleDarkMode}
@@ -243,41 +235,34 @@ export default function Settings() {
         </View>
       </ScrollView>
 
-      <Modal
-        transparent={true}
-        visible={modalVisible}
-        animationType="slide"
-        onRequestClose={handleModalClose}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <ScrollView horizontal={true} contentContainerStyle={styles.modalIconsContainer}>
-              <TouchableOpacity
-                onPress={() => openShareUrl('whatsapp')}
-                style={styles.modalButton}>
-                <Image source={whatsappIcon} style={styles.modalIcon} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => openShareUrl('instagram')}
-                style={styles.modalButton}>
-                <Image source={instagramIcon} style={styles.modalIcon} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => openShareUrl('twitter')}
-                style={styles.modalButton}>
-                <Image source={xIcon} style={styles.modalIcon} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => openShareUrl('linkedin')}
-                style={styles.modalButton}>
-                <Image source={linkedinIcon} style={styles.modalIcon} />
-              </TouchableOpacity>
-            </ScrollView>
-            <TouchableOpacity
-              onPress={handleModalClose}
-              style={styles.closeButton}>
-              <Text style={styles.modalButtonText}>Close</Text>
+      <Modal transparent={true} visible={modalVisible} animationType="slide" onRequestClose={handleModalClose}>
+        <View style={styles.bottomSheetContainer}>
+          <View style={styles.bottomSheetContent}>
+            <TouchableOpacity onPress={() => openShareUrl('whatsapp')} style={styles.bottomSheetButton}>
+              <Image source={whatsappIcon} style={styles.bottomSheetIcon} />
+              <Text style={styles.bottomSheetButtonText}>{languageStore[selectedLanguage]['share_via_whatsapp']}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => openShareUrl('twitter')} style={styles.bottomSheetButton}>
+              <Image source={xIcon} style={styles.bottomSheetIcon} />
+              <Text style={styles.bottomSheetButtonText}>{languageStore[selectedLanguage]['share_via_twitter']}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => openShareUrl('linkedin')} style={styles.bottomSheetButton}>
+              <Image source={linkedinIcon} style={styles.bottomSheetIcon} />
+              <Text style={styles.bottomSheetButtonText}>{languageStore[selectedLanguage]['share_via_linkedin']}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleCopyToClipboard} style={styles.bottomSheetButton}>
+              <MaterialIcons name="content-copy" size={30} color="#6B2346" style={styles.bottomSheetIcon} />
+              <Text style={styles.bottomSheetButtonText}>{languageStore[selectedLanguage]['copy_link']}</Text>
+              {toastVisible && (
+                <View style={styles.inlineToast}>
+                  <Text style={styles.inlineToastText}>{languageStore[selectedLanguage]['link_copied']}</Text>
+                </View>
+              )}
             </TouchableOpacity>
           </View>
+          <TouchableOpacity onPress={handleModalClose} activeOpacity={1} style={styles.bottomSheetCloseButton}>
+            <Text style={styles.bottomSheetCloseButtonText}>{languageStore[selectedLanguage]['close']}</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
     </SafeAreaView>
@@ -285,6 +270,58 @@ export default function Settings() {
 }
 
 const styles = StyleSheet.create({
+  bottomSheetContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  bottomSheetContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  bottomSheetButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingVertical: 15,
+  },
+  bottomSheetIcon: {
+    width: 30,
+    height: 30,
+    marginRight: 15,
+  },
+  bottomSheetButtonText: {
+    fontSize: 18,
+    color: '#000',
+  },
+  bottomSheetCloseButton: {
+    alignItems: 'center',
+    padding: 15,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  bottomSheetCloseButtonText: {
+    fontSize: 18,
+    color: '#6B2346',
+  },
+  toastContainer: {
+    position: 'absolute',
+    top: 100,
+    left: '50%',
+    transform: [{ translateX: -100 }],
+    backgroundColor: '#333',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    zIndex: 1000,
+  },
+  toastText: {
+    color: '#fff',
+    fontSize: 16,
+  },
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
@@ -416,5 +453,16 @@ const styles = StyleSheet.create({
   expandedTextTitle: {
     color: '#6B2346',
     paddingVertical: 5,
+  },
+  inlineToast: {
+    marginLeft: 'auto',
+    backgroundColor: '#6B2346',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+  },
+  inlineToastText: {
+    color: '#fff',
+    fontSize: 14,
   },
 });
