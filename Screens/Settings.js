@@ -185,7 +185,7 @@ export default function Settings() {
                     style={[styles.languageOption, selectedLanguage === 'tr' ? styles.selected : null]}
                     onPress={() => toggleLanguage('tr')}
                   >
-                    <Image source={require('../assets/flags/tr_flag.png')} style={styles.flag} />
+                    <Image source={require('../assets/flags/tr_flag.jpg')} style={styles.flag} />
                     <Text
                       style={[
                         styles.languageText,
@@ -199,7 +199,7 @@ export default function Settings() {
                     style={[styles.languageOption, selectedLanguage === 'en' ? styles.selected : null]}
                     onPress={() => toggleLanguage('en')}
                   >
-                    <Image source={require('../assets/flags/en_flag.png')} style={styles.flag} />
+                    <Image source={require('../assets/flags/en_flag.jpg')} style={styles.flag} />
                     <Text
                       style={[
                         styles.languageText,
