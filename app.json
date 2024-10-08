@@ -16,6 +16,7 @@
       "supportsTablet": true
     },
     "android": {
+      "enableHermes": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/bnyLogo512.png",
         "backgroundColor": "#3F1626"

@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Platform, StatusBar, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, Platform, StatusBar, ScrollView, TouchableOpacity, findNodeHandle, LayoutAnimation } from 'react-native';
 import RecipeCard from '../Components/RecipeCard';
 import SearchBar from '../Components/SearchBar';
 import { useNavigation } from '@react-navigation/native';
@@ -8,10 +8,13 @@ import { Ionicons } from '@expo/vector-icons';
 
 const FoodsOfCountriesDetail = ({ updateRecipeRating }) => {
   const { isDarkMode, selectedLanguage, allRecipeData, savedRecipes, addRecipe, removeRecipe, languageStore, selectedCountry, setSelectedCountry } = useAppContext();
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const [expandedCardIndex, setExpandedCardIndex] = React.useState(null);
-  const [sortOrder, setSortOrder] = React.useState('none');
-  const [selectedChips, setSelectedChips] = React.useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [expandedCardIndex, setExpandedCardIndex] = useState(null);
+  const [sortOrder, setSortOrder] = useState('none');
+  const [selectedChips, setSelectedChips] = useState([]);
+
+  const scrollViewRef = useRef();
+  const cardRefs = useRef({});
   
   const navigation = useNavigation();
   
@@ -52,6 +55,21 @@ const FoodsOfCountriesDetail = ({ updateRecipeRating }) => {
 
   const toggleExpand = (index) => {
     setExpandedCardIndex(expandedCardIndex === index ? null : index);
+
+    setTimeout(() => {
+      if (expandedCardIndex !== index && scrollViewRef.current) {
+        const cardRef = cardRefs.current[index];
+        if (cardRef) {
+          cardRef.measureLayout(
+            findNodeHandle(scrollViewRef.current),
+            (x, y) => {
+              scrollViewRef.current.scrollTo({ y: y, animated: true });
+            },
+            (error) => console.error("Failed to measure layout:", error)
+          );
+        }
+      }
+    }, 200);
   };
 
   const handleSort = () => {
@@ -98,22 +116,24 @@ const FoodsOfCountriesDetail = ({ updateRecipeRating }) => {
           onChipRemove={handleChipRemove}
           isDarkMode={isDarkMode}
         />
-        <ScrollView>
+        <ScrollView ref={scrollViewRef}>
           {sortedRecipes?.map((r, index) => (
-            <RecipeCard
-              key={index}
-              recipeID={r.id}
-              imgUrl={r.imageUrl}
-              foodName={r.name[selectedLanguage]}
-              ingredients={r.ingredients[selectedLanguage]}
-              recipeSteps={r.recipe[selectedLanguage]}
-              expanded={expandedCardIndex === index}
-              toggleExpand={() => toggleExpand(index)}
-              onSave={(isSaved) => handleSave(r, isSaved)}
-              saved={savedRecipes.some(savedRecipe => savedRecipe.id === r.id)}
-              rating={r.rating || 0} 
-              updateRecipeRating={updateRecipeRating}
-            />
+            <View key={index} ref={ref => cardRefs.current[index] = ref}>
+              <RecipeCard
+                key={index}
+                recipeID={r.id}
+                imgUrl={r.imageUrl}
+                foodName={r.name[selectedLanguage]}
+                ingredients={r.ingredients[selectedLanguage]}
+                recipeSteps={r.recipe[selectedLanguage]}
+                expanded={expandedCardIndex === index}
+                toggleExpand={() => toggleExpand(index)}
+                onSave={(isSaved) => handleSave(r, isSaved)}
+                saved={savedRecipes.some(savedRecipe => savedRecipe.id === r.id)}
+                rating={r.rating || 0} 
+                updateRecipeRating={updateRecipeRating}
+              />
+            </View>
           ))}
         </ScrollView>
       </View>

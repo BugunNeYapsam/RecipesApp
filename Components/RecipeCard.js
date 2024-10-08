@@ -71,7 +71,7 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
     }
   
     try {
-      const dbUpdateResult = await updateRecipeRating(recipe_id, newRating, updateSpecificRecipeRating);  
+      const dbUpdateResult = await updateRecipeRating(recipe_id, validRating, updateSpecificRecipeRating);
       if (dbUpdateResult) {
         await saveRatingToDevice(validRating);
         await markAsRated(recipe_id);
@@ -81,6 +81,7 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
         triggerFailureAnimation();
       }
     } catch (error) {
+      console.error("Error during rating update:", error);
       triggerFailureAnimation();
     } finally {
       setLoading(false);

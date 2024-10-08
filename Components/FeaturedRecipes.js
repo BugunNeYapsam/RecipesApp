@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     elevation: 2,
-    backgroundColor: '#fff',
+    backgroundColor: '#D9D9D9',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#6B2346',
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   recipeName: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginVertical: 5,
+    marginVertical: 4,
     textAlign: 'center',
   },
   placeholderCard: {
@@ -220,8 +220,11 @@ const styles = StyleSheet.create({
     height: 180,
     marginRight: 10,
     borderRadius: 10,
-    backgroundColor: '#E0E0E0',
     elevation: 2,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#D0D0D0',
   },
   placeholderImage: {
     width: '100%',
