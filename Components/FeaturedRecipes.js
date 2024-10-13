@@ -6,6 +6,15 @@ import { Ionicons } from '@expo/vector-icons';
 
 const screenWidth = Dimensions.get('window').width;
 
+const getCardWidth = () => {
+  if (screenWidth >= 1024) {
+    return screenWidth / 4.5;
+  } else if (screenWidth >= 768) {
+    return screenWidth / 3;
+  }
+  return screenWidth / 1.5;
+};
+
 const FeaturedRecipes = ({ showAll }) => {
     const navigation = useNavigation();
     const { featuredRecipes, selectedLanguage, languageStore, selectedFeaturedRecipe, setSelectedFeaturedRecipe, isDarkMode } = useAppContext();
@@ -160,7 +169,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   featuredCardHome: {
-    width: 240,
+    width: getCardWidth(),
     height: 180,
     marginRight: 10,
     borderRadius: 10,
@@ -194,7 +203,7 @@ const styles = StyleSheet.create({
     paddingBottom: "25%",
   },
   recipeCard: {
-    width: '48%',
+    width: getCardWidth(),
     marginBottom: 10,
     borderRadius: 10,
     overflow: 'hidden',
@@ -216,7 +225,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   placeholderCard: {
-    width: 240,
+    width: getCardWidth(),
     height: 180,
     marginRight: 10,
     borderRadius: 10,

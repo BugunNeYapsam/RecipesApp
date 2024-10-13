@@ -6,6 +6,15 @@ import { Ionicons } from '@expo/vector-icons';
 
 const screenWidth = Dimensions.get('window').width;
 
+const getCardWidth = () => {
+  if (screenWidth >= 1024) {
+    return screenWidth / 5 - 30;
+  } else if (screenWidth >= 768) {
+    return screenWidth / 4 - 30;
+  }
+  return screenWidth / 3 - 30;
+};
+
 const Categories = ({ showAll }) => {
   const navigation = useNavigation();
   const { allCategoriesData, selectedLanguage, languageStore, setSelectedCategory, isDarkMode } = useAppContext();
@@ -62,7 +71,7 @@ const Categories = ({ showAll }) => {
   const handleOnPressCategory = (category_object) => {
     setSelectedCategory(category_object);
     setCategoryToNavigate(category_object);
-  }
+  };
 
   const renderPlaceholders = () => {
     const placeholders = new Array(5).fill(0);
@@ -163,7 +172,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   categoryCard: {
-    width: (screenWidth / 3) - 30,
+    width: getCardWidth(),
     height: 130,
     marginRight: 10,
     borderRadius: 10,
@@ -174,7 +183,7 @@ const styles = StyleSheet.create({
     borderColor: '#6B2346',
   },
   categoryCardShowAll: {
-    width: (screenWidth / 3) - 30,
+    width: getCardWidth(),
     height: 160,
     marginRight: 10,
     borderRadius: 10,
@@ -183,7 +192,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#6B2346',
-    marginBottom: 10
+    marginBottom: 10,
   },
   categoryImage: {
     width: '100%',
@@ -210,7 +219,7 @@ const styles = StyleSheet.create({
     paddingBottom: "25%"
   },
   placeholderCard: {
-    width: (screenWidth / 3) - 30,
+    width: getCardWidth(),
     height: 130,
     marginRight: 10,
     borderRadius: 10,

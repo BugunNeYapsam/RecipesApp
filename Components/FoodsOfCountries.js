@@ -6,6 +6,15 @@ import { Ionicons } from '@expo/vector-icons';
 
 const screenWidth = Dimensions.get('window').width;
 
+const getCardWidth = () => {
+  if (screenWidth >= 1024) {
+    return screenWidth / 6;
+  } else if (screenWidth >= 768) {
+    return screenWidth / 5;
+  }
+  return screenWidth / 4;
+};
+
 const FoodsOfCountries = ({ showAll }) => {
   const navigation = useNavigation();
   const { allCountries, selectedLanguage, languageStore, setSelectedCountry, isDarkMode } = useAppContext();
@@ -62,7 +71,7 @@ const FoodsOfCountries = ({ showAll }) => {
   const handleOnPressCountry = (country) => {
     setSelectedCountry(country.code);
     setCountryToNavigate(country.code);
-  }
+  };
 
   const renderPlaceholders = () => {
     const placeholders = new Array(5).fill(0);
@@ -173,7 +182,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   countryCard: {
-    width: (screenWidth / 4),
+    width: getCardWidth(),
     height: 85,
     marginRight: 10,
     paddingBottom: 10,
@@ -214,7 +223,7 @@ const styles = StyleSheet.create({
     paddingBottom: "25%"
   },
   placeholderCard: {
-    width: (screenWidth / 4),
+    width: getCardWidth(),
     height: 85,
     marginRight: 10,
     paddingBottom: 10,
