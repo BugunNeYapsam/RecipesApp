@@ -4,16 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 import { Ionicons } from '@expo/vector-icons';
 
-const screenWidth = Dimensions.get('window').width;
-
-const getCardWidth = () => {
-  if (screenWidth >= 1024) {
-    return screenWidth / 5 - 30;
-  } else if (screenWidth >= 768) {
-    return screenWidth / 4 - 30;
-  }
-  return screenWidth / 3 - 30;
-};
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const Categories = ({ showAll }) => {
   const navigation = useNavigation();
@@ -71,12 +62,12 @@ const Categories = ({ showAll }) => {
   const handleOnPressCategory = (category_object) => {
     setSelectedCategory(category_object);
     setCategoryToNavigate(category_object);
-  };
+  }
 
   const renderPlaceholders = () => {
     const placeholders = new Array(5).fill(0);
     return placeholders.map((_, index) => (
-      <View key={index} style={styles.placeholderCard}>
+      <View key={index} style={[styles.placeholderCard, { width: cardWidth, height: cardHeight, marginBottom: showAll ? 10 : 0 }]}>
         <Animated.View style={[styles.placeholderImage, { opacity: shimmerValue }]} />
         <View style={styles.placeholderOverlay}>
           <Animated.View style={[styles.placeholderText, { opacity: shimmerValue }]} />
@@ -85,6 +76,19 @@ const Categories = ({ showAll }) => {
     ));
   };
 
+  const calculateCardSize = () => {
+    const cardWidth = screenWidth < 600 ? (screenWidth / 3) - 20 : (screenWidth / 4) - 20;
+    const cardHeight = screenHeight < 800 ? 130 : 180;
+    return { cardWidth, cardHeight };
+  };
+
+  const calculateFontSize = () => {
+    return screenWidth < 600 ? 14 : 18;
+  };
+
+  const { cardWidth, cardHeight } = calculateCardSize();
+  const fontSize = calculateFontSize();
+
   if (showAll) {
     return (
       <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
@@ -92,15 +96,15 @@ const Categories = ({ showAll }) => {
           <TouchableOpacity onPress={() => navigation?.goBack()}>
             <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#c781a4' : '#444'} />
           </TouchableOpacity>
-          <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["categories"]?.toUpperCase() || '' }</Text>
+          <Text style={[styles.text, dynamicPageTitleStyle, { fontSize }]}>{languageStore[selectedLanguage]["categories"]?.toUpperCase() || '' }</Text>
         </View>
         <ScrollView style={styles.container}>
-          <View style={styles.grid}>
+          <View style={[styles.grid, { justifyContent: loading || allCategoriesData.length % 4 === 0 ? 'space-between' : 'flex-start' }]}>
             {loading ? renderPlaceholders() : allCategoriesData?.map((category, index) => (
-              <TouchableOpacity key={index} style={styles.categoryCardShowAll} onPress={() => handleOnPressCategory(category)}>
+              <TouchableOpacity key={index} style={[styles.categoryCardShowAll, { width: cardWidth, height: cardHeight }]} onPress={() => handleOnPressCategory(category)}>
                 <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
                 <View style={styles.categoryOverlay}>
-                  <Text style={[styles.categoryName, { marginBottom: 2 }]}>{category.name[selectedLanguage]}</Text>
+                  <Text style={[styles.categoryName, { marginBottom: 2, fontSize }]}>{category.name[selectedLanguage]}</Text>
                 </View>
               </TouchableOpacity>
             ))}
@@ -113,20 +117,20 @@ const Categories = ({ showAll }) => {
   return (
     <View>
       <View style={styles.header}>
-        <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["categories"]}</Text>
+        <Text style={[styles.sectionTitle, dynamicPageTitleStyle, { fontSize: fontSize * 1.2 }]}>{languageStore[selectedLanguage]["categories"]}</Text>
         {
           !loading && 
-          <TouchableOpacity onPress={() => navigation.navigate(languageStore[selectedLanguage]["all_categories"])}>
-            <Text style={[styles.seeAll, dynamicSeeAllStyle]}>{languageStore[selectedLanguage]["see_all"]}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate(languageStore[selectedLanguage]["all_categories"]) }>
+            <Text style={[styles.seeAll, dynamicSeeAllStyle, { fontSize: fontSize }]}>{languageStore[selectedLanguage]["see_all"]}</Text>
           </TouchableOpacity>
         }
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
         {loading ? renderPlaceholders() : allCategoriesData.slice(0, 5)?.map((category, index) => (
-          <TouchableOpacity key={index} style={styles.categoryCard} onPress={() => handleOnPressCategory(category)}>
+          <TouchableOpacity key={index} style={[styles.categoryCard, { width: cardWidth, height: cardHeight }]} onPress={() => handleOnPressCategory(category)}>
             <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
             <View style={styles.categoryOverlay}>
-              <Text style={styles.categoryName}>{category.name[selectedLanguage]}</Text>
+              <Text style={[styles.categoryName, { fontSize }]}>{category.name[selectedLanguage]}</Text>
             </View>
           </TouchableOpacity>
         ))}
@@ -172,8 +176,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   categoryCard: {
-    width: getCardWidth(),
-    height: 130,
     marginRight: 10,
     borderRadius: 10,
     overflow: 'hidden',
@@ -183,8 +185,6 @@ const styles = StyleSheet.create({
     borderColor: '#6B2346',
   },
   categoryCardShowAll: {
-    width: getCardWidth(),
-    height: 160,
     marginRight: 10,
     borderRadius: 10,
     overflow: 'hidden',
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#6B2346',
-    marginBottom: 10,
+    marginBottom: 10
   },
   categoryImage: {
     width: '100%',
@@ -215,12 +215,9 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
     paddingBottom: "25%"
   },
   placeholderCard: {
-    width: getCardWidth(),
-    height: 130,
     marginRight: 10,
     borderRadius: 10,
     overflow: 'hidden',

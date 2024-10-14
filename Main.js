@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Text, StatusBar, View, ActivityIndicator, StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { Text, StatusBar, View, ActivityIndicator, StyleSheet, Dimensions } from 'react-native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Explore from "./Screens/Explore";
@@ -18,12 +18,19 @@ import Settings from './Screens/Settings';
 import CategoryDetail from './Components/CategoryDetail';
 import FoodsOfCountriesDetail from './Components/FoodsOfCountriesDetail';
 import FeaturedRecipesDetail from './Components/FeaturedRecipesDetail';
-import { DefaultTheme, DarkTheme } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { runTransaction } from "firebase/firestore";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
+const { width, height } = Dimensions.get('window');
+const guidelineBaseWidth = 300;
+const guidelineBaseHeight = 600;
+
+const scale = size => width / guidelineBaseWidth * size;
+const verticalScale = size => height / guidelineBaseHeight * size;
+const moderateScale = (size, factor = 0.2) => size + (scale(size) - size) * factor;
 
 const errorMessages = {
   "en": "Oops! It seems we're having trouble connecting right now. Please check back in a moment.",
@@ -224,7 +231,7 @@ export default function Main() {
 
   if (languageLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={styles.center}>
         <ActivityIndicator size="large" color="#6B2346" />
       </View>
     );
@@ -233,8 +240,8 @@ export default function Main() {
   if (appSettings?.isMaintenanceOn) {
     return (
       <View style={styles.center}>
-        <Icon name="build" size={75} color="#6B2346" />
-        <Text style={[styles.errorText, { width: selectedLanguage == "tr" ? "75%" : "80%" }]}>
+        <Icon name="build" size={moderateScale(75)} color="#6B2346" />
+        <Text style={[styles.errorText, { width: selectedLanguage == "tr" ? "75%" : "80%", fontSize: moderateScale(16) }]}>
           {selectedLanguage ? maintenanceMessages[selectedLanguage] : maintenanceMessages["tr"]}
         </Text>
       </View>
@@ -244,8 +251,8 @@ export default function Main() {
   if (error) {
     return (
       <View style={styles.center}>
-        <Icon name="error-outline" size={75} color="#6B2346" />
-        <Text style={[styles.errorText, { width: "85%" }]}>
+        <Icon name="error-outline" size={moderateScale(75)} color="#6B2346" />
+        <Text style={[styles.errorText, { width: "85%", fontSize: moderateScale(16) }]}>
           {selectedLanguage ? errorMessages[selectedLanguage] : errorMessages["tr"]}
         </Text>
       </View>
@@ -278,14 +285,18 @@ export default function Main() {
               backgroundColor: "#6B2346",
               borderTopWidth: 0,
               elevation: 0,
-              height: 65,
+              height: moderateScale(70),
               margin: 15,
               borderRadius: 15,
-              position: 'absolute'
+              position: 'absolute',
             },
             tabBarLabelStyle: {
-              fontSize: 12,
+              fontSize: moderateScale(14),
               marginBottom: 2,
+            },
+            tabBarLabelPosition: 'below-icon',
+            tabBarItemStyle: {
+              flexDirection: 'column',
             },
           }}
         >
@@ -298,11 +309,11 @@ export default function Main() {
                 <MaterialIcons
                   name="explore"
                   color={focused ? "#ffffff" : "#ffdddd"}
-                  size={27}
+                  size={moderateScale(28)}
                 />
               ),
               tabBarLabel: ({ focused }) => (
-                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: moderateScale(14), padding: 5 }}>
                   {languageStore[selectedLanguage]["explore"]}
                 </Text>
               ),
@@ -316,10 +327,10 @@ export default function Main() {
               headerShown: false,
               tabBarItemStyle: { marginTop: 3 },
               tabBarIcon: ({ focused }) => (
-                <MaterialIcons name="tune" color={focused ? "#ffffff" : "#ffdddd"} size={27} />
+                <MaterialIcons name="tune" color={focused ? "#ffffff" : "#ffdddd"} size={moderateScale(28)} />
               ),
               tabBarLabel: ({ focused }) => (
-                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: moderateScale(14), padding: 5 }}>
                   {languageStore[selectedLanguage]["filter"]}
                 </Text>
               ),
@@ -333,10 +344,10 @@ export default function Main() {
               headerShown: false,
               tabBarItemStyle: { marginTop: 3 },
               tabBarIcon: ({ focused }) => (
-                <MaterialIcons name="bookmark" color={focused ? "#ffffff" : "#ffdddd"} size={27} />
+                <MaterialIcons name="bookmark" color={focused ? "#ffffff" : "#ffdddd"} size={moderateScale(28)} />
               ),
               tabBarLabel: ({ focused }) => (
-                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: moderateScale(14), padding: 5 }}>
                   {languageStore[selectedLanguage]["saveds"]}
                 </Text>
               ),
@@ -351,10 +362,10 @@ export default function Main() {
               headerShown: false,
               tabBarItemStyle: { marginTop: 3 },
               tabBarIcon: ({ focused }) => (
-                <MaterialIcons name="settings" color={focused ? "#ffffff" : "#ffdddd"} size={27} />
+                <MaterialIcons name="settings" color={focused ? "#ffffff" : "#ffdddd"} size={moderateScale(28)} />
               ),
               tabBarLabel: ({ focused }) => (
-                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: 12, padding: 5 }}>
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: moderateScale(14), padding: 5 }}>
                   {languageStore[selectedLanguage]["settings"]}
                 </Text>
               ),
@@ -375,7 +386,6 @@ const styles = StyleSheet.create({
   errorText: {
     textAlign: "center",
     color: '#6B2346',
-    fontSize: 16,
     fontWeight: 'bold',
     marginTop: 10,
   },

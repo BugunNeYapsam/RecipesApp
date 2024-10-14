@@ -1,19 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, ScrollView, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, Platform, StatusBar, Animated, Easing, Dimensions } from 'react-native';
+import { View, ScrollView, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, Platform, StatusBar, Animated, Easing, Dimensions, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 import { Ionicons } from '@expo/vector-icons';
 
-const screenWidth = Dimensions.get('window').width;
-
-const getCardWidth = () => {
-  if (screenWidth >= 1024) {
-    return screenWidth / 6;
-  } else if (screenWidth >= 768) {
-    return screenWidth / 5;
-  }
-  return screenWidth / 4;
-};
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const FoodsOfCountries = ({ showAll }) => {
   const navigation = useNavigation();
@@ -33,7 +24,7 @@ const FoodsOfCountries = ({ showAll }) => {
   const dynamicSeeAllStyle = {
     color: isDarkMode ? '#5c86ff' : '#0445ff'
   };
-    
+  
   useEffect(() => {
     if (countryToNavigate) {
       navigation.navigate(languageStore[selectedLanguage][countryToNavigate]);
@@ -76,7 +67,7 @@ const FoodsOfCountries = ({ showAll }) => {
   const renderPlaceholders = () => {
     const placeholders = new Array(5).fill(0);
     return placeholders.map((_, index) => (
-      <View key={index} style={styles.placeholderCard}>
+      <View key={index} style={[styles.placeholderCard, { width: cardWidth, height: cardHeight }]}>
         <Animated.View style={[styles.placeholderImage, { opacity: shimmerValue }]} />
         <View style={styles.placeholderOverlay}>
           <Animated.View style={[styles.placeholderText, { opacity: shimmerValue }]} />
@@ -85,6 +76,19 @@ const FoodsOfCountries = ({ showAll }) => {
     ));
   };
 
+  const calculateCardSize = () => {
+    const cardWidth = screenWidth < 600 ? (screenWidth / 2) - 20 : (screenWidth / 4.5);
+    const cardHeight = screenHeight < 800 ? 130 : 140;
+    return { cardWidth, cardHeight };
+  };
+
+  const calculateFontSize = () => {
+    return screenWidth < 600 ? 14 : 18;
+  };
+
+  const { cardWidth, cardHeight } = calculateCardSize();
+  const fontSize = calculateFontSize();
+
   if (showAll) {
     return (
       <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
@@ -92,31 +96,34 @@ const FoodsOfCountries = ({ showAll }) => {
           <TouchableOpacity onPress={() => navigation?.goBack()}>
             <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#c781a4' : '#444'} />
           </TouchableOpacity>
-          <Text style={[styles.text, dynamicPageTitleStyle]}>
+          <Text style={[styles.text, dynamicPageTitleStyle, { fontSize }]}>
             {languageStore[selectedLanguage]["foods_of_countries"]?.toUpperCase() || ''}
           </Text>
         </View>
-        <ScrollView style={styles.container}>
-          <View style={styles.grid}>
-            {loading
-              ? renderPlaceholders()
-              : [...allCountries]
-                  .sort((a, b) => {
-                    if (a.code == "other") return 1;
-                    if (b.code == "other") return -1;
-                    return showAll ? languageStore[selectedLanguage][a.code].localeCompare(languageStore[selectedLanguage][b.code]) : 0; }
-                  )
-                  .filter((country) => country?.show)
-                  .map((country, index) => (
-                    <TouchableOpacity key={index} style={styles.countryCard} onPress={() => handleOnPressCountry(country)}>
-                      <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
-                      <View style={styles.countryOverlay}>
-                        <Text style={styles.countryName}>{languageStore[selectedLanguage][country.code]}</Text>
-                      </View>
-                    </TouchableOpacity>
-                  ))}
-          </View>
-        </ScrollView>
+        <FlatList
+          data={
+            [...allCountries]
+            .sort((a, b) => {
+              if (a.code == "other") return 1;
+              if (b.code == "other") return -1;
+              return showAll ? languageStore[selectedLanguage][a.code].localeCompare(languageStore[selectedLanguage][b.code]) : 0; }
+            )
+            .filter((country) => country?.show)
+          }
+          keyExtractor={(item, index) => index.toString()}
+          numColumns={screenWidth < 600 ? 2 : 3}
+          columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 10 }}
+          contentContainerStyle={styles.grid}
+          renderItem={({ item }) => (
+            <TouchableOpacity style={[styles.countryCard, { width: cardWidth, height: cardHeight }]} onPress={() => handleOnPressCountry(item)}>
+              <Image source={{ uri: item.imageUrl }} style={styles.countryFlag} />
+              <View style={styles.countryOverlay}>
+                <Text style={[styles.countryName, { fontSize }]}>{languageStore[selectedLanguage][item.code]}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+          ListEmptyComponent={renderPlaceholders}
+        />
       </SafeAreaView>
     );
   }
@@ -124,20 +131,20 @@ const FoodsOfCountries = ({ showAll }) => {
   return (
     <View>
       <View style={styles.header}>
-        <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["foods_of_countries"]}</Text>
+        <Text style={[styles.sectionTitle, dynamicPageTitleStyle, { fontSize: fontSize * 1.2 }]}>{languageStore[selectedLanguage]["foods_of_countries"]}</Text>
         {
           !loading && 
           <TouchableOpacity onPress={() => navigation.navigate(languageStore[selectedLanguage]["all_foods_of_countries"])}>
-            <Text style={[styles.seeAll, dynamicSeeAllStyle]}>{languageStore[selectedLanguage]["see_all"]}</Text>
+            <Text style={[styles.seeAll, dynamicSeeAllStyle, { fontSize: fontSize }]}>{languageStore[selectedLanguage]["see_all"]}</Text>
           </TouchableOpacity>
         }
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
         {loading ? renderPlaceholders() : allCountries?.slice(0, 5).filter((country) => country?.show).map((country, index) => (
-          <TouchableOpacity key={index} style={styles.countryCard} onPress={() => handleOnPressCountry(country)}>
+          <TouchableOpacity key={index} style={[styles.countryCard, { width: cardWidth, height: cardHeight }]} onPress={() => handleOnPressCountry(country)}>
             <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
             <View style={styles.countryOverlay}>
-              <Text style={styles.countryName}>{languageStore[selectedLanguage][country.code]}</Text>
+              <Text style={[styles.countryName, { fontSize }]}>{languageStore[selectedLanguage][country.code]}</Text>
             </View>
           </TouchableOpacity>
         ))}
@@ -150,7 +157,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-    padding: 10,
+    padding: 16,
   },
   container: {
     flex: 1,
@@ -168,7 +175,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 10,
     marginTop: 30,
-    marginLeft: -10
+    marginLeft: -10,
   },
   sectionTitle: {
     fontSize: 18,
@@ -182,8 +189,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   countryCard: {
-    width: getCardWidth(),
-    height: 85,
+    marginBottom: 10,
     marginRight: 10,
     paddingBottom: 10,
     borderRadius: 10,
@@ -191,15 +197,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     elevation: 2,
     backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#6B2346',
+    alignItems: 'center',
   },
   countryFlag: {
-    marginTop: -15,
+    marginTop: -10,
     width: '100%',
-    height: '90%',
+    height: '100%',
   },
   countryOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -211,20 +216,15 @@ const styles = StyleSheet.create({
     color: '#222',
     fontSize: 16,
     fontWeight: 'bold',
+    marginTop: 110,
     textAlign: 'center',
-    marginTop: 60,
-    backgroundColor: "#D3D3D3",
-    width: "100%",
+    backgroundColor: '#D3D3D3',
+    width: '100%',
   },
   grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    paddingBottom: "25%"
+    paddingBottom: '25%'
   },
   placeholderCard: {
-    width: getCardWidth(),
-    height: 85,
     marginRight: 10,
     paddingBottom: 10,
     borderRadius: 10,
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   },
   placeholderImage: {
     width: '100%',
-    height: '75%',
+    height: '80%',
     borderRadius: 10,
     backgroundColor: '#D0D0D0',
   },

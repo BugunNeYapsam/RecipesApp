@@ -1,11 +1,24 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Platform, StatusBar, SafeAreaView, View, Image, RefreshControl, Text, Button } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Platform,
+  StatusBar,
+  SafeAreaView,
+  View,
+  Image,
+  RefreshControl,
+  Text,
+  Dimensions,
+} from 'react-native';
 import Categories from '../Components/Categories';
 import FeaturedRecipes from '../Components/FeaturedRecipes';
 import FoodsOfCountries from '../Components/FoodsOfCountries';
 import headerImage from '../assets/headerBNY.png';
 import headerImageLight from '../assets/headerBNY_light.png';
 import { useAppContext } from '../Context/AppContext';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const Explore = (props) => {
   const { isDarkMode } = useAppContext();
@@ -19,33 +32,35 @@ const Explore = (props) => {
   }, []);
 
   const dynamicLineStyle = {
-    backgroundColor: isDarkMode ? '#AAAAAA' : '#2F2F2F'
+    backgroundColor: isDarkMode ? '#AAAAAA' : '#2F2F2F',
   };
 
   const dynamicDotStyle = {
-    color: isDarkMode ? '#AAAAAA' : '#2F2F2F'
+    color: isDarkMode ? '#AAAAAA' : '#2F2F2F',
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.separatorContainer}>
-          <Image source={isDarkMode ? headerImage : headerImageLight} style={styles.headerImage} />
-        </View>
-        <View style={styles.separatorContainer}>
-          <View style={[styles.line, dynamicLineStyle]} />
-          <Text style={[styles.dot, dynamicDotStyle]}>•</Text>
-          <View style={[styles.line, dynamicLineStyle]} />
-        </View>
-      <ScrollView 
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        <Image
+          source={isDarkMode ? headerImage : headerImageLight}
+          style={styles.headerImage}
+          resizeMode="contain"
+        />
+      </View>
+      <View style={styles.separatorContainer}>
+        <View style={[styles.line, dynamicLineStyle]} />
+        <Text style={[styles.dot, dynamicDotStyle]}>•</Text>
+        <View style={[styles.line, dynamicLineStyle]} />
+      </View>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
           <Categories />
           <FeaturedRecipes />
           <FoodsOfCountries />
-        </ScrollView>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -53,10 +68,11 @@ const Explore = (props) => {
 
 const styles = StyleSheet.create({
   headerImage: {
-    width: 300,
-    height: 50,
-    marginLeft: 1,
-    marginTop: 5
+    width: screenWidth * 0.8,
+    aspectRatio: 6,
+    alignSelf: 'center',
+    marginTop: 5,
+    resizeMode: 'contain',
   },
   header: {
     flexDirection: 'row',
@@ -109,18 +125,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    marginBottom: "20%"
+    marginBottom: '20%',
   },
   separatorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 5,
-    marginBottom: 10
+    marginBottom: 10,
   },
   line: {
     height: 0.5,
-    width: 150,
+    width: screenWidth * 0.4, // Responsive width (40% of screen width)
   },
   dot: {
     marginHorizontal: 10,

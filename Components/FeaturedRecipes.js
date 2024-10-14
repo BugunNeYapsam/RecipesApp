@@ -1,23 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, ScrollView, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, Platform, StatusBar, Animated, Easing, Dimensions } from 'react-native';
+import { View, ScrollView, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, Platform, StatusBar, Animated, Easing, Dimensions, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 import { Ionicons } from '@expo/vector-icons';
 
-const screenWidth = Dimensions.get('window').width;
-
-const getCardWidth = () => {
-  if (screenWidth >= 1024) {
-    return screenWidth / 4.5;
-  } else if (screenWidth >= 768) {
-    return screenWidth / 3;
-  }
-  return screenWidth / 1.5;
-};
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const FeaturedRecipes = ({ showAll }) => {
     const navigation = useNavigation();
-    const { featuredRecipes, selectedLanguage, languageStore, selectedFeaturedRecipe, setSelectedFeaturedRecipe, isDarkMode } = useAppContext();
+    const { featuredRecipes, selectedLanguage, languageStore, setSelectedFeaturedRecipe, isDarkMode } = useAppContext();
     const [loading, setLoading] = useState(true);
     const shimmerValue = useRef(new Animated.Value(0)).current;
     const [featuredRecipeToNavigate, setFeaturedRecipeToNavigate] = useState(null);
@@ -35,8 +26,8 @@ const FeaturedRecipes = ({ showAll }) => {
     };
 
     useEffect(() => {
-      if (selectedFeaturedRecipe) {
-        navigation.navigate(selectedFeaturedRecipe.name[selectedLanguage]);
+      if (featuredRecipeToNavigate) {
+        navigation.navigate(featuredRecipeToNavigate?.name[selectedLanguage]);
         setFeaturedRecipeToNavigate(null);
       }
     }, [featuredRecipeToNavigate, selectedLanguage, navigation]);
@@ -76,7 +67,7 @@ const FeaturedRecipes = ({ showAll }) => {
     const renderPlaceholders = () => {
       const placeholders = new Array(5).fill(0);
       return placeholders.map((_, index) => (
-        <View key={index} style={styles.placeholderCard}>
+        <View key={index} style={[styles.placeholderCard, { width: cardWidth, height: cardHeight, marginBottom: showAll ? 10 : 0 }]}>
           <Animated.View style={[styles.placeholderImage, { opacity: shimmerValue }]} />
           <View style={styles.placeholderOverlay}>
             <Animated.View style={[styles.placeholderText, { opacity: shimmerValue }]} />
@@ -85,6 +76,19 @@ const FeaturedRecipes = ({ showAll }) => {
       ));
     };
 
+    const calculateCardSize = () => {
+      const cardWidth = screenWidth < 600 ? (screenWidth / 2) - 20 : (screenWidth / 3) - 20;
+      const cardHeight = screenHeight < 800 ? 180 : 220;
+      return { cardWidth, cardHeight };
+    };
+
+    const calculateFontSize = () => {
+      return screenWidth < 600 ? 14 : 18;
+    };
+
+    const { cardWidth, cardHeight } = calculateCardSize();
+    const fontSize = calculateFontSize();
+
     if (showAll) {
       return (
         <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
@@ -92,18 +96,25 @@ const FeaturedRecipes = ({ showAll }) => {
             <TouchableOpacity onPress={() => navigation?.goBack()}>
               <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#c781a4' : '#444'} />
             </TouchableOpacity>
-            <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["featured_recipes"]?.toUpperCase() || '' }</Text>
+            <Text style={[styles.text, dynamicPageTitleStyle, { fontSize }]}>{languageStore[selectedLanguage]["featured_recipes"]?.toUpperCase() || '' }</Text>
           </View>
-          <ScrollView style={styles.container}>
-            <View style={styles.grid}>
-              {loading ? renderPlaceholders() : featuredRecipes?.map((recipe, index) => (
-                <TouchableOpacity key={index} style={styles.recipeCard} onPress={() => handleOnPressFeaturedRecipe(recipe)}>
-                  <Image source={recipe?.imageUrl !== "" ? { uri: recipe?.imageUrl } : require('../assets/FoodPlaceholder.png')} style={styles.recipeImage} />
-                  <Text style={styles.recipeName}>{recipe.name[selectedLanguage]}</Text>
+          {
+            loading ? renderPlaceholders() :
+            <FlatList
+              data={featuredRecipes}
+              keyExtractor={(item, index) => index.toString()}
+              numColumns={screenWidth < 600 ? 2 : 3}
+              columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 10 }}
+              contentContainerStyle={styles.grid}
+              renderItem={({ item }) => (
+                <TouchableOpacity style={[styles.recipeCard, { width: cardWidth, height: cardHeight }]} onPress={() => handleOnPressFeaturedRecipe(item)}>
+                  <Image source={item?.imageUrl !== "" ? { uri: item?.imageUrl } : require('../assets/FoodPlaceholder.png')} style={styles.recipeImage} />
+                  <Text style={[styles.recipeName, { fontSize }]}>{item.name[selectedLanguage]}</Text>
                 </TouchableOpacity>
-              ))}
-            </View>
-          </ScrollView>
+              )}
+              ListEmptyComponent={renderPlaceholders}
+            />
+          }
         </SafeAreaView>
       );
     }
@@ -111,33 +122,34 @@ const FeaturedRecipes = ({ showAll }) => {
     return (
       <View>
         <View style={styles.header}>
-          <Text style={[styles.sectionTitle, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["featured_recipes"]}</Text>
+          <Text style={[styles.sectionTitle, dynamicPageTitleStyle, { fontSize: fontSize * 1.2 }]}>{languageStore[selectedLanguage]["featured_recipes"]}</Text>
           {
             !loading && 
             <TouchableOpacity onPress={() => navigation.navigate(languageStore[selectedLanguage]["all_featured_recipes"])}>
-              <Text style={[styles.seeAll, dynamicSeeAllStyle]}>{languageStore[selectedLanguage]["see_all"]}</Text>
+              <Text style={[styles.seeAll, dynamicSeeAllStyle, { fontSize: fontSize }]}>{languageStore[selectedLanguage]["see_all"]}</Text>
             </TouchableOpacity>
           }
         </View>
         <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
           {loading ? renderPlaceholders() : featuredRecipes.slice(0, 5)?.map((recipe, index) => (
-            <TouchableOpacity key={index} style={styles.featuredCardHome} onPress={() => handleOnPressFeaturedRecipe(recipe)}>
+            <TouchableOpacity key={index} style={[styles.featuredCardHome, { width: cardWidth, height: cardHeight }]} onPress={() => handleOnPressFeaturedRecipe(recipe)}>
               <Image source={recipe?.imageUrl !== "" ? { uri: recipe?.imageUrl } : require('../assets/FoodPlaceholder.png')} style={styles.recipeImage} />
               <View style={styles.featuredOverlay}>
-                <Text style={styles.recipeName}>{recipe.name[selectedLanguage]}</Text>
+                <Text style={[styles.recipeName, { fontSize }]}>{recipe.name[selectedLanguage]}</Text>
               </View>
             </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
     );
-  };
+};
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-    padding: 10,
+    padding: "12%",
+    paddingHorizontal: 16
   },
   container: {
     flex: 1,
@@ -169,8 +181,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   featuredCardHome: {
-    width: getCardWidth(),
-    height: 180,
     marginRight: 10,
     borderRadius: 10,
     overflow: 'hidden',
@@ -179,31 +189,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#6B2346',
   },
-  featuredImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
   featuredOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  featuredName: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    paddingBottom: "25%",
-  },
   recipeCard: {
-    width: getCardWidth(),
     marginBottom: 10,
     borderRadius: 10,
     overflow: 'hidden',
@@ -215,7 +207,7 @@ const styles = StyleSheet.create({
   },
   recipeImage: {
     width: '100%',
-    height: 150,
+    height: '85%',
     resizeMode: 'cover',
   },
   recipeName: {
@@ -225,12 +217,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   placeholderCard: {
-    width: getCardWidth(),
-    height: 180,
     marginRight: 10,
     borderRadius: 10,
-    elevation: 2,
     overflow: 'hidden',
+    elevation: 2,
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#D0D0D0',
