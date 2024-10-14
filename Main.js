@@ -30,7 +30,7 @@ const guidelineBaseHeight = 600;
 
 const scale = size => width / guidelineBaseWidth * size;
 const verticalScale = size => height / guidelineBaseHeight * size;
-const moderateScale = (size, factor = 0.2) => size + (scale(size) - size) * factor;
+const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * 0.5 * factor;
 
 const errorMessages = {
   "en": "Oops! It seems we're having trouble connecting right now. Please check back in a moment.",
@@ -285,13 +285,13 @@ export default function Main() {
               backgroundColor: "#6B2346",
               borderTopWidth: 0,
               elevation: 0,
-              height: moderateScale(70),
+              height: moderateScale(60),
               margin: 15,
               borderRadius: 15,
               position: 'absolute',
             },
             tabBarLabelStyle: {
-              fontSize: moderateScale(14),
+              fontSize: moderateScale(12),
               marginBottom: 2,
             },
             tabBarLabelPosition: 'below-icon',
@@ -309,11 +309,11 @@ export default function Main() {
                 <MaterialIcons
                   name="explore"
                   color={focused ? "#ffffff" : "#ffdddd"}
-                  size={moderateScale(28)}
+                  size={moderateScale(24)}
                 />
               ),
               tabBarLabel: ({ focused }) => (
-                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: moderateScale(14), padding: 5 }}>
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: moderateScale(12), padding: 5, paddingTop: 0 }}>
                   {languageStore[selectedLanguage]["explore"]}
                 </Text>
               ),
@@ -327,10 +327,10 @@ export default function Main() {
               headerShown: false,
               tabBarItemStyle: { marginTop: 3 },
               tabBarIcon: ({ focused }) => (
-                <MaterialIcons name="tune" color={focused ? "#ffffff" : "#ffdddd"} size={moderateScale(28)} />
+                <MaterialIcons name="tune" color={focused ? "#ffffff" : "#ffdddd"} size={moderateScale(24)} />
               ),
               tabBarLabel: ({ focused }) => (
-                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: moderateScale(14), padding: 5 }}>
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: moderateScale(12), padding: 5, paddingTop: 0 }}>
                   {languageStore[selectedLanguage]["filter"]}
                 </Text>
               ),
@@ -344,10 +344,10 @@ export default function Main() {
               headerShown: false,
               tabBarItemStyle: { marginTop: 3 },
               tabBarIcon: ({ focused }) => (
-                <MaterialIcons name="bookmark" color={focused ? "#ffffff" : "#ffdddd"} size={moderateScale(28)} />
+                <MaterialIcons name="bookmark" color={focused ? "#ffffff" : "#ffdddd"} size={moderateScale(24)} />
               ),
               tabBarLabel: ({ focused }) => (
-                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: moderateScale(14), padding: 5 }}>
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: moderateScale(12), padding: 5, paddingTop: 0 }}>
                   {languageStore[selectedLanguage]["saveds"]}
                 </Text>
               ),
@@ -362,10 +362,10 @@ export default function Main() {
               headerShown: false,
               tabBarItemStyle: { marginTop: 3 },
               tabBarIcon: ({ focused }) => (
-                <MaterialIcons name="settings" color={focused ? "#ffffff" : "#ffdddd"} size={moderateScale(28)} />
+                <MaterialIcons name="settings" color={focused ? "#ffffff" : "#ffdddd"} size={moderateScale(24)} />
               ),
               tabBarLabel: ({ focused }) => (
-                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: moderateScale(14), padding: 5 }}>
+                <Text style={{ color: focused ? "#ffffff" : "#ffdddd", fontSize: moderateScale(12), padding: 5, paddingTop: 0 }}>
                   {languageStore[selectedLanguage]["settings"]}
                 </Text>
               ),

@@ -77,13 +77,13 @@ const FoodsOfCountries = ({ showAll }) => {
   };
 
   const calculateCardSize = () => {
-    const cardWidth = screenWidth < 600 ? (screenWidth / 2) - 20 : (screenWidth / 4.5);
-    const cardHeight = screenHeight < 800 ? 130 : 140;
+    const cardWidth = screenWidth < 600 ? (screenWidth / 3.75) : (screenWidth / 3.75);
+    const cardHeight = screenHeight < 1000 ? 90 : 150;
     return { cardWidth, cardHeight };
   };
 
   const calculateFontSize = () => {
-    return screenWidth < 600 ? 14 : 18;
+    return screenWidth < 600 ? 16 : 22;
   };
 
   const { cardWidth, cardHeight } = calculateCardSize();
@@ -111,7 +111,7 @@ const FoodsOfCountries = ({ showAll }) => {
             .filter((country) => country?.show)
           }
           keyExtractor={(item, index) => index.toString()}
-          numColumns={screenWidth < 600 ? 2 : 3}
+          numColumns={3}
           columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 10 }}
           contentContainerStyle={styles.grid}
           renderItem={({ item }) => (
@@ -131,20 +131,20 @@ const FoodsOfCountries = ({ showAll }) => {
   return (
     <View>
       <View style={styles.header}>
-        <Text style={[styles.sectionTitle, dynamicPageTitleStyle, { fontSize: fontSize * 1.2 }]}>{languageStore[selectedLanguage]["foods_of_countries"]}</Text>
+        <Text style={[styles.sectionTitle, dynamicPageTitleStyle, { fontSize: fontSize }]}>{languageStore[selectedLanguage]["foods_of_countries"]}</Text>
         {
           !loading && 
           <TouchableOpacity onPress={() => navigation.navigate(languageStore[selectedLanguage]["all_foods_of_countries"])}>
-            <Text style={[styles.seeAll, dynamicSeeAllStyle, { fontSize: fontSize }]}>{languageStore[selectedLanguage]["see_all"]}</Text>
+            <Text style={[styles.seeAll, dynamicSeeAllStyle, { fontSize: fontSize * 0.9 }]}>{languageStore[selectedLanguage]["see_all"]}</Text>
           </TouchableOpacity>
         }
       </View>
       <ScrollView horizontal style={styles.horizontalScroll} showsHorizontalScrollIndicator={false}>
         {loading ? renderPlaceholders() : allCountries?.slice(0, 5).filter((country) => country?.show).map((country, index) => (
-          <TouchableOpacity key={index} style={[styles.countryCard, { width: cardWidth, height: cardHeight }]} onPress={() => handleOnPressCountry(country)}>
+          <TouchableOpacity key={index} style={[styles.countryCard, { marginRight: 10, width: cardWidth, height: cardHeight }]} onPress={() => handleOnPressCountry(country)}>
             <Image source={{ uri: country.imageUrl }} style={styles.countryFlag} />
             <View style={styles.countryOverlay}>
-              <Text style={[styles.countryName, { fontSize }]}>{languageStore[selectedLanguage][country.code]}</Text>
+              <Text style={[styles.countryName, { fontSize: fontSize * 0.9 }]}>{languageStore[selectedLanguage][country.code]}</Text>
             </View>
           </TouchableOpacity>
         ))}
@@ -190,36 +190,29 @@ const styles = StyleSheet.create({
   },
   countryCard: {
     marginBottom: 10,
-    marginRight: 10,
-    paddingBottom: 10,
     borderRadius: 10,
     overflow: 'hidden',
-    marginBottom: 10,
     elevation: 2,
-    backgroundColor: '#fff',
+    backgroundColor: '#D9D9D9',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#6B2346',
-    alignItems: 'center',
   },
   countryFlag: {
-    marginTop: -10,
     width: '100%',
-    height: '100%',
+    height: '80%',
+    resizeMode: 'cover',
   },
   countryOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   countryName: {
-    color: '#222',
     fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 110,
     textAlign: 'center',
-    backgroundColor: '#D3D3D3',
-    width: '100%',
   },
   grid: {
     paddingBottom: '25%'

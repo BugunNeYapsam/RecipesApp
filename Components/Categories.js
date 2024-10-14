@@ -77,13 +77,13 @@ const Categories = ({ showAll }) => {
   };
 
   const calculateCardSize = () => {
-    const cardWidth = screenWidth < 600 ? (screenWidth / 3) - 20 : (screenWidth / 4) - 20;
-    const cardHeight = screenHeight < 800 ? 130 : 180;
+    const cardWidth = screenWidth < 600 ? (screenWidth / 3.7) : (screenWidth / 4.5);
+    const cardHeight = screenHeight < 1000 ? 160 : 220;
     return { cardWidth, cardHeight };
   };
 
   const calculateFontSize = () => {
-    return screenWidth < 600 ? 14 : 18;
+    return screenWidth < 600 ? 16 : 22;
   };
 
   const { cardWidth, cardHeight } = calculateCardSize();
@@ -117,11 +117,11 @@ const Categories = ({ showAll }) => {
   return (
     <View>
       <View style={styles.header}>
-        <Text style={[styles.sectionTitle, dynamicPageTitleStyle, { fontSize: fontSize * 1.2 }]}>{languageStore[selectedLanguage]["categories"]}</Text>
+        <Text style={[styles.sectionTitle, dynamicPageTitleStyle, { fontSize: fontSize }]}>{languageStore[selectedLanguage]["categories"]}</Text>
         {
           !loading && 
           <TouchableOpacity onPress={() => navigation.navigate(languageStore[selectedLanguage]["all_categories"]) }>
-            <Text style={[styles.seeAll, dynamicSeeAllStyle, { fontSize: fontSize }]}>{languageStore[selectedLanguage]["see_all"]}</Text>
+            <Text style={[styles.seeAll, dynamicSeeAllStyle, { fontSize: fontSize * 0.9 }]}>{languageStore[selectedLanguage]["see_all"]}</Text>
           </TouchableOpacity>
         }
       </View>
@@ -130,7 +130,7 @@ const Categories = ({ showAll }) => {
           <TouchableOpacity key={index} style={[styles.categoryCard, { width: cardWidth, height: cardHeight }]} onPress={() => handleOnPressCategory(category)}>
             <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} />
             <View style={styles.categoryOverlay}>
-              <Text style={[styles.categoryName, { fontSize }]}>{category.name[selectedLanguage]}</Text>
+              <Text style={[styles.categoryName, { fontSize: fontSize * 0.9 }]}>{category.name[selectedLanguage]}</Text>
             </View>
           </TouchableOpacity>
         ))}
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
   },
   categoryImage: {
     width: '100%',
-    height: '85%',
+    height: '87%',
     resizeMode: 'cover',
   },
   categoryOverlay: {
