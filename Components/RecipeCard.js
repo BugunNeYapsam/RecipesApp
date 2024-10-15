@@ -1,12 +1,42 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Animated, Image } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+  Animated,
+  Image,
+  Dimensions,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { useAppContext } from '../Context/AppContext';
 
-const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expanded, toggleExpand, saved, onSave, updateRecipeRating }) => {
-  const { recipeRatings, updateSpecificRecipeRating, isDarkMode, selectedLanguage, languageStore } = useAppContext();
+// Get screen width and define breakpoint
+const { width: screenWidth } = Dimensions.get('window');
+const isLargeScreen = screenWidth > 600; // Adjust breakpoint as needed
+
+const RecipeCard = ({
+  recipeID,
+  imgUrl,
+  foodName,
+  ingredients,
+  recipeSteps,
+  expanded,
+  toggleExpand,
+  saved,
+  onSave,
+  updateRecipeRating,
+}) => {
+  const {
+    recipeRatings,
+    updateSpecificRecipeRating,
+    isDarkMode,
+    selectedLanguage,
+    languageStore,
+  } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFailure, setShowFailure] = useState(false);
@@ -41,7 +71,7 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
       }
       return false;
     } catch (error) {
-      console.error("Error checking if recipe has been rated:", error);
+      console.error('Error checking if recipe has been rated:', error);
       return false;
     }
   };
@@ -56,22 +86,26 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
       ratedList.push(recipe_id);
       await AsyncStorage.setItem('ratedRecipes', JSON.stringify(ratedList));
     } catch (error) {
-      console.error("Error marking recipe as rated:", error);
+      console.error('Error marking recipe as rated:', error);
     }
   };
-  
+
   const handleRating = async (recipe_id, newRating) => {
     const validRating = Math.max(0, Math.min(5, newRating));
     setLoading(true);
-  
+
     const hasRated = await checkIfRated(recipe_id);
     if (hasRated) {
       setLoading(false);
       return;
     }
-  
+
     try {
-      const dbUpdateResult = await updateRecipeRating(recipe_id, validRating, updateSpecificRecipeRating);
+      const dbUpdateResult = await updateRecipeRating(
+        recipe_id,
+        validRating,
+        updateSpecificRecipeRating
+      );
       if (dbUpdateResult) {
         await saveRatingToDevice(validRating);
         await markAsRated(recipe_id);
@@ -81,7 +115,7 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
         triggerFailureAnimation();
       }
     } catch (error) {
-      console.error("Error during rating update:", error);
+      console.error('Error during rating update:', error);
       triggerFailureAnimation();
     } finally {
       setLoading(false);
@@ -127,10 +161,10 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
     const stars = [];
     const fullStars = Math.floor(current_rating);
     const hasHalfStar = current_rating % 1 !== 0;
-  
+
     const starColor = isRated ? '#AAAAAA' : '#FFC107';
     const starOpacity = isRated ? 0.5 : 1;
-  
+
     for (let i = 1; i <= fullStars; i++) {
       stars.push(
         <TouchableOpacity
@@ -138,11 +172,16 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
           onPress={() => !isRated && handleRating(parseInt(recipe_id), i)}
           disabled={isRated}
         >
-          <MaterialIcons name="star" size={24} color={starColor} style={{ opacity: starOpacity }} />
+          <MaterialIcons
+            name="star"
+            size={isLargeScreen ? 34 : 24}
+            color={starColor}
+            style={{ opacity: starOpacity }}
+          />
         </TouchableOpacity>
       );
     }
-  
+
     if (hasHalfStar) {
       stars.push(
         <TouchableOpacity
@@ -150,11 +189,16 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
           onPress={() => !isRated && handleRating(parseInt(recipe_id), fullStars + 1)}
           disabled={isRated}
         >
-          <MaterialIcons name="star-half" size={24} color={starColor} style={{ opacity: starOpacity }} />
+          <MaterialIcons
+            name="star-half"
+            size={isLargeScreen ? 34 : 24}
+            color={starColor}
+            style={{ opacity: starOpacity }}
+          />
         </TouchableOpacity>
       );
     }
-  
+
     for (let i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++) {
       stars.push(
         <TouchableOpacity
@@ -162,14 +206,19 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
           onPress={() => !isRated && handleRating(parseInt(recipe_id), i + 1)}
           disabled={isRated}
         >
-          <MaterialIcons name="star-border" size={24} color={starColor} style={{ opacity: starOpacity }} />
+          <MaterialIcons
+            name="star-border"
+            size={isLargeScreen ? 34 : 24}
+            color={starColor}
+            style={{ opacity: starOpacity }}
+          />
         </TouchableOpacity>
       );
     }
-  
+
     return stars;
   };
-  
+
   return (
     <TouchableOpacity onPress={toggleExpand} activeOpacity={0.8}>
       <View style={[styles.card, expanded && styles.cardExpanded]}>
@@ -179,26 +228,43 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
           end={{ x: 1, y: 1 }}
           style={styles.gradient}
         >
-          <View style={[styles.header, { width: expanded ? "100%" : "80%" }]}>
-            <MaterialIcons name={expanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'} size={24} color={isDarkMode ? "#111" : "#888"} />
+          <View style={[styles.header, { width: expanded ? '100%' : '80%' }]}>
+            <MaterialIcons
+              name={expanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
+              size={isLargeScreen ? 28 : 24}
+              color={isDarkMode ? '#111' : '#888'}
+            />
             <Text style={styles.title}>{foodName}</Text>
           </View>
 
-          {
-            !expanded &&
+          {!expanded && (
             <Image
               style={styles.imageContainer}
-              source={imgUrl !== "" ? { uri: imgUrl } : require('../assets/FoodPlaceholder.png')}
+              source={
+                imgUrl !== ''
+                  ? { uri: imgUrl }
+                  : require('../assets/FoodPlaceholder.png')
+              }
               resizeMode="cover"
             />
-          }
+          )}
 
           {expanded && (
             <>
-            { expanded && <Image source={imgUrl !== "" ? { uri: imgUrl } : require('../assets/FoodPlaceholder.png')} style={styles.imageExpanded} resizeMode="cover" /> }
+              <Image
+                source={
+                  imgUrl !== ''
+                    ? { uri: imgUrl }
+                    : require('../assets/FoodPlaceholder.png')
+                }
+                style={styles.imageExpanded}
+                resizeMode="cover"
+              />
 
               <View style={styles.contentContainer}>
-                <Text style={styles.subtitle}>{languageStore[selectedLanguage]["ingredients"]}:</Text>
+                <Text style={styles.subtitle}>
+                  {languageStore[selectedLanguage]['ingredients']}:
+                </Text>
                 <View style={styles.ingredientsList}>
                   {ingredients.map((ingredient, index) => (
                     <Text key={index} style={styles.ingredientItem}>
@@ -206,7 +272,9 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
                     </Text>
                   ))}
                 </View>
-                <Text style={styles.subtitle}>{languageStore[selectedLanguage]["recipe"]}:</Text>
+                <Text style={styles.subtitle}>
+                  {languageStore[selectedLanguage]['recipe']}:
+                </Text>
                 <View style={styles.stepsList}>
                   {recipeSteps.map((step, index) => (
                     <View key={index} style={styles.stepItemContainer}>
@@ -219,25 +287,47 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
 
               <View style={styles.cardFooter}>
                 <View style={styles.ratingContainer}>
-                  <Text style={styles.ratingText}>{recipeRatings[recipeID]?.toFixed(1)}</Text>
+                  <Text style={styles.ratingText}>
+                    {recipeRatings[recipeID]?.toFixed(1)}
+                  </Text>
                   <View style={styles.starsContainer}>
                     {renderStars(recipeID)}
                   </View>
 
                   {loading ? (
-                    <ActivityIndicator style={{marginLeft: 15}} size="small" color="#FFC107" />
+                    <ActivityIndicator
+                      style={{ marginLeft: 15 }}
+                      size="small"
+                      color="#FFC107"
+                    />
                   ) : showSuccess ? (
-                    <Animated.View style={[styles.successTick, { opacity: successOpacity }]}>
-                      <Ionicons name="checkmark-circle" size={30} color="green" />
+                    <Animated.View
+                      style={[styles.successTick, { opacity: successOpacity }]}
+                    >
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={isLargeScreen ? 34 : 30}
+                        color="green"
+                      />
                     </Animated.View>
                   ) : showFailure ? (
-                    <Animated.View style={[styles.failureTick, { opacity: failureOpacity }]}>
-                      <Ionicons name="close-circle" size={30} color="red" />
+                    <Animated.View
+                      style={[styles.failureTick, { opacity: failureOpacity }]}
+                    >
+                      <Ionicons
+                        name="close-circle"
+                        size={isLargeScreen ? 34 : 30}
+                        color="red"
+                      />
                     </Animated.View>
                   ) : null}
                 </View>
                 <TouchableOpacity onPress={() => onSave(!saved)}>
-                  <MaterialIcons name={saved ? 'bookmark' : 'bookmark-border'} size={24} color={'#888'} />
+                  <MaterialIcons
+                    name={saved ? 'bookmark' : 'bookmark-border'}
+                    size={isLargeScreen ? 34 : 24}
+                    color={'#888'}
+                  />
                 </TouchableOpacity>
               </View>
             </>
@@ -250,83 +340,83 @@ const RecipeCard = ({ recipeID, imgUrl, foodName, ingredients, recipeSteps, expa
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 15,
-    marginBottom: 15,
+    borderRadius: isLargeScreen ? 20 : 15,
+    marginBottom: isLargeScreen ? 20 : 15,
     overflow: 'hidden',
-    borderWidth: .5,
-    borderColor: "#555",
+    borderWidth: 0.5,
+    borderColor: '#555',
   },
   gradient: {
-    borderRadius: 10,
-    padding: 20,
+    borderRadius: isLargeScreen ? 15 : 10,
+    padding: isLargeScreen ? 25 : 20,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: -5,
-    height: 45
+    height: isLargeScreen ? 60 : 40,
   },
   title: {
-    fontSize: 18,
+    fontSize: isLargeScreen ? 24 : 18,
     fontWeight: 'bold',
     color: '#222',
     flex: 1,
-    marginHorizontal: 10,
+    marginHorizontal: isLargeScreen ? 15 : 10,
   },
   imageContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    position: "absolute",
+    position: 'absolute',
     right: 0,
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-    borderColor: "#555",
+    width: isLargeScreen ? 140 : 100,
+    height: isLargeScreen ? 140 : 100,
+    borderRadius: isLargeScreen ? 12 : 10,
+    borderColor: '#555',
     borderWidth: 1,
-    marginTop: "-2%"
+    marginTop: '-2%',
   },
   imageExpanded: {
-    display: "flex",
-    justifyContent: "center",
-    height: 200,
-    width: "100%",
-    borderRadius: 10,
-    borderColor: "#555",
+    display: 'flex',
+    justifyContent: 'center',
+    height: isLargeScreen ? 350 : 200,
+    width: '100%',
+    borderRadius: isLargeScreen ? 15 : 10,
+    borderColor: '#555',
     borderWidth: 1,
-    marginTop: 20,
-    marginBottom: 10,
+    marginTop: isLargeScreen ? 25 : 20,
+    marginBottom: isLargeScreen ? 15 : 10,
   },
   contentContainer: {
-    borderRadius: 10,
-    marginTop: 10,
+    borderRadius: isLargeScreen ? 15 : 10,
+    marginTop: isLargeScreen ? 15 : 10,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: isLargeScreen ? 24 : 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 5,
+    marginBottom: isLargeScreen ? 7 : 5,
   },
   ingredientsList: {
-    marginBottom: 10,
+    marginBottom: isLargeScreen ? 15 : 10,
   },
   ingredientItem: {
-    fontSize: 16,
+    fontSize: isLargeScreen ? 22 : 16,
     color: '#333',
   },
   stepsList: {
-    marginBottom: 10,
+    marginBottom: isLargeScreen ? 15 : 10,
   },
   stepItemContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
   stepNumber: {
-    fontSize: 16,
+    fontSize: isLargeScreen ? 22 : 16,
     color: '#333',
-    marginRight: 5,
+    marginRight: isLargeScreen ? 7 : 5,
   },
   stepText: {
-    fontSize: 16,
+    fontSize: isLargeScreen ? 22 : 16,
     color: '#333',
     flex: 1,
     flexWrap: 'wrap',
@@ -334,8 +424,8 @@ const styles = StyleSheet.create({
   cardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: "center",
-    marginTop: 20,
+    alignItems: 'center',
+    marginTop: isLargeScreen ? 25 : 20,
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -345,19 +435,19 @@ const styles = StyleSheet.create({
   starsContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginVertical: 10,
+    marginVertical: isLargeScreen ? 12 : 10,
   },
   successTick: {
-    marginLeft: 10,
+    marginLeft: isLargeScreen ? 12 : 10,
   },
   failureTick: {
-    marginLeft: 10,
+    marginLeft: isLargeScreen ? 12 : 10,
   },
   ratingText: {
-    fontSize: 16,
-    marginRight: 10,
+    fontSize: isLargeScreen ? 22 : 16,
+    marginRight: isLargeScreen ? 12 : 10,
     color: '#555',
-    fontWeight: "500"
+    fontWeight: '500',
   },
 });
 

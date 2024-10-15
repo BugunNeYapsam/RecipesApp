@@ -1,21 +1,52 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Animated, Image, ScrollView, SafeAreaView, Platform, StatusBar } from 'react-native'; // Import Image
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+  Animated,
+  Image,
+  ScrollView,
+  SafeAreaView,
+  Platform,
+  StatusBar,
+  Dimensions, // Import Dimensions
+} from 'react-native'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../Context/AppContext';
 
+// Get screen width and define breakpoint
+const { width: screenWidth } = Dimensions.get('window');
+const isLargeScreen = screenWidth > 600; // Adjust breakpoint as needed
+
 const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
-  const { recipeRatings, updateSpecificRecipeRating, isDarkMode, selectedLanguage, languageStore, selectedFeaturedRecipe, setSelectedFeaturedRecipe, addRecipe, removeRecipe, savedRecipes } = useAppContext();
+  const {
+    recipeRatings,
+    updateSpecificRecipeRating,
+    isDarkMode,
+    selectedLanguage,
+    languageStore,
+    selectedFeaturedRecipe,
+    setSelectedFeaturedRecipe,
+    addRecipe,
+    removeRecipe,
+    savedRecipes,
+  } = useAppContext();
+
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFailure, setShowFailure] = useState(false);
   const [isRated, setIsRated] = useState(false);
-  const [saved, setSaved] = useState(savedRecipes.includes(selectedFeaturedRecipe?.name[selectedLanguage]));
+  const [saved, setSaved] = useState(
+    savedRecipes.includes(selectedFeaturedRecipe?.name[selectedLanguage])
+  );
   const successOpacity = useRef(new Animated.Value(0)).current;
   const failureOpacity = useRef(new Animated.Value(0)).current;
-  
+
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -30,20 +61,23 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
   useEffect(() => {
     return () => {
       setSelectedFeaturedRecipe(undefined);
-    }
+    };
   }, []);
-  
+
   const dynamicSafeAreaStyle = {
-    backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE'
+    backgroundColor: isDarkMode ? '#2D2D2D' : '#EEEEEE',
   };
 
   const dynamicPageTitleStyle = {
-    color: isDarkMode ? '#c781a4' : '#7f405f'
+    color: isDarkMode ? '#c781a4' : '#7f405f',
   };
 
   const saveRatingToDevice = async (rating) => {
     try {
-      await AsyncStorage.setItem(`rating_${selectedFeaturedRecipe?.name[selectedLanguage]}`, JSON.stringify(rating));
+      await AsyncStorage.setItem(
+        `rating_${selectedFeaturedRecipe?.name[selectedLanguage]}`,
+        JSON.stringify(rating)
+      );
     } catch (error) {
       console.error('Failed to save rating:', error);
       throw error;
@@ -59,7 +93,7 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
       }
       return false;
     } catch (error) {
-      console.error("Error checking if recipe has been rated:", error);
+      console.error('Error checking if recipe has been rated:', error);
       return false;
     }
   };
@@ -74,22 +108,26 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
       ratedList.push(recipe_id);
       await AsyncStorage.setItem('ratedRecipes', JSON.stringify(ratedList));
     } catch (error) {
-      console.error("Error marking recipe as rated:", error);
+      console.error('Error marking recipe as rated:', error);
     }
   };
-  
+
   const handleRating = async (recipe_id, newRating) => {
     const validRating = Math.max(0, Math.min(5, newRating));
     setLoading(true);
-  
+
     const hasRated = await checkIfRated(recipe_id);
     if (hasRated) {
       setLoading(false);
       return;
     }
-  
+
     try {
-      const dbUpdateResult = await updateRecipeRating(recipe_id, newRating, updateSpecificRecipeRating);  
+      const dbUpdateResult = await updateRecipeRating(
+        recipe_id,
+        validRating,
+        updateSpecificRecipeRating
+      );
       if (dbUpdateResult) {
         await saveRatingToDevice(validRating);
         await markAsRated(recipe_id);
@@ -153,10 +191,10 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
     const stars = [];
     const fullStars = Math.floor(current_rating);
     const hasHalfStar = current_rating % 1 !== 0;
-  
+
     const starColor = isRated ? '#AAAAAA' : '#FFC107';
     const starOpacity = isRated ? 0.5 : 1;
-  
+
     for (let i = 1; i <= fullStars; i++) {
       stars.push(
         <TouchableOpacity
@@ -164,11 +202,16 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
           onPress={() => !isRated && handleRating(parseInt(recipe_id), i)}
           disabled={isRated}
         >
-          <MaterialIcons name="star" size={24} color={starColor} style={{ opacity: starOpacity }} />
+          <MaterialIcons
+            name="star"
+            size={isLargeScreen ? 28 : 24}
+            color={starColor}
+            style={{ opacity: starOpacity }}
+          />
         </TouchableOpacity>
       );
     }
-  
+
     if (hasHalfStar) {
       stars.push(
         <TouchableOpacity
@@ -176,11 +219,16 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
           onPress={() => !isRated && handleRating(parseInt(recipe_id), fullStars + 1)}
           disabled={isRated}
         >
-          <MaterialIcons name="star-half" size={24} color={starColor} style={{ opacity: starOpacity }} />
+          <MaterialIcons
+            name="star-half"
+            size={isLargeScreen ? 28 : 24}
+            color={starColor}
+            style={{ opacity: starOpacity }}
+          />
         </TouchableOpacity>
       );
     }
-  
+
     for (let i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++) {
       stars.push(
         <TouchableOpacity
@@ -188,21 +236,32 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
           onPress={() => !isRated && handleRating(parseInt(recipe_id), i + 1)}
           disabled={isRated}
         >
-          <MaterialIcons name="star-border" size={24} color={starColor} style={{ opacity: starOpacity }} />
+          <MaterialIcons
+            name="star-border"
+            size={isLargeScreen ? 28 : 24}
+            color={starColor}
+            style={{ opacity: starOpacity }}
+          />
         </TouchableOpacity>
       );
     }
-  
+
     return stars;
   };
-  
+
   return (
     <SafeAreaView style={[styles.safeArea, dynamicSafeAreaStyle]}>
       <View style={styles.headerBackButtonRow}>
         <TouchableOpacity onPress={() => navigation?.goBack()}>
-            <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#c781a4' : '#7f405f'} />
+          <Ionicons
+            name="arrow-back"
+            size={isLargeScreen ? 28 : 24}
+            color={isDarkMode ? '#c781a4' : '#7f405f'}
+          />
         </TouchableOpacity>
-        <Text style={[styles.text, dynamicPageTitleStyle]}>{languageStore[selectedLanguage]["back"]?.toUpperCase() || '' }</Text>
+        <Text style={[styles.text, dynamicPageTitleStyle]}>
+          {languageStore[selectedLanguage]['back']?.toUpperCase() || ''}
+        </Text>
       </View>
       <ScrollView style={[styles.card]}>
         <LinearGradient
@@ -212,52 +271,94 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
           style={styles.gradient}
         >
           <View style={styles.header}>
-            <Text style={styles.title}>{selectedFeaturedRecipe?.name[selectedLanguage]}</Text>
+            <Text style={styles.title}>
+              {selectedFeaturedRecipe?.name[selectedLanguage]}
+            </Text>
           </View>
 
           <>
-            <Image source={selectedFeaturedRecipe?.imageUrl !== "" ? { uri: selectedFeaturedRecipe?.imageUrl } : require('../assets/FoodPlaceholder.png')} style={styles.imageExpanded} resizeMode="cover" />
+            <Image
+              source={
+                selectedFeaturedRecipe?.imageUrl !== ''
+                  ? { uri: selectedFeaturedRecipe?.imageUrl }
+                  : require('../assets/FoodPlaceholder.png')
+              }
+              style={styles.imageExpanded}
+              resizeMode="cover"
+            />
             <View style={styles.contentContainer}>
-              <Text style={styles.subtitle}>{languageStore[selectedLanguage]["ingredients"]}:</Text>
+              <Text style={styles.subtitle}>
+                {languageStore[selectedLanguage]['ingredients']}:
+              </Text>
               <View style={styles.ingredientsList}>
-                {selectedFeaturedRecipe?.ingredients[selectedLanguage]?.map((ingredient, index) => (
-                  <Text key={index} style={styles.ingredientItem}>
-                    • {ingredient}
-                  </Text>
-                ))}
+                {selectedFeaturedRecipe?.ingredients[selectedLanguage]?.map(
+                  (ingredient, index) => (
+                    <Text key={index} style={styles.ingredientItem}>
+                      • {ingredient}
+                    </Text>
+                  )
+                )}
               </View>
-              <Text style={styles.subtitle}>{languageStore[selectedLanguage]["recipe"]}:</Text>
+              <Text style={styles.subtitle}>
+                {languageStore[selectedLanguage]['recipe']}:
+              </Text>
               <View style={styles.stepsList}>
-                {selectedFeaturedRecipe?.recipe[selectedLanguage]?.map((step, index) => (
-                  <View key={index} style={styles.stepItemContainer}>
-                    <Text style={styles.stepNumber}>{index + 1}.</Text>
-                    <Text style={styles.stepText}>{step.trim()}</Text>
-                  </View>
-                ))}
+                {selectedFeaturedRecipe?.recipe[selectedLanguage]?.map(
+                  (step, index) => (
+                    <View key={index} style={styles.stepItemContainer}>
+                      <Text style={styles.stepNumber}>{index + 1}.</Text>
+                      <Text style={styles.stepText}>{step.trim()}</Text>
+                    </View>
+                  )
+                )}
               </View>
             </View>
 
             <View style={styles.cardFooter}>
               <View style={styles.ratingContainer}>
-                <Text style={styles.ratingText}>{recipeRatings[selectedFeaturedRecipe?.id]?.toFixed(1)}</Text>
+                <Text style={styles.ratingText}>
+                  {recipeRatings[selectedFeaturedRecipe?.id]?.toFixed(1)}
+                </Text>
                 <View style={styles.starsContainer}>
                   {renderStars(selectedFeaturedRecipe?.id)}
                 </View>
 
                 {loading ? (
-                  <ActivityIndicator style={{marginLeft: 15}} size="small" color="#FFC107" />
+                  <ActivityIndicator
+                    style={{ marginLeft: 15 }}
+                    size="small"
+                    color="#FFC107"
+                  />
                 ) : showSuccess ? (
-                  <Animated.View style={[styles.successTick, { opacity: successOpacity }]}>
-                    <Ionicons name="checkmark-circle" size={30} color="green" />
+                  <Animated.View
+                    style={[styles.successTick, { opacity: successOpacity }]}
+                  >
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={isLargeScreen ? 34 : 30}
+                      color="green"
+                    />
                   </Animated.View>
                 ) : showFailure ? (
-                  <Animated.View style={[styles.failureTick, { opacity: failureOpacity }]}>
-                    <Ionicons name="close-circle" size={30} color="red" />
+                  <Animated.View
+                    style={[styles.failureTick, { opacity: failureOpacity }]}
+                  >
+                    <Ionicons
+                      name="close-circle"
+                      size={isLargeScreen ? 34 : 30}
+                      color="red"
+                    />
                   </Animated.View>
                 ) : null}
               </View>
-              <TouchableOpacity onPress={() => handleSave(selectedFeaturedRecipe, !saved)}>
-                <MaterialIcons name={saved ? 'bookmark' : 'bookmark-border'} size={24} color={'#888'} />
+              <TouchableOpacity
+                onPress={() => handleSave(selectedFeaturedRecipe, !saved)}
+              >
+                <MaterialIcons
+                  name={saved ? 'bookmark' : 'bookmark-border'}
+                  size={isLargeScreen ? 28 : 24}
+                  color={'#888'}
+                />
               </TouchableOpacity>
             </View>
           </>
@@ -269,21 +370,19 @@ const FeaturedRecipesDetail = ({ updateRecipeRating }) => {
 
 const styles = StyleSheet.create({
   safeArea: {
-    flex: 1,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    marginBottom: isLargeScreen ? '20%' : '35%' 
   },
   card: {
-    borderRadius: 10,
-    marginBottom: 20,
-    overflow: 'hidden',
-    borderWidth: .5,
-    borderColor: "#555",
-    margin: 16,
-    marginBottom: "25%"
+    borderRadius: isLargeScreen ? 15 : 10,
+    borderWidth: 0.5,
+    borderColor: '#555',
+    margin: isLargeScreen ? 24 : 16,
+    marginBottom: isLargeScreen ? 54 : 16,
   },
   gradient: {
-    borderRadius: 10,
-    padding: 20,
+    borderRadius: isLargeScreen ? 15 : 10,
+    padding: isLargeScreen ? 30 : 20,
   },
   header: {
     flexDirection: 'row',
@@ -292,65 +391,54 @@ const styles = StyleSheet.create({
     marginLeft: -5,
   },
   title: {
-    fontSize: 18,
+    fontSize: isLargeScreen ? 24 : 18,
     fontWeight: 'bold',
     color: '#222',
     flex: 1,
-    marginHorizontal: 10,
-  },
-  image: {
-    position: "absolute",
-    right: 0,
-    width: 100,
-    height: 100,
-    borderRadius: 60,
-    borderColor: "#555",
-    borderWidth: .5,
-    marginLeft: 10,
-    marginRight: -30,
+    marginHorizontal: isLargeScreen ? 15 : 10,
   },
   imageExpanded: {
-    display: "flex",
-    justifyContent: "center",
-    height: 200,
-    width: "100%",
-    borderRadius: 5,
-    borderColor: "#555",
-    borderWidth: .5,
-    marginTop: 20,
-    marginBottom: 10,
+    display: 'flex',
+    justifyContent: 'center',
+    height: isLargeScreen ? 350 : 200,
+    width: '100%',
+    borderRadius: isLargeScreen ? 10 : 5,
+    borderColor: '#555',
+    borderWidth: 0.5,
+    marginTop: isLargeScreen ? 25 : 20,
+    marginBottom: isLargeScreen ? 15 : 10,
   },
   contentContainer: {
-    borderRadius: 10,
-    marginTop: 10,
+    borderRadius: isLargeScreen ? 15 : 10,
+    marginTop: isLargeScreen ? 15 : 10,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: isLargeScreen ? 22 : 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 5,
+    marginBottom: isLargeScreen ? 7 : 5,
   },
   ingredientsList: {
-    marginBottom: 10,
+    marginBottom: isLargeScreen ? 15 : 10,
   },
   ingredientItem: {
-    fontSize: 16,
+    fontSize: isLargeScreen ? 20 : 14,
     color: '#333',
   },
   stepsList: {
-    marginBottom: 10,
+    marginBottom: isLargeScreen ? 15 : 10,
   },
   stepItemContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
   stepNumber: {
-    fontSize: 16,
+    fontSize: isLargeScreen ? 20 : 14,
     color: '#333',
-    marginRight: 5,
+    marginRight: isLargeScreen ? 7 : 5,
   },
   stepText: {
-    fontSize: 16,
+    fontSize: isLargeScreen ? 20 : 14,
     color: '#333',
     flex: 1,
     flexWrap: 'wrap',
@@ -358,8 +446,8 @@ const styles = StyleSheet.create({
   cardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: "center",
-    marginTop: 20,
+    alignItems: 'center',
+    marginTop: isLargeScreen ? 25 : 20,
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -369,31 +457,31 @@ const styles = StyleSheet.create({
   starsContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginVertical: 10,
+    marginVertical: isLargeScreen ? 12 : 10,
   },
   successTick: {
-    marginLeft: 10,
+    marginLeft: isLargeScreen ? 12 : 10,
   },
   failureTick: {
-    marginLeft: 10,
+    marginLeft: isLargeScreen ? 12 : 10,
   },
   ratingText: {
-    fontSize: 16,
-    marginRight: 10,
+    fontSize: isLargeScreen ? 20 : 14,
+    marginRight: isLargeScreen ? 12 : 10,
     color: '#555',
-    fontWeight: "500"
+    fontWeight: '500',
   },
   text: {
-    fontSize: 16,
+    fontSize: isLargeScreen ? 22 : 14,
     fontWeight: 'bold',
-    marginLeft: 10,
+    marginLeft: isLargeScreen ? 15 : 10,
   },
   headerBackButtonRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    marginBottom: 10,
-    marginTop: 30,
+    paddingHorizontal: isLargeScreen ? 25 : 20,
+    marginBottom: isLargeScreen ? 15 : 10,
+    marginTop: isLargeScreen ? 35 : 30,
   },
 });
 
