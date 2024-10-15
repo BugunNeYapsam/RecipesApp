@@ -59,6 +59,8 @@ export const AppProvider = ({ children }) => {
   const [languageLoading, setLanguageLoading] = useState(true);
   const [error, setError] = useState(false);
   const [appSettings, setAppSettings] = useState({});
+  const [adminUniqueID, setAdminUniqueID] = useState(undefined);
+  
 
   useEffect(() => {
     const loadLanguages = async () => {
@@ -176,7 +178,9 @@ export const AppProvider = ({ children }) => {
         languageLoading,
         error,
         appSettings,
-        setAppSettings
+        setAppSettings,
+        adminUniqueID,
+        setAdminUniqueID
       }}
     >
       {children}

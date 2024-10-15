@@ -4,6 +4,10 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AppProvider } from './Context/AppContext';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'react-native';import Main from './Main';
+import * as Application from 'expo-application';
+
+let uniqueId = Application.getAndroidId();
+console.log(uniqueId);
 
 SplashScreen.preventAutoHideAsync();
 
@@ -22,7 +26,7 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AppProvider>
-        <Main />
+        <Main uniqueId={uniqueId} />
         <StatusBar hidden={true} />
       </AppProvider>
     </GestureHandlerRootView>

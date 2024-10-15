@@ -81,7 +81,7 @@ const ExploreStack = ({ retrieveAllData, updateRecipeRating }) => {
   );
 };
 
-export default function Main() {
+export default function Main(props) {
   const { languageLoading, error, setAllCategoriesData, setAllRecipeData, setAllCountries, setFeaturedRecipes, appSettings, updateAllRecipeRatings, isDarkMode, setIsDarkMode, setSelectedLanguage, selectedLanguage, languageStore, setAllSuggestions } = useAppContext();
 
   const getData = async () => {
@@ -237,7 +237,7 @@ export default function Main() {
     );
   }
 
-  if (appSettings?.isMaintenanceOn) {
+  if (appSettings?.isMaintenanceOn && !appSettings?.super_admins?.includes(props?.uniqueId)) {
     return (
       <View style={styles.center}>
         <Icon name="build" size={moderateScale(75)} color="#6B2346" />

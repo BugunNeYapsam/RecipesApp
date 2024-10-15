@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -12,7 +12,7 @@ import {
   Platform,
   StatusBar,
   Switch,
-  Dimensions, // Import Dimensions
+  Dimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FeatherIcon from 'react-native-vector-icons/Feather';
@@ -23,9 +23,8 @@ import linkedinIcon from '../assets/linkedin.png';
 import * as Clipboard from 'expo-clipboard';
 import { useAppContext } from '../Context/AppContext';
 
-// Get screen width and define breakpoint
 const { width: screenWidth } = Dimensions.get('window');
-const isLargeScreen = screenWidth > 600; // Adjust breakpoint as needed
+const isLargeScreen = screenWidth > 600;
 
 export default function Settings() {
   const [toastVisible, setToastVisible] = useState(false);
@@ -88,10 +87,7 @@ export default function Settings() {
   const openShareUrl = (platform) => {
     let url = '';
     const appLink = appSettings?.appLink;
-    const shareMessage =
-      selectedLanguage == 'tr'
-        ? 'Bu harika uygulamayı denemelisiniz!'
-        : 'Check out this awesome app!';
+    const shareMessage = languageStore[selectedLanguage]['share_message']
 
     switch (platform) {
       case 'whatsapp':

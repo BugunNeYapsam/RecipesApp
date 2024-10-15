@@ -9,7 +9,7 @@
     "entryPoint": "./App.js",
     "splash": {
       "image": "./assets/SplashScreen/splash.jpg",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#4C1E35"
     },
     "ios": {

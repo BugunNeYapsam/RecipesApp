@@ -14,14 +14,12 @@ import {
 import Categories from '../Components/Categories';
 import FeaturedRecipes from '../Components/FeaturedRecipes';
 import FoodsOfCountries from '../Components/FoodsOfCountries';
-import headerImage from '../assets/headerBNY.png';
-import headerImageLight from '../assets/headerBNY_light.png';
 import { useAppContext } from '../Context/AppContext';
 
 const { width: screenWidth } = Dimensions.get('window');
 
 const Explore = (props) => {
-  const { isDarkMode } = useAppContext();
+  const { isDarkMode, appSettings } = useAppContext();
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
@@ -43,7 +41,7 @@ const Explore = (props) => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.separatorContainer}>
         <Image
-          source={isDarkMode ? headerImage : headerImageLight}
+          source={{ uri: isDarkMode ? appSettings?.headerImage?.dark : appSettings?.headerImage?.light }}
           style={styles.headerImage}
           resizeMode="contain"
         />
