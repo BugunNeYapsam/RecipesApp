@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   },
   line: {
     height: 0.5,
-    width: screenWidth * 0.4, // Responsive width (40% of screen width)
+    width: screenWidth * 0.4,
   },
   dot: {
     marginHorizontal: 10,
