@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/bnyLogo512.png",
         "backgroundColor": "#3F1626"
       },
-      "package": "com.kdrbln.bugunneyapsam"
+      "package": "com.wayspect.bugunneyapsam"
     },
     "web": {
       "favicon": "./assets/bny_icon.png"
